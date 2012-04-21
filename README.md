@@ -94,12 +94,12 @@ Stay connected with other developers building on Splunk.
 
 <tr>
 <td><em>Issues</em>
-<td><span>https://github.com/splunk/splunk-sdk-java/issues/</span></td>
+<td><span>https://github.com/splunk/splunk-sdk-php/issues/</span></td>
 </tr>
 
 <tr>
 <td><em>Answers</em>
-<td><span>http://splunk-base.splunk.com/tags/java/</span></td>
+<td><span>http://splunk-base.splunk.com/tags/php/</span></td>
 </tr>
 
 <tr>
