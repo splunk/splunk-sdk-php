@@ -15,8 +15,6 @@
  * under the License.
  */
 
-require_once 'Utils.php';
-
 /**
  * HTTP abstraction layer.
  * 
@@ -142,7 +140,7 @@ class Splunk_HttpException extends Exception
     
     private static function parseFirstMessageFrom($response)
     {
-        return Splunk_Utils::getTextContentAtXpath(
+        return Splunk_Util::getTextContentAtXpath(
             new SimpleXMLElement($response['body']),
             '/response/messages/msg');
     }

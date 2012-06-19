@@ -15,8 +15,6 @@
  * under the License.
  */
 
-require_once 'Utils.php';
-
 class Splunk_Context
 {
     private $username;
@@ -69,7 +67,7 @@ class Splunk_Context
             'password' => $this->password,
         ));
         
-        $sessionKey = Splunk_Utils::getTextContentAtXpath(
+        $sessionKey = Splunk_Util::getTextContentAtXpath(
             new SimpleXMLElement($response['body']),
             '/response/sessionKey');
         

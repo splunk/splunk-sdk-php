@@ -20,7 +20,7 @@
  * 
  * @package Splunk
  */
-class Splunk_Utils
+class Splunk_Util
 {
     /**
      * @param SimpleXMLElement  $xmlElement
@@ -32,7 +32,7 @@ class Splunk_Utils
         $matchingElements = $xmlElement->xpath($xpathExpr);
         return (count($matchingElements) == 0)
             ? NULL
-            : Splunk_Utils::getTextContentOfXmlElement($matchingElements[0]);
+            : Splunk_Util::getTextContentOfXmlElement($matchingElements[0]);
     }
     
     /**
