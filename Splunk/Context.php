@@ -15,6 +15,11 @@
  * under the License.
  */
 
+/**
+ * This class allows clients to issue HTTP requests to a Splunk server.
+ * 
+ * @package Splunk
+ */
 class Splunk_Context
 {
     private $username;
@@ -27,7 +32,7 @@ class Splunk_Context
     private $token;
     
     /**
-     * @param array $args (optional) {
+     * @param array $args {
      *      'username' => (optional) The username to login with. Defaults to "admin".
      *      'password' => (optional) The password to login with. Defaults to "changeme".
      *      'host' => (optional) The hostname of the Splunk server. Defaults to "localhost".
