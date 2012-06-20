@@ -3,3 +3,6 @@
 
 # Generated documentation
 docs/
+
+# Local settings
+*.local.php

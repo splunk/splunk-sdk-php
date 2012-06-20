@@ -16,6 +16,7 @@
  */
 
 require_once '../Splunk.php';
+require_once 'settings.php';
 
 class ContextTest extends PHPUnit_Framework_TestCase
 {
@@ -71,6 +72,14 @@ class ContextTest extends PHPUnit_Framework_TestCase
         $context = new Splunk_Context(array(
             'http' => $http,
         ));
+        $context->login();
+    }
+    
+    public function testLoginSuccessOnRealServer()
+    {
+        global $Splunk_testSettings;
+        
+        $context = new Splunk_Context($Splunk_testSettings['connectArgs']);
         $context->login();
     }
 }
