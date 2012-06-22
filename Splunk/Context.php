@@ -16,7 +16,7 @@
  */
 
 /**
- * This class allows clients to issue HTTP requests to a Splunk server.
+ * Allows clients to issue HTTP requests to a Splunk server.
  * 
  * @package Splunk
  */
@@ -79,6 +79,20 @@ class Splunk_Context
         $this->token = 'Splunk ' . $sessionKey;
     }
     
+    /**
+     * Performs an HTTP GET request to the endpoint at the specified path.
+     * 
+     * @param string $path  relative or absolute URL path.
+     * @return array
+     * @see Splunk_Http::get
+     */
+    public function get($path)
+    {
+        return $this->http->get($this->url($path), array(
+            'Authorization' => $this->token,
+        ));
+    }
+    
     // === Accessors ===
     
     /**
@@ -92,8 +106,26 @@ class Splunk_Context
     
     // === Utility ===
     
+    /**
+     * @param string $path  relative or absolute URL path.
+     * @return string       absolute URL.
+     */
     private function url($path)
     {
-        return "{$this->scheme}://{$this->host}:{$this->port}{$path}";
+        return "{$this->scheme}://{$this->host}:{$this->port}{$this->abspath($path)}";
+    }
+    
+    /**
+     * @param string $path  relative or absolute URL path.
+     * @return string       absolute URL path.
+     */
+    private function abspath($path)
+    {
+        if ((strlen($path) >= 1) && ($path[0] == '/'))
+            return $path;
+        
+        // TODO: Support namespaces
+        // TODO: Quote the path component properly.
+        return "/services/{$path}";
     }
 }

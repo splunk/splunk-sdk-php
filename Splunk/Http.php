@@ -22,28 +22,30 @@
  */
 class Splunk_Http
 {
-    public function get($url)
+    public function get($url, $request_headers=array())
     {
-        return $this->request('get', $url);
+        return $this->request('get', $url, $request_headers);
     }
     
     public function post($url, $params=array())
     {
-        return $this->request('post', $url, http_build_query($params));
+        return $this->request('post', $url, array(), http_build_query($params));
     }
     
     /**
-     * @param string $method        HTTP request method (ex: 'get').
-     * @param string $url           URL to fetch.
-     * @param string $request_body  content to send in the request.
-     * @return object {
+     * @param string $method            HTTP request method (ex: 'get').
+     * @param string $url               URL to fetch.
+     * @param array $request_headers    dictionary of header names and values.
+     * @param string $request_body      content to send in the request.
+     * @return array {
      *      'status' => HTTP status code (ex: 200).
      *      'reason' => HTTP reason string (ex: 'OK').
      *      'headers' => Dictionary of headers. (ex: array('Content-Length' => '0')).
      *      'body' => Content of the response.
      * }
      */
-    private function request($method, $url, $request_body='')
+    private function request(
+        $method, $url, $request_headers=array(), $request_body='')
     {
         $opts = array(
             CURLOPT_HTTPGET => TRUE,
@@ -54,6 +56,9 @@ class Splunk_Http
             // disable SSL certificate validation
             CURLOPT_SSL_VERIFYPEER => FALSE,
         );
+        
+        foreach ($request_headers as $k => $v)
+            $opts[CURLOPT_HTTPHEADER][] = "$k: $v";
         
         switch ($method)
         {
