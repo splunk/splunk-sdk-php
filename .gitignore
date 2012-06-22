@@ -1,2 +1,8 @@
 # OS X
 .DS_Store
+
+# Generated documentation
+docs/
+
+# Local settings
+*.local.php
