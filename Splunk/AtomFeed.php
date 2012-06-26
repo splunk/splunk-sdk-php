@@ -16,6 +16,8 @@
  */
 
 /**
+ * Contains utilities for parsing Atom feeds received from the Splunk REST API.
+ * 
  * @package Splunk
  */
 class Splunk_AtomFeed
@@ -23,6 +25,12 @@ class Splunk_AtomFeed
     /** Name of the 's' namespace in Splunk Atom feeds. */
     const NS_S = 'http://dev.splunk.com/ns/rest';
     
+    /**
+     * Parses and returns the value inside the specified XML element.
+     * 
+     * @param SimpleXMLElement $containerXml
+     * @returns mixed
+     */
     public static function parseValueInside($containerXml)
     {
         $dictValue = $containerXml->children(Splunk_AtomFeed::NS_S)->dict;
