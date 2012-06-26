@@ -4,10 +4,6 @@
 
 ## Running the Tests
 
-Navigate to this directory, then run:
+Navigate to the root directory containing `Splunk.php`, then run:
 
-    phpunit .
-
-Or alternatively:
-
-    make
+    phpunit tests

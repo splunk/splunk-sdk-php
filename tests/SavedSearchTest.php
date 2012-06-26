@@ -15,7 +15,7 @@
  * under the License.
  */
 
-require_once '../Splunk.php';
+require_once 'Splunk.php';
 require_once 'settings.php';
 
 class SavedSearchTest extends PHPUnit_Framework_TestCase

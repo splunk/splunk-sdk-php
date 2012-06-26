@@ -15,7 +15,7 @@
  * under the License.
  */
 
-require_once '../Splunk.php';
+require_once 'Splunk.php';
 require_once 'settings.php';
 
 class ContextTest extends PHPUnit_Framework_TestCase
