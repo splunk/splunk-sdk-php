@@ -20,14 +20,36 @@
  * 
  * @package Splunk
  */
-class Splunk_Endpoint
+abstract class Splunk_Endpoint
 {
     protected $service;
     protected $path;
+    
+    protected $loaded = FALSE;
     
     public function __construct($service, $path)
     {
         $this->service = $service;
         $this->path = $path;
     }
+    
+    // === Load ===
+    
+    /** Loads this resource if not already done. Returns self. */
+    protected function validate()
+    {
+        if (!$this->loaded)
+        {
+            $this->load();
+            assert($this->loaded);
+        }
+        return $this;
+    }
+    
+    /**
+     * Loads this resource.
+     * 
+     * Implementations must set $this->loaded to TRUE before returning.
+     */
+    protected abstract function load();
 }

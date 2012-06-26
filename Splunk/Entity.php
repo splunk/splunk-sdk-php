@@ -22,7 +22,6 @@
  */
 class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
 {
-    private $loaded = FALSE;
     private $data;
     private $content;
     
@@ -43,17 +42,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     // === Load ===
     
-    /** Loads this entity if not already done. Returns self. */
-    private function validate()
-    {
-        if (!$this->loaded)
-        {
-            $this->load();
-        }
-        return $this;
-    }
-    
-    private function load()
+    protected function load()
     {
         $response = $this->service->get($this->path);
         $xml = new SimpleXMLElement($response->body);

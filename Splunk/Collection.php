@@ -22,22 +22,11 @@
  */
 class Splunk_Collection extends Splunk_Endpoint
 {
-    private $loaded = FALSE;
     private $entries = NULL;
     
     // === Load ===
     
-    /** Loads this collection if not already done. Returns self. */
-    private function validate()
-    {
-        if (!$this->loaded)
-        {
-            $this->load();
-        }
-        return $this;
-    }
-    
-    private function load()
+    protected function load()
     {
         $response = $this->service->get($this->path);
         $xml = new SimpleXMLElement($response->body);
