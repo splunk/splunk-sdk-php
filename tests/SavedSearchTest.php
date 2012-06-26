@@ -36,23 +36,53 @@ class SavedSearchTest extends PHPUnit_Framework_TestCase
             $response->body);
     }
     
+    public function testGetSavedSearchFromCollection()
+    {
+        global $Splunk_testSettings;
+        $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
+        $service->login();
+        
+        $savedSearch = $service->getSavedSearches()->get(self::SAVED_SEARCH_NAME);
+        return $savedSearch;
+    }
+    
+    /** @depends testGetSavedSearchFromCollection */
+    public function testGetPropertyOfSavedSearchFromCollection($savedSearch)
+    {
+        $this->assertEquals(self::SAVED_SEARCH_QUERY, $savedSearch['search']);
+    }
+    
     public function testGetSavedSearch()
     {
         global $Splunk_testSettings;
         $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
         $service->login();
         
-        $savedSearch = $service->savedSearches()->get(self::SAVED_SEARCH_NAME);
+        $savedSearch = $service->getSavedSearch(self::SAVED_SEARCH_NAME);
         return $savedSearch;
     }
     
-    /**
-     * @depends testGetSavedSearch
-     */
+    /** @depends testGetSavedSearch */
     public function testGetPropertyOfSavedSearch($savedSearch)
     {
-        $this->assertEquals(
-            self::SAVED_SEARCH_QUERY,
-            $savedSearch['search']);
+        $this->assertEquals(self::SAVED_SEARCH_QUERY, $savedSearch['search']);
+    }
+    
+    public function testGetMissingSavedSearch()
+    {
+        global $Splunk_testSettings;
+        $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
+        $service->login();
+        
+        $savedSearch = $service->getSavedSearch('NO_SUCH_SEARCH');
+        try
+        {
+            $savedSearch->getName();    // force load from server
+            $this->assertFail('Expected Splunk_HttpException to be thrown.');
+        }
+        catch (Splunk_HttpException $e)
+        {
+            $this->assertEquals(404, $e->getResponse()->status);
+        }
     }
 }

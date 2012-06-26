@@ -25,6 +25,8 @@ class Splunk_Collection extends Splunk_Endpoint
     private $loaded = FALSE;
     private $entries = NULL;
     
+    // === Load ===
+    
     /** Loads this collection if not already done. Returns self. */
     private function validate()
     {
@@ -54,9 +56,11 @@ class Splunk_Collection extends Splunk_Endpoint
     {
         return new Splunk_Entity(
             $this->service,
-            "{$this->path}/{$entryData->title}",
+            "{$this->path}/" . urlencode($entryData->title),
             $entryData);
     }
+    
+    // === Children ===
     
     /**
      * Returns the unique entity with the specified name.

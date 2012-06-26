@@ -30,7 +30,14 @@ class Splunk_Service extends Splunk_Context
         parent::__construct($args);
     }
     
-    public function savedSearches()
+    // === Endpoints ===
+    
+    public function getSavedSearch($name)
+    {
+        return new Splunk_Entity($this, 'saved/searches/' . urlencode($name));
+    }
+    
+    public function getSavedSearches()
     {
         return new Splunk_Collection($this, 'saved/searches/');
     }

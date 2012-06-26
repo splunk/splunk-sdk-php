@@ -22,29 +22,64 @@
  */
 class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
 {
+    private $loaded = FALSE;
     private $data;
     private $content;
     
-    public function __construct($service, $path, $data)
+    /**
+     * @param Splunk_Service $service
+     * @param string $path
+     * @param SimpleXMLElement $data    (optional) The XML of this entity,
+     *                                  as received from the REST API.
+     */
+    public function __construct($service, $path, $data=NULL)
     {
         parent::__construct($service, $path);
-        $this->data = $data;
         
-        $this->content = Splunk_AtomFeed::parseValueInside($data->content);
+        $this->data = $data;
+        if ($this->data != NULL)
+            $this->loadContentsOfData();
+    }
+    
+    // === Load ===
+    
+    /** Loads this entity if not already done. Returns self. */
+    private function validate()
+    {
+        if (!$this->loaded)
+        {
+            $this->load();
+        }
+        return $this;
+    }
+    
+    private function load()
+    {
+        $response = $this->service->get($this->path);
+        $xml = new SimpleXMLElement($response->body);
+        
+        $this->data = $xml->entry;
+        $this->loadContentsOfData();
+    }
+    
+    private function loadContentsOfData()
+    {
+        $this->content = Splunk_AtomFeed::parseValueInside($this->data->content);
+        $this->loaded = TRUE;
     }
     
     // === Accessors ===
     
     public function getName()
     {
-        return (string) $this->data->title;
+        return (string) $this->validate()->data->title;
     }
     
     // === ArrayAccess Methods ===
     
     public function offsetGet($key)
     {
-        return $this->content[$key];
+        return $this->validate()->content[$key];
     }
     
     public function offsetSet($key, $value)
@@ -59,6 +94,6 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     public function offsetExists($key)
     {
-        return isset($this->content[$key]);
+        return isset($this->validate()->content[$key]);
     }
 }

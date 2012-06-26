@@ -129,7 +129,6 @@ class Splunk_Context
             return $path;
         
         // TODO: Support namespaces
-        // TODO: Quote the path component properly.
         return "/services/{$path}";
     }
 }
