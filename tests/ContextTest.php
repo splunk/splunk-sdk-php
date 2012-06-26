@@ -15,14 +15,14 @@
  * under the License.
  */
 
-require_once '../Splunk.php';
+require_once 'Splunk.php';
 require_once 'settings.php';
 
 class ContextTest extends PHPUnit_Framework_TestCase
 {
     public function testLoginSuccess()
     {
-        $http_response = array(
+        $http_response = (object) array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
@@ -39,8 +39,9 @@ class ContextTest extends PHPUnit_Framework_TestCase
         $context = new Splunk_Context(array(
             'http' => $http,
         ));
-        $context->login();
         
+        $this->assertEquals(NULL, $context->getToken());
+        $context->login();
         $this->assertEquals(
             'Splunk 068b3021210eb4b67819b1a292302948',
             $context->getToken());
@@ -52,7 +53,7 @@ class ContextTest extends PHPUnit_Framework_TestCase
      */
     public function testLoginFailDueToBadPassword()
     {
-        $http_response = array(
+        $http_response = (object) array(
             'status' => 401,
             'reason' => 'Unauthorized',
             'headers' => array(),
@@ -81,5 +82,13 @@ class ContextTest extends PHPUnit_Framework_TestCase
         
         $context = new Splunk_Context($Splunk_testSettings['connectArgs']);
         $context->login();
+    }
+    
+    public function testLoginWithToken()
+    {
+        $context = new Splunk_Context(array(
+            'token' => 'Splunk ACEACE'
+        ));
+        $this->assertEquals('Splunk ACEACE', $context->getToken());
     }
 }

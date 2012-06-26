@@ -15,16 +15,11 @@
  * under the License.
  */
 
-require_once 'Splunk.php';
-
-class HttpTest extends PHPUnit_Framework_TestCase
+/**
+ * Thrown if the requested operation is not supported.
+ * 
+ * @package Splunk
+ */
+class Splunk_UnsupportedOperationException extends RuntimeException
 {
-    public function testGet()
-    {
-        $http = new Splunk_Http();
-        $response = $http->get('http://www.splunk.com/');
-        
-        $this->assertEquals(200, $response->status);
-        $this->assertContains('<head>', $response->body);
-    }
 }

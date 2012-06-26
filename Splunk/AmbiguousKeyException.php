@@ -15,16 +15,7 @@
  * under the License.
  */
 
-require_once 'Splunk.php';
-
-class HttpTest extends PHPUnit_Framework_TestCase
-{
-    public function testGet()
-    {
-        $http = new Splunk_Http();
-        $response = $http->get('http://www.splunk.com/');
-        
-        $this->assertEquals(200, $response->status);
-        $this->assertContains('<head>', $response->body);
-    }
-}
+/**
+ * @package Splunk
+ */
+class Splunk_AmbiguousKeyException extends RuntimeException {}
