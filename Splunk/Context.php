@@ -77,7 +77,7 @@ class Splunk_Context
         ));
         
         $sessionKey = Splunk_XmlUtil::getTextContentAtXpath(
-            new SimpleXMLElement($response['body']),
+            new SimpleXMLElement($response->body),
             '/response/sessionKey');
         
         $this->token = "Splunk {$sessionKey}";

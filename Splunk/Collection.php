@@ -38,7 +38,7 @@ class Splunk_Collection extends Splunk_Endpoint
     private function load()
     {
         $response = $this->service->get($this->path);
-        $xml = new SimpleXMLElement($response['body']);
+        $xml = new SimpleXMLElement($response->body);
         
         $entries = array();
         foreach ($xml->entry as $entryData)

@@ -33,7 +33,7 @@ class SavedSearchTest extends PHPUnit_Framework_TestCase
         $response = $context->get('/servicesNS/nobody/search/saved/searches/');
         $this->assertContains(
             '<title>' . self::SAVED_SEARCH_NAME . '</title>',
-            $response['body']);
+            $response->body);
     }
     
     public function testGetSavedSearch()

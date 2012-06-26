@@ -22,7 +22,7 @@ class ContextTest extends PHPUnit_Framework_TestCase
 {
     public function testLoginSuccess()
     {
-        $http_response = array(
+        $http_response = (object) array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
@@ -53,7 +53,7 @@ class ContextTest extends PHPUnit_Framework_TestCase
      */
     public function testLoginFailDueToBadPassword()
     {
-        $http_response = array(
+        $http_response = (object) array(
             'status' => 401,
             'reason' => 'Unauthorized',
             'headers' => array(),

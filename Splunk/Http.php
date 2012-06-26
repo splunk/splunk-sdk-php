@@ -37,7 +37,7 @@ class Splunk_Http
      * @param string $url               URL to fetch.
      * @param array $request_headers    dictionary of header names and values.
      * @param string $request_body      content to send in the request.
-     * @return array {
+     * @return object {
      *      'status' => HTTP status code (ex: 200).
      *      'reason' => HTTP reason string (ex: 'OK').
      *      'headers' => Dictionary of headers. (ex: array('Content-Length' => '0')).
@@ -100,7 +100,7 @@ class Splunk_Http
         
         list($http_version, $_, $reason) = explode(' ', $status_line, 3);
         
-        $response = array(
+        $response = (object) array(
             'status' => $status,
             'reason' => $reason,
             'headers' => $headers,
@@ -136,8 +136,7 @@ class Splunk_HttpException extends Exception
     {
         $detail = Splunk_HttpException::parseFirstMessageFrom($response);
         
-        // FIXME: Include HTTP "reason" in message
-        $message = "HTTP {$response['status']} {$response['reason']}";
+        $message = "HTTP {$response->status} {$response->reason}";
         if ($detail != NULL)
             $message .= ' -- ' . $detail;
         
@@ -148,7 +147,7 @@ class Splunk_HttpException extends Exception
     private static function parseFirstMessageFrom($response)
     {
         return Splunk_XmlUtil::getTextContentAtXpath(
-            new SimpleXMLElement($response['body']),
+            new SimpleXMLElement($response->body),
             '/response/messages/msg');
     }
     

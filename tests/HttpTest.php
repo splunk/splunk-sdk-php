@@ -24,7 +24,7 @@ class HttpTest extends PHPUnit_Framework_TestCase
         $http = new Splunk_Http();
         $response = $http->get('http://www.splunk.com/');
         
-        $this->assertEquals(200, $response['status']);
-        $this->assertContains('<head>', $response['body']);
+        $this->assertEquals(200, $response->status);
+        $this->assertContains('<head>', $response->body);
     }
 }
