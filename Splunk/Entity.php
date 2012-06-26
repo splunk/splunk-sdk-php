@@ -20,6 +20,45 @@
  * 
  * @package Splunk
  */
-class Splunk_Entity extends Splunk_Endpoint
+class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
 {
+    private $data;
+    private $content;
+    
+    public function __construct($service, $path, $data)
+    {
+        parent::__construct($service, $path);
+        $this->data = $data;
+        
+        $this->content = Splunk_AtomFeed::parseValueInside($data->content);
+    }
+    
+    // === Accessors ===
+    
+    public function getName()
+    {
+        return (string) $this->data->title;
+    }
+    
+    // === ArrayAccess Methods ===
+    
+    public function offsetGet($key)
+    {
+        return $this->content[$key];
+    }
+    
+    public function offsetSet($key, $value)
+    {
+        throw new Splunk_UnsupportedOperationException();
+    }
+    
+    public function offsetUnset($key)
+    {
+        throw new Splunk_UnsupportedOperationException();
+    }
+    
+    public function offsetExists($key)
+    {
+        return isset($this->content[$key]);
+    }
 }

@@ -43,6 +43,8 @@ class Splunk_Http
      *      'headers' => Dictionary of headers. (ex: array('Content-Length' => '0')).
      *      'body' => Content of the response.
      * }
+     * @throws Splunk_ConnectException
+     * @throws Splunk_HttpException
      */
     private function request(
         $method, $url, $request_headers=array(), $request_body='')

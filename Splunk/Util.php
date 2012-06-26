@@ -39,7 +39,7 @@ class Splunk_Util
      * @param SimpleXMLElement $xmlElement
      * @return string
      */
-    private static function getTextContentOfXmlElement($xmlElement)
+    public static function getTextContentOfXmlElement($xmlElement)
     {
         // HACK: Some versions of PHP 5 can't access the [0] element
         //       of a SimpleXMLElement object properly.

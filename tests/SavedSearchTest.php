@@ -40,8 +40,19 @@ class SavedSearchTest extends PHPUnit_Framework_TestCase
     {
         global $Splunk_testSettings;
         $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
+        $service->login();
         
         $savedSearch = $service->savedSearches()->get(self::SAVED_SEARCH_NAME);
         return $savedSearch;
+    }
+    
+    /**
+     * @depends testGetSavedSearch
+     */
+    public function testGetPropertyOfSavedSearch($savedSearch)
+    {
+        $this->assertEquals(
+            self::SAVED_SEARCH_QUERY,
+            $savedSearch['search']);
     }
 }

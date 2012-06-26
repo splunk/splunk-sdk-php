@@ -22,8 +22,75 @@
  */
 class Splunk_Collection extends Splunk_Endpoint
 {
+    private $loaded = FALSE;
+    private $entries = NULL;
+    
+    /** Loads this collection if not already done. Returns self. */
+    private function validate()
+    {
+        if (!$this->loaded)
+        {
+            $this->load();
+        }
+        return $this;
+    }
+    
+    private function load()
+    {
+        $response = $this->service->get($this->path);
+        $xml = new SimpleXMLElement($response['body']);
+        
+        $entries = array();
+        foreach ($xml->entry as $entryData)
+        {
+            $entries[] = $this->loadEntry($entryData);
+        }
+        
+        $this->entries = $entries;
+        $this->loaded = TRUE;
+    }
+    
+    private function loadEntry($entryData)
+    {
+        return new Splunk_Entity(
+            $this->service,
+            "{$this->path}/{$entryData->title}",
+            $entryData);
+    }
+    
+    /**
+     * Returns the unique entity with the specified name.
+     * 
+     * @param string $name
+     * @return Splunk_Entity
+     * @throws Splunk_NoSuchKeyException
+     * @throws Splunk_AmbiguousKeyException
+     */
     public function get($name)
     {
-        return new Splunk_Entity($this->service, "{$this->path}{$name}");
+        $results = array();
+        foreach ($this->validate()->entries as $entry)
+        {
+            if ($entry->getName() == $name)
+            {
+                $results[] = $entry;
+            }
+        }
+        
+        if (count($results) == 0)
+        {
+            throw new Splunk_NoSuchKeyException(
+                "No value exists with key '{$name}'.");
+        }
+        else if (count($results) == 1)
+        {
+            return $results[0];
+        }
+        else
+        {
+            throw new Splunk_AmbiguousKeyException(
+                "Multiple values exist with key '{$name}'. " .
+                "Specify a namespace to disambiguate.");
+        }
     }
 }
