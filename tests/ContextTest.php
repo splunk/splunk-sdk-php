@@ -39,8 +39,9 @@ class ContextTest extends PHPUnit_Framework_TestCase
         $context = new Splunk_Context(array(
             'http' => $http,
         ));
-        $context->login();
         
+        $this->assertEquals(NULL, $context->getToken());
+        $context->login();
         $this->assertEquals(
             'Splunk 068b3021210eb4b67819b1a292302948',
             $context->getToken());
@@ -81,5 +82,13 @@ class ContextTest extends PHPUnit_Framework_TestCase
         
         $context = new Splunk_Context($Splunk_testSettings['connectArgs']);
         $context->login();
+    }
+    
+    public function testLoginWithToken()
+    {
+        $context = new Splunk_Context(array(
+            'token' => 'Splunk ACEACE'
+        ));
+        $this->assertEquals('Splunk ACEACE', $context->getToken());
     }
 }

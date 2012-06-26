@@ -24,17 +24,19 @@ class Splunk_Context
 {
     private $username;
     private $password;
+    private $token;
     private $host;
     private $port;
     private $scheme;
     private $http;
     
-    private $token;
-    
     /**
      * @param array $args {
      *      'username' => (optional) The username to login with. Defaults to "admin".
      *      'password' => (optional) The password to login with. Defaults to "changeme".
+     *      'token' => (optional) The authentication token to use. If provided,
+     *                 the username and password are ignored and there is no
+     *                 need to call login(). In the format "Splunk SESSION_KEY".
      *      'host' => (optional) The hostname of the Splunk server. Defaults to "localhost".
      *      'port' => (optional) The port of the Splunk server. Defaults to 8089.
      *      'scheme' => (optional) The scheme to use: either "http" or "https". Defaults to "https".
@@ -46,6 +48,7 @@ class Splunk_Context
         $args = array_merge(array(
             'username' => 'admin',
             'password' => 'changeme',
+            'token' => NULL,
             'host' => 'localhost',
             'port' => 8089,
             'scheme' => 'https',
@@ -54,6 +57,7 @@ class Splunk_Context
         
         $this->username = $args['username'];
         $this->password = $args['password'];
+        $this->token = $args['token'];
         $this->host = $args['host'];
         $this->port = $args['port'];
         $this->scheme = $args['scheme'];
@@ -76,7 +80,7 @@ class Splunk_Context
             new SimpleXMLElement($response['body']),
             '/response/sessionKey');
         
-        $this->token = 'Splunk ' . $sessionKey;
+        $this->token = "Splunk {$sessionKey}";
     }
     
     /**
