@@ -147,7 +147,7 @@ class Splunk_HttpException extends Exception
     
     private static function parseFirstMessageFrom($response)
     {
-        return Splunk_Util::getTextContentAtXpath(
+        return Splunk_XmlUtil::getTextContentAtXpath(
             new SimpleXMLElement($response['body']),
             '/response/messages/msg');
     }

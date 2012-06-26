@@ -72,7 +72,7 @@ class Splunk_Context
             'password' => $this->password,
         ));
         
-        $sessionKey = Splunk_Util::getTextContentAtXpath(
+        $sessionKey = Splunk_XmlUtil::getTextContentAtXpath(
             new SimpleXMLElement($response['body']),
             '/response/sessionKey');
         

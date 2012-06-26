@@ -27,13 +27,13 @@ class Splunk_AtomFeed
     {
         $dictValue = $containerXml->children(Splunk_AtomFeed::NS_S)->dict;
         
-        if (Splunk_AtomFeed::elementExists($dictValue))
+        if (Splunk_XmlUtil::elementExists($dictValue))
         {
             return Splunk_AtomFeed::parseDict($dictValue);
         }
         else // value is scalar
         {
-            return Splunk_Util::getTextContentOfXmlElement($containerXml);
+            return Splunk_XmlUtil::getTextContent($containerXml);
         }
     }
     
@@ -42,16 +42,11 @@ class Splunk_AtomFeed
         $dict = array();
         foreach ($dictXml->children(Splunk_AtomFeed::NS_S)->key as $keyXml)
         {
-            $key = (string) $keyXml->attributes()->name;
+            $key = Splunk_XmlUtil::getAttributeValue($keyXml, 'name');
             $value = Splunk_AtomFeed::parseValueInside($keyXml);
             
             $dict[$key] = $value;
         }
         return $dict;
-    }
-    
-    private static function elementExists($xml)
-    {
-        return $xml->getName() != '';
     }
 }
