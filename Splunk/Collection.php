@@ -52,7 +52,7 @@ class Splunk_Collection extends Splunk_Endpoint
     // === Children ===
     
     /**
-     * Returns the unique entity with the specified name.
+     * Returns the unique entity with the specified name in this collection.
      * 
      * @param string $name
      * @return Splunk_Entity

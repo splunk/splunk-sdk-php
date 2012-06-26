@@ -30,6 +30,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      * @param string $path
      * @param SimpleXMLElement $data    (optional) The XML of this entity,
      *                                  as received from the REST API.
+     *                                  If omitted, will be loaded on demand.
      */
     public function __construct($service, $path, $data=NULL)
     {
