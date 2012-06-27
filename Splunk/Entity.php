@@ -22,23 +22,23 @@
  */
 class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
 {
-    private $data;
+    private $entry;
     private $content;
     
     /**
      * @param Splunk_Service $service
      * @param string $path
-     * @param SimpleXMLElement $data    (optional) the XML of this entity,
+     * @param SimpleXMLElement $entry   (optional) the <entry> for this entity,
      *                                  as received from the REST API.
      *                                  If omitted, will be loaded on demand.
      */
-    public function __construct($service, $path, $data=NULL)
+    public function __construct($service, $path, $entry=NULL)
     {
         parent::__construct($service, $path);
         
-        $this->data = $data;
-        if ($this->data != NULL)
-            $this->loadContentsOfData();
+        $this->entry = $entry;
+        if ($this->entry != NULL)
+            $this->loadContentsOfEntry();
     }
     
     // === Load ===
@@ -48,8 +48,8 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         $response = $this->loadResponseFromService();
         $xml = new SimpleXMLElement($response->body);
         
-        $this->data = $this->loadEntryFromResponse($xml);
-        $this->loadContentsOfData();
+        $this->entry = $this->loadEntryFromResponse($xml);
+        $this->loadContentsOfEntry();
     }
     
     /** Fetches this entity's Atom feed from the Splunk server. */
@@ -64,9 +64,9 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return $xml->entry;
     }
     
-    private function loadContentsOfData()
+    private function loadContentsOfEntry()
     {
-        $this->content = Splunk_AtomFeed::parseValueInside($this->data->content);
+        $this->content = Splunk_AtomFeed::parseValueInside($this->entry->content);
         $this->loaded = TRUE;
     }
     
@@ -74,7 +74,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     public function getName()
     {
-        return (string) $this->validate()->data->title;
+        return (string) $this->validate()->entry->title;
     }
     
     // === ArrayAccess Methods ===

@@ -23,7 +23,7 @@
 class Splunk_Collection extends Splunk_Endpoint
 {
     private $entitySubclass;
-    private $entries = NULL;
+    private $entities = NULL;
     
     /**
      * @param Splunk_Service $service
@@ -45,22 +45,22 @@ class Splunk_Collection extends Splunk_Endpoint
         $response = $this->service->get($this->path);
         $xml = new SimpleXMLElement($response->body);
         
-        $entries = array();
-        foreach ($xml->entry as $entryData)
+        $entities = array();
+        foreach ($xml->entry as $entry)
         {
-            $entries[] = $this->loadEntry($entryData);
+            $entities[] = $this->loadEntityFromEntry($entry);
         }
         
-        $this->entries = $entries;
+        $this->entities = $entities;
         $this->loaded = TRUE;
     }
     
-    private function loadEntry($entryData)
+    private function loadEntityFromEntry($entry)
     {
         return new $this->entitySubclass(
             $this->service,
-            "{$this->path}/" . urlencode($entryData->title),
-            $entryData);
+            "{$this->path}/" . urlencode($entry->title),
+            $entry);
     }
     
     // === Children ===
@@ -76,11 +76,11 @@ class Splunk_Collection extends Splunk_Endpoint
     public function get($name)
     {
         $results = array();
-        foreach ($this->validate()->entries as $entry)
+        foreach ($this->validate()->entities as $entity)
         {
-            if ($entry->getName() == $name)
+            if ($entity->getName() == $name)
             {
-                $results[] = $entry;
+                $results[] = $entity;
             }
         }
         
