@@ -16,7 +16,7 @@
  */
 
 /**
- * This class allows clients to issue HTTP requests to a Splunk server.
+ * Allows clients to issue HTTP requests to a Splunk server.
  * 
  * @package Splunk
  */
@@ -24,17 +24,19 @@ class Splunk_Context
 {
     private $username;
     private $password;
+    private $token;
     private $host;
     private $port;
     private $scheme;
     private $http;
     
-    private $token;
-    
     /**
      * @param array $args {
      *      'username' => (optional) The username to login with. Defaults to "admin".
      *      'password' => (optional) The password to login with. Defaults to "changeme".
+     *      'token' => (optional) The authentication token to use. If provided,
+     *                 the username and password are ignored and there is no
+     *                 need to call login(). In the format "Splunk SESSION_KEY".
      *      'host' => (optional) The hostname of the Splunk server. Defaults to "localhost".
      *      'port' => (optional) The port of the Splunk server. Defaults to 8089.
      *      'scheme' => (optional) The scheme to use: either "http" or "https". Defaults to "https".
@@ -46,6 +48,7 @@ class Splunk_Context
         $args = array_merge(array(
             'username' => 'admin',
             'password' => 'changeme',
+            'token' => NULL,
             'host' => 'localhost',
             'port' => 8089,
             'scheme' => 'https',
@@ -54,6 +57,7 @@ class Splunk_Context
         
         $this->username = $args['username'];
         $this->password = $args['password'];
+        $this->token = $args['token'];
         $this->host = $args['host'];
         $this->port = $args['port'];
         $this->scheme = $args['scheme'];
@@ -72,11 +76,25 @@ class Splunk_Context
             'password' => $this->password,
         ));
         
-        $sessionKey = Splunk_Util::getTextContentAtXpath(
-            new SimpleXMLElement($response['body']),
+        $sessionKey = Splunk_XmlUtil::getTextContentAtXpath(
+            new SimpleXMLElement($response->body),
             '/response/sessionKey');
         
-        $this->token = 'Splunk ' . $sessionKey;
+        $this->token = "Splunk {$sessionKey}";
+    }
+    
+    /**
+     * Performs an HTTP GET request to the endpoint at the specified path.
+     * 
+     * @param string $path  relative or absolute URL path.
+     * @return array
+     * @see Splunk_Http::get
+     */
+    public function get($path)
+    {
+        return $this->http->get($this->url($path), array(
+            'Authorization' => $this->token,
+        ));
     }
     
     // === Accessors ===
@@ -92,8 +110,25 @@ class Splunk_Context
     
     // === Utility ===
     
+    /**
+     * @param string $path  relative or absolute URL path.
+     * @return string       absolute URL.
+     */
     private function url($path)
     {
-        return "{$this->scheme}://{$this->host}:{$this->port}{$path}";
+        return "{$this->scheme}://{$this->host}:{$this->port}{$this->abspath($path)}";
+    }
+    
+    /**
+     * @param string $path  relative or absolute URL path.
+     * @return string       absolute URL path.
+     */
+    private function abspath($path)
+    {
+        if ((strlen($path) >= 1) && ($path[0] == '/'))
+            return $path;
+        
+        // TODO: Support namespaces
+        return "/services/{$path}";
     }
 }

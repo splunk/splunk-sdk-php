@@ -22,28 +22,32 @@
  */
 class Splunk_Http
 {
-    public function get($url)
+    public function get($url, $request_headers=array())
     {
-        return $this->request('get', $url);
+        return $this->request('get', $url, $request_headers);
     }
     
     public function post($url, $params=array())
     {
-        return $this->request('post', $url, http_build_query($params));
+        return $this->request('post', $url, array(), http_build_query($params));
     }
     
     /**
-     * @param string $method        HTTP request method (ex: 'get').
-     * @param string $url           URL to fetch.
-     * @param string $request_body  content to send in the request.
+     * @param string $method            HTTP request method (ex: 'get').
+     * @param string $url               URL to fetch.
+     * @param array $request_headers    dictionary of header names and values.
+     * @param string $request_body      content to send in the request.
      * @return object {
      *      'status' => HTTP status code (ex: 200).
      *      'reason' => HTTP reason string (ex: 'OK').
      *      'headers' => Dictionary of headers. (ex: array('Content-Length' => '0')).
      *      'body' => Content of the response.
      * }
+     * @throws Splunk_ConnectException
+     * @throws Splunk_HttpException
      */
-    private function request($method, $url, $request_body='')
+    private function request(
+        $method, $url, $request_headers=array(), $request_body='')
     {
         $opts = array(
             CURLOPT_HTTPGET => TRUE,
@@ -54,6 +58,9 @@ class Splunk_Http
             // disable SSL certificate validation
             CURLOPT_SSL_VERIFYPEER => FALSE,
         );
+        
+        foreach ($request_headers as $k => $v)
+            $opts[CURLOPT_HTTPHEADER][] = "$k: $v";
         
         switch ($method)
         {
@@ -93,7 +100,7 @@ class Splunk_Http
         
         list($http_version, $_, $reason) = explode(' ', $status_line, 3);
         
-        $response = array(
+        $response = (object) array(
             'status' => $status,
             'reason' => $reason,
             'headers' => $headers,
@@ -129,8 +136,7 @@ class Splunk_HttpException extends Exception
     {
         $detail = Splunk_HttpException::parseFirstMessageFrom($response);
         
-        // FIXME: Include HTTP "reason" in message
-        $message = "HTTP {$response['status']} {$response['reason']}";
+        $message = "HTTP {$response->status} {$response->reason}";
         if ($detail != NULL)
             $message .= ' -- ' . $detail;
         
@@ -140,8 +146,8 @@ class Splunk_HttpException extends Exception
     
     private static function parseFirstMessageFrom($response)
     {
-        return Splunk_Util::getTextContentAtXpath(
-            new SimpleXMLElement($response['body']),
+        return Splunk_XmlUtil::getTextContentAtXpath(
+            new SimpleXMLElement($response->body),
             '/response/messages/msg');
     }
     

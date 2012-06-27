@@ -15,16 +15,30 @@
  * under the License.
  */
 
-require_once 'Splunk.php';
-
-class HttpTest extends PHPUnit_Framework_TestCase
+/**
+ * Provides an object-oriented interface to access entities of a Splunk server.
+ * 
+ * @package Splunk
+ */
+class Splunk_Service extends Splunk_Context
 {
-    public function testGet()
+    /**
+     * @see Splunk_Context::__construct
+     */
+    public function __construct($args)
     {
-        $http = new Splunk_Http();
-        $response = $http->get('http://www.splunk.com/');
-        
-        $this->assertEquals(200, $response->status);
-        $this->assertContains('<head>', $response->body);
+        parent::__construct($args);
+    }
+    
+    // === Endpoints ===
+    
+    public function getSavedSearch($name)
+    {
+        return new Splunk_Entity($this, 'saved/searches/' . urlencode($name));
+    }
+    
+    public function getSavedSearches()
+    {
+        return new Splunk_Collection($this, 'saved/searches/');
     }
 }

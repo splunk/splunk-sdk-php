@@ -4,5 +4,8 @@
 # Generated documentation
 docs/
 
+# Generated code coverage report
+coverage/
+
 # Local settings
 *.local.php
