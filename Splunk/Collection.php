@@ -22,7 +22,21 @@
  */
 class Splunk_Collection extends Splunk_Endpoint
 {
+    private $entitySubclass;
     private $entries = NULL;
+    
+    /**
+     * @param Splunk_Service $service
+     * @param string $path
+     * @param string $entitySubclass    (optional) name of the entity subclass
+     *                                  that this collection's children will
+     *                                  be instantiated with.
+     */
+    public function __construct($service, $path, $entitySubclass='Splunk_Entity')
+    {
+        parent::__construct($service, $path);
+        $this->entitySubclass = $entitySubclass;
+    }
     
     // === Load ===
     
@@ -43,7 +57,7 @@ class Splunk_Collection extends Splunk_Endpoint
     
     private function loadEntry($entryData)
     {
-        return new Splunk_Entity(
+        return new $this->entitySubclass(
             $this->service,
             "{$this->path}/" . urlencode($entryData->title),
             $entryData);

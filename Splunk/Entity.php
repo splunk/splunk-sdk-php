@@ -28,7 +28,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /**
      * @param Splunk_Service $service
      * @param string $path
-     * @param SimpleXMLElement $data    (optional) The XML of this entity,
+     * @param SimpleXMLElement $data    (optional) the XML of this entity,
      *                                  as received from the REST API.
      *                                  If omitted, will be loaded on demand.
      */
@@ -45,11 +45,23 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     protected function load()
     {
-        $response = $this->service->get($this->path);
+        $response = $this->loadResponseFromService();
         $xml = new SimpleXMLElement($response->body);
         
-        $this->data = $xml->entry;
+        $this->data = $this->loadEntryFromResponse($xml);
         $this->loadContentsOfData();
+    }
+    
+    /** Fetches this entity's Atom feed from the Splunk server. */
+    protected function loadResponseFromService()
+    {
+        return $this->service->get($this->path);
+    }
+    
+    /** Returns the <entry> element inside the root element. */
+    protected function loadEntryFromResponse($xml)
+    {
+        return $xml->entry;
     }
     
     private function loadContentsOfData()

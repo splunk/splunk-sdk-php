@@ -87,14 +87,35 @@ class Splunk_Context
      * Performs an HTTP GET request to the endpoint at the specified path.
      * 
      * @param string $path  relative or absolute URL path.
-     * @return array
-     * @see Splunk_Http::get
+     * @return object       see the return value of Http::request().
+     * @see Splunk_Http::get()
      */
     public function get($path)
     {
-        return $this->http->get($this->url($path), array(
+        return $this->http->get(
+            $this->url($path), $this->getRequestHeaders());
+    }
+    
+    /**
+     * Performs an HTTP POST request to the endpoint at the specified path.
+     * 
+     * @param string $path  relative or absolute URL path.
+     * @param array $params form parameters to send in the request body.
+     * @return object       see the return value of Http::request().
+     * @see Splunk_Http::post()
+     */
+    public function post($path, $params)
+    {
+        return $this->http->post(
+            $this->url($path), $params, $this->getRequestHeaders());
+    }
+    
+    /** Returns the standard headers to send on each HTTP request. */
+    private function getRequestHeaders()
+    {
+        return array(
             'Authorization' => $this->token,
-        ));
+        );
     }
     
     // === Accessors ===

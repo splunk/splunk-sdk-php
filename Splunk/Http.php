@@ -22,14 +22,23 @@
  */
 class Splunk_Http
 {
+    /**
+     * @see request()
+     */
     public function get($url, $request_headers=array())
     {
-        return $this->request('get', $url, $request_headers);
+        return $this->request(
+            'get', $url, $request_headers);
     }
     
-    public function post($url, $params=array())
+    /**
+     * @param array $params     form parameters to send in the request body.
+     * @see request()
+     */
+    public function post($url, $params=array(), $request_headers=array())
     {
-        return $this->request('post', $url, array(), http_build_query($params));
+        return $this->request(
+            'post', $url, $request_headers, http_build_query($params));
     }
     
     /**
@@ -111,50 +120,5 @@ class Splunk_Http
             throw new Splunk_HttpException($response);
         else
             return $response;
-    }
-}
-
-/**
- * Thrown when unable to connect to a Splunk server.
- * 
- * @package Splunk
- */
-class Splunk_ConnectException extends Exception {}
-
-/**
- * Thrown when an HTTP request fails due to a non 2xx status code.
- * 
- * @package Splunk
- */
-class Splunk_HttpException extends Exception
-{
-    private $response;
-    
-    // === Init ===
-    
-    public function __construct($response)
-    {
-        $detail = Splunk_HttpException::parseFirstMessageFrom($response);
-        
-        $message = "HTTP {$response->status} {$response->reason}";
-        if ($detail != NULL)
-            $message .= ' -- ' . $detail;
-        
-        $this->response = $response;
-        parent::__construct($message);
-    }
-    
-    private static function parseFirstMessageFrom($response)
-    {
-        return Splunk_XmlUtil::getTextContentAtXpath(
-            new SimpleXMLElement($response->body),
-            '/response/messages/msg');
-    }
-    
-    // === Accessors ===
-    
-    public function getResponse()
-    {
-        return $this->response;
     }
 }

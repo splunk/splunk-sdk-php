@@ -85,4 +85,11 @@ class SavedSearchTest extends PHPUnit_Framework_TestCase
             $this->assertEquals(404, $e->getResponse()->status);
         }
     }
+    
+    /** @depends testGetSavedSearch */
+    public function testDispatchSearch($savedSearch)
+    {
+        $job = $savedSearch->dispatch();
+        $this->assertEquals('1', $job['isSavedSearch']);
+    }
 }
