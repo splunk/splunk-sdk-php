@@ -24,20 +24,29 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
 {
     private $loaded = FALSE;
     private $entry;
+    private $namespace;
     private $content;
     
     /**
      * @param Splunk_Service $service
      * @param string $path
-     * @param SimpleXMLElement $entry   (optional) the <entry> for this entity,
+     * @param SimpleXMLElement|NULL $entry
+     *                                  (optional) The <entry> for this entity,
      *                                  as received from the REST API.
      *                                  If omitted, will be loaded on demand.
+     * @param Splunk_Namespace|NULL $namespace
+     *                                  (optional) The namespace from which to
+     *                                  load this entity, or NULL to use the
+     *                                  $service object's default namespace.
+     *                                  Does not apply if this entity is already
+     *                                  loaded (i.e. if $entry is not NULL).
      */
-    public function __construct($service, $path, $entry=NULL)
+    public function __construct($service, $path, $entry=NULL, $namespace=NULL)
     {
         parent::__construct($service, $path);
         
         $this->entry = $entry;
+        $this->namespace = $namespace;
         if ($this->entry != NULL)
             $this->loadContentsOfEntry();
     }
@@ -68,7 +77,9 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /** Fetches this entity's Atom feed from the Splunk server. */
     protected function loadResponseFromService()
     {
-        return $this->service->get($this->path);
+        return $this->service->get($this->path, array(
+            'namespace' => $this->namespace,
+        ));
     }
     
     /** Returns the <entry> element inside the root element. */

@@ -74,8 +74,36 @@ class EntityTest extends SplunkTest
             'NO_SUCH_SEARCH');
         try
         {
-            $savedSearch->getName();    // force load from server
-            $this->assertFail('Expected Splunk_HttpException to be thrown.');
+            $this->touch($savedSearch);
+            $this->assertTrue(FALSE, 'Expected Splunk_HttpException to be thrown.');
+        }
+        catch (Splunk_HttpException $e)
+        {
+            $this->assertEquals(404, $e->getResponse()->status);
+        }
+    }
+    
+    /**
+     * @expectedException Splunk_NoSuchKeyException
+     */
+    public function testGetMissingEntityInNamespaceFromCollection()
+    {
+        $service = $this->loginToRealService();
+        $savedSearch = $service->getSavedSearches()->get(
+            self::SAVED_SEARCH_NAME,
+            Splunk_Namespace::system());
+    }
+    
+    public function testGetMissingEntityInNamespace()
+    {
+        $service = $this->loginToRealService();
+        $savedSearch = $service->getSavedSearches()->getReference(
+            self::SAVED_SEARCH_NAME,
+            Splunk_Namespace::system());
+        try
+        {
+            $this->touch($savedSearch);
+            $this->assertTrue(FALSE, 'Expected Splunk_HttpException to be thrown.');
         }
         catch (Splunk_HttpException $e)
         {

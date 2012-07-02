@@ -72,4 +72,17 @@ class CollectionTest extends SplunkTest
             $entityNames[count($entityNames) - 1],
             $lastEntity->getName());
     }
+    
+    public function testEnumerateInNamespace()
+    {
+        $service = $this->loginToRealService();
+        
+        $entities = $service->getSavedSearches()->enumerate(array(
+            'namespace' => Splunk_Namespace::system()
+        ));
+        $this->assertCount(0, $entities,
+            'Expected no saved searches in the system namespace.');
+        
+        return $entities;
+    }
 }

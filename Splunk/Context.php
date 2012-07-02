@@ -28,6 +28,7 @@ class Splunk_Context
     private $host;
     private $port;
     private $scheme;
+    private $namespace;
     private $http;
     
     /**
@@ -40,7 +41,10 @@ class Splunk_Context
      *      'host' => (optional) The hostname of the Splunk server. Defaults to "localhost".
      *      'port' => (optional) The port of the Splunk server. Defaults to 8089.
      *      'scheme' => (optional) The scheme to use: either "http" or "https". Defaults to "https".
+     *      'namespace' => (optional) Namespace that all object lookups will occur in by default.
+     *                     Defaults to `Splunk_Namespace::default_()`.
      *      'http' => (optional) An Http object that will be used for performing HTTP requests.
+     *                This is intended for testing only.
      * }
      */
     public function __construct($args)
@@ -52,6 +56,7 @@ class Splunk_Context
             'host' => 'localhost',
             'port' => 8089,
             'scheme' => 'https',
+            'namespace' => Splunk_Namespace::default_(),
             'http' => new Splunk_Http(),
         ), $args);
         
@@ -61,6 +66,7 @@ class Splunk_Context
         $this->host = $args['host'];
         $this->port = $args['port'];
         $this->scheme = $args['scheme'];
+        $this->namespace = $args['namespace'];
         $this->http = $args['http'];
     }
     
@@ -87,14 +93,19 @@ class Splunk_Context
      * Performs an HTTP GET request to the endpoint at the specified path.
      * 
      * @param string $path  relative or absolute URL path.
-     * @param array $params (optional) query parameters.
+     * @param array $args   (optional) query parameters, merged with {
+     *     'namespace' => (optional) namespace to use, or NULL to use
+     *                    this context's default namespace.
+     * }
      * @return object       see the return value of Http::request().
      * @see Splunk_Http::get()
      */
-    public function get($path, $params=array())
+    public function get($path, $args=array())
     {
+        list($params, $namespace) = $this->extractArgument($args, 'namespace', NULL);
+        
         return $this->http->get(
-            $this->url($path),
+            $this->url($path, $namespace),
             $params,
             $this->getRequestHeaders());
     }
@@ -103,14 +114,22 @@ class Splunk_Context
      * Performs an HTTP POST request to the endpoint at the specified path.
      * 
      * @param string $path  relative or absolute URL path.
-     * @param array $params form parameters to send in the request body.
+     * @param array $args   (optional) form parameters to send in the request body,
+     *                      merged with {
+     *     'namespace' => (optional) namespace to use, or NULL to use
+     *                    this context's default namespace.
+     * }
      * @return object       see the return value of Http::request().
      * @see Splunk_Http::post()
      */
-    public function post($path, $params)
+    public function post($path, $args=array())
     {
+        list($params, $namespace) = $this->extractArgument($args, 'namespace', NULL);
+        
         return $this->http->post(
-            $this->url($path), $params, $this->getRequestHeaders());
+            $this->url($path, $namespace),
+            $params,
+            $this->getRequestHeaders());
     }
     
     /** Returns the standard headers to send on each HTTP request. */
@@ -135,24 +154,45 @@ class Splunk_Context
     // === Utility ===
     
     /**
-     * @param string $path  relative or absolute URL path.
-     * @return string       absolute URL.
+     * @param string $path                  relative or absolute URL path.
+     * @param Splunk_Namespace|NULL $namespace
+     * @return string                       absolute URL.
      */
-    private function url($path)
+    private function url($path, $namespace=NULL)
     {
-        return "{$this->scheme}://{$this->host}:{$this->port}{$this->abspath($path)}";
+        return "{$this->scheme}://{$this->host}:{$this->port}{$this->abspath($path, $namespace)}";
     }
     
     /**
-     * @param string $path  relative or absolute URL path.
-     * @return string       absolute URL path.
+     * @param string $path                  relative or absolute URL path.
+     * @param Splunk_Namespace|NULL $namespace
+     * @return string                       absolute URL path.
      */
-    private function abspath($path)
+    private function abspath($path, $namespace=NULL)
     {
         if ((strlen($path) >= 1) && ($path[0] == '/'))
             return $path;
+        if ($namespace === NULL)
+            $namespace = Splunk_Namespace::default_();
         
-        // TODO: Support namespaces
-        return "/services/{$path}";
+        return $namespace->getPathPrefix() . $path;
+    }
+    
+    /**
+     * Extracts the value for the specified $key from the specified $map.
+     * 
+     * @param array $map
+     * @param mixed $key
+     * @param mixed $defaultValue
+     * @return array {
+     *     [0] => $map without $key
+     *     [1] => $map[$key] if it exists, or $defaultValue if it does not
+     * }
+     */
+    private function extractArgument($map, $key, $defaultValue)
+    {
+        $value = array_key_exists($key, $map) ? $map[$key] : $defaultValue;
+        unset($map[$key]);
+        return array($map, $value);
     }
 }

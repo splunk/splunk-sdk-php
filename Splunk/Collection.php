@@ -47,6 +47,8 @@ class Splunk_Collection extends Splunk_Endpoint
      * the paging options (i.e. 'offset' and 'count').
      * 
      * @param $args (optional) {
+     *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
+     *                    to list entities. Defaults to the service's namespace.
      *     'count' => (optional) The maximum number of items to return.
      *                Defaults to returning all items.
      *     'offset' => (optional) The offset of the first item to return.
@@ -102,14 +104,22 @@ class Splunk_Collection extends Splunk_Endpoint
     /**
      * Returns the unique entity with the specified name in this collection.
      * 
-     * @param string $name
+     * @param string $name  The name of the entity to search for.
+     * @param Splunk_Namespace|NULL $namespace
+     *                      (optional) {Splunk_Namespace} The namespace in which
+     *                      to search. Defaults to the service's namespace.
      * @return Splunk_Entity
      * @throws Splunk_NoSuchKeyException
+     *                      If no such entity exists.
      * @throws Splunk_AmbiguousKeyException
+     *                      If multiple entities with the specified name
+     *                      exist in the specified namespace.
      */
-    public function get($name)
+    public function get($name, $namespace=NULL)
     {
-        $entities = $this->enumerate();
+        $entities = $this->enumerate(array(
+            'namespace' => $namespace,
+        ));
         
         $results = array();
         foreach ($entities as $entity)
@@ -142,12 +152,15 @@ class Splunk_Collection extends Splunk_Endpoint
      * collection. Loading of the entity is deferred until its first use.
      * 
      * @param string $name
+     * @param Splunk_Namespace|NULL $namespace
      * @return Splunk_Entity
      */
-    public function getReference($name)
+    public function getReference($name, $namespace=NULL)
     {
         return new $this->entitySubclass(
             $this->service,
-            $this->path . urlencode($name));
+            $this->path . urlencode($name),
+            NULL,
+            $namespace);
     }
 }

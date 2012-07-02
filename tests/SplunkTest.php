@@ -51,4 +51,13 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
         $service->login();
         return $service;
     }
+    
+    /**
+     * Forcefully loads the specified entity from the server,
+     * if it hasn't been already.
+     */
+    public function touch($entity)
+    {
+        $entity->getName();    // force load from server
+    }
 }
