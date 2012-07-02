@@ -23,7 +23,6 @@
 class Splunk_Collection extends Splunk_Endpoint
 {
     private $entitySubclass;
-    private $entities = NULL;
     
     /**
      * @param Splunk_Service $service
@@ -38,9 +37,20 @@ class Splunk_Collection extends Splunk_Endpoint
         $this->entitySubclass = $entitySubclass;
     }
     
-    // === Load ===
+    // === Operations ===
     
-    protected function load()
+    /**
+     * Lists this collection's entities, returning a list of loaded entities.
+     * 
+     * By default, all items in the collection are returned. For large
+     * collections, it is advisable to fetch items using multiple calls with
+     * the paging options (i.e. 'offset' and 'count').
+     * 
+     * @return array    the entities in the listing.
+     */
+    // NOTE: This method isn't called 'list' only because PHP treats 'list' as a
+    //       pseudo-keyword and gets confused when it's used as a method name.
+    public function enumerate()
     {
         $response = $this->service->get($this->path);
         $xml = new SimpleXMLElement($response->body);
@@ -51,8 +61,7 @@ class Splunk_Collection extends Splunk_Endpoint
             $entities[] = $this->loadEntityFromEntry($entry);
         }
         
-        $this->entities = $entities;
-        $this->loaded = TRUE;
+        return $entities;
     }
     
     private function loadEntityFromEntry($entry)
@@ -62,8 +71,6 @@ class Splunk_Collection extends Splunk_Endpoint
             "{$this->path}/" . urlencode($entry->title),
             $entry);
     }
-    
-    // === Children ===
     
     /**
      * Returns the unique entity with the specified name in this collection.
@@ -75,8 +82,10 @@ class Splunk_Collection extends Splunk_Endpoint
      */
     public function get($name)
     {
+        $entities = $this->enumerate();
+        
         $results = array();
-        foreach ($this->validate()->entities as $entity)
+        foreach ($entities as $entity)
         {
             if ($entity->getName() == $name)
             {
