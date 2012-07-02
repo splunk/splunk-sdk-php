@@ -87,13 +87,16 @@ class Splunk_Context
      * Performs an HTTP GET request to the endpoint at the specified path.
      * 
      * @param string $path  relative or absolute URL path.
+     * @param array $params (optional) query parameters.
      * @return object       see the return value of Http::request().
      * @see Splunk_Http::get()
      */
-    public function get($path)
+    public function get($path, $params=array())
     {
         return $this->http->get(
-            $this->url($path), $this->getRequestHeaders());
+            $this->url($path),
+            $params,
+            $this->getRequestHeaders());
     }
     
     /**

@@ -46,13 +46,40 @@ class Splunk_Collection extends Splunk_Endpoint
      * collections, it is advisable to fetch items using multiple calls with
      * the paging options (i.e. 'offset' and 'count').
      * 
+     * @param $args (optional) {
+     *     'count' => (optional) The maximum number of items to return.
+     *                Defaults to returning all items.
+     *     'offset' => (optional) The offset of the first item to return.
+     *                 Defaults to 0.
+     *     'search' => (optional) The search expression to filter responses
+     *                 with. For example, "foo" matches any object that has
+     *                 "foo" in a substring of a field. Similarly the
+     *                 expression "field_name=field_value" matches only objects
+     *                 that have a "field_name" field with the value
+     *                 "field_value".
+     *     'sort_dir' => (optional) The direction to sort returned items.
+     *                   Valid values:
+     *                   - "asc": Sort in ascending order.
+     *                   - "desc": Sort in descending order.
+     *                   Defaults to "asc".
+     *     'sort_key' => (optional) The field to use for sorting.
+     *                   Defaults to "name".
+     *     'sort_mode' => (optional) The sorting algorithm to use. Valid values:
+     *                    - "auto": If all values of the field are numbers,
+     *                              sort numerically. Otherwise, sort
+     *                              alphabetically.
+     *                    - "alpha": Sort alphabetically.
+     *                    - "alpha_case": Sort alphabetically, case-sensitive.
+     *                    - "num": Sort numerically.
+     *                    Defaults to "auto".
+     * }
      * @return array    the entities in the listing.
      */
     // NOTE: This method isn't called 'list' only because PHP treats 'list' as a
     //       pseudo-keyword and gets confused when it's used as a method name.
-    public function enumerate()
+    public function enumerate($args=array())
     {
-        $response = $this->service->get($this->path);
+        $response = $this->service->get($this->path, $args);
         $xml = new SimpleXMLElement($response->body);
         
         $entities = array();

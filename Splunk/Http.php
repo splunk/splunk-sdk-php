@@ -23,16 +23,21 @@
 class Splunk_Http
 {
     /**
+     * @param array $params     (optional) query parameters.
      * @see request()
      */
-    public function get($url, $request_headers=array())
+    public function get($url, $params=array(), $request_headers=array())
     {
+        $fullUrl = ($params == NULL || count($params) == 0)
+            ? $url
+            : $url . '?' . http_build_query($params);
+        
         return $this->request(
-            'get', $url, $request_headers);
+            'get', $fullUrl, $request_headers);
     }
     
     /**
-     * @param array $params     form parameters to send in the request body.
+     * @param array $params     (optional) form parameters to send in the request body.
      * @see request()
      */
     public function post($url, $params=array(), $request_headers=array())
@@ -44,8 +49,8 @@ class Splunk_Http
     /**
      * @param string $method            HTTP request method (ex: 'get').
      * @param string $url               URL to fetch.
-     * @param array $request_headers    dictionary of header names and values.
-     * @param string $request_body      content to send in the request.
+     * @param array $request_headers    (optional) dictionary of header names and values.
+     * @param string $request_body      (optional) content to send in the request.
      * @return object {
      *      'status' => HTTP status code (ex: 200).
      *      'reason' => HTTP reason string (ex: 'OK').
