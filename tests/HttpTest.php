@@ -15,9 +15,9 @@
  * under the License.
  */
 
-require_once 'Splunk.php';
+require_once 'SplunkTest.php';
 
-class HttpTest extends PHPUnit_Framework_TestCase
+class HttpTest extends SplunkTest
 {
     public function testGet()
     {

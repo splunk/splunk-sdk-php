@@ -15,10 +15,9 @@
  * under the License.
  */
 
-require_once 'Splunk.php';
-require_once 'settings.php';
+require_once 'SplunkTest.php';
 
-class AtomFeedTest extends PHPUnit_Framework_TestCase
+class AtomFeedTest extends SplunkTest
 {
     public function testParseScalar()
     {
@@ -121,6 +120,7 @@ class AtomFeedTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $expectedValue,
-            Splunk_AtomFeed::parseValueInside(new SimpleXMLElement($xmlString)));
+            Splunk_AtomFeed::parseValueInside(
+                new SimpleXMLElement($xmlString)));
     }
 }

@@ -15,20 +15,16 @@
  * under the License.
  */
 
-require_once 'Splunk.php';
-require_once 'settings.php';
+require_once 'SplunkTest.php';
 
-class SavedSearchTest extends PHPUnit_Framework_TestCase
+class SavedSearchTest extends SplunkTest
 {
     // (This search is installed by default on Splunk 4.x.)
     const SAVED_SEARCH_NAME = 'Errors in the last 24 hours';
     
     public function testGetSavedSearch()
     {
-        global $Splunk_testSettings;
-        $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
-        $service->login();
-        
+        $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearch(self::SAVED_SEARCH_NAME);
         return $savedSearch;
     }

@@ -15,10 +15,9 @@
  * under the License.
  */
 
-require_once 'Splunk.php';
-require_once 'settings.php';
+require_once 'SplunkTest.php';
 
-class ContextTest extends PHPUnit_Framework_TestCase
+class ContextTest extends SplunkTest
 {
     public function testLoginSuccess()
     {
@@ -78,10 +77,7 @@ class ContextTest extends PHPUnit_Framework_TestCase
     
     public function testLoginSuccessOnRealServer()
     {
-        global $Splunk_testSettings;
-        
-        $context = new Splunk_Context($Splunk_testSettings['connectArgs']);
-        $context->login();
+        $context = $this->loginToRealContext();
     }
     
     public function testLoginWithToken()
