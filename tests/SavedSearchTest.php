@@ -25,7 +25,8 @@ class SavedSearchTest extends SplunkTest
     public function testGetSavedSearch()
     {
         $service = $this->loginToRealService();
-        $savedSearch = $service->getSavedSearch(self::SAVED_SEARCH_NAME);
+        $savedSearch = $service->getSavedSearches()->getReference(
+            self::SAVED_SEARCH_NAME);
         return $savedSearch;
     }
     

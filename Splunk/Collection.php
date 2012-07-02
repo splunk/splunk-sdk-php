@@ -68,7 +68,7 @@ class Splunk_Collection extends Splunk_Endpoint
     {
         return new $this->entitySubclass(
             $this->service,
-            "{$this->path}/" . urlencode($entry->title),
+            $this->path . urlencode($entry->title),
             $entry);
     }
     
@@ -108,5 +108,19 @@ class Splunk_Collection extends Splunk_Endpoint
                 "Multiple values exist with key '{$name}'. " .
                 "Specify a namespace to disambiguate.");
         }
+    }
+    
+    /**
+     * Returns a reference to the unique entity with the specified name in this
+     * collection. Loading of the entity is deferred until its first use.
+     * 
+     * @param string $name
+     * @return Splunk_Entity
+     */
+    public function getReference($name)
+    {
+        return new $this->entitySubclass(
+            $this->service,
+            $this->path . urlencode($name));
     }
 }

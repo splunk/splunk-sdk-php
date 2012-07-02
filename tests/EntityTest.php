@@ -56,7 +56,8 @@ class EntityTest extends SplunkTest
     public function testGetEntity()
     {
         $service = $this->loginToRealService();
-        $savedSearch = $service->getSavedSearch(self::SAVED_SEARCH_NAME);
+        $savedSearch = $service->getSavedSearches()->getReference(
+            self::SAVED_SEARCH_NAME);
         return $savedSearch;
     }
     
@@ -69,7 +70,8 @@ class EntityTest extends SplunkTest
     public function testGetMissingEntity()
     {
         $service = $this->loginToRealService();
-        $savedSearch = $service->getSavedSearch('NO_SUCH_SEARCH');
+        $savedSearch = $service->getSavedSearches()->getReference(
+            'NO_SUCH_SEARCH');
         try
         {
             $savedSearch->getName();    // force load from server

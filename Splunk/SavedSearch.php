@@ -38,6 +38,6 @@ class Splunk_SavedSearch extends Splunk_Entity
         $xml = new SimpleXMLElement($response->body);
         $sid = Splunk_XmlUtil::getTextContentAtXpath($xml, '/response/sid');
         
-        return $this->service->getJob($sid);
+        return $this->service->getJobs()->getReference($sid);
     }
 }
