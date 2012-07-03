@@ -110,4 +110,20 @@ class EntityTest extends SplunkTest
             $this->assertEquals(404, $e->getResponse()->status);
         }
     }
+    
+    public function testGetEntityInNamespaceFromCollection()
+    {
+        $service = $this->loginToRealService();
+        $savedSearch = $service->getSavedSearches()->get(
+            self::SAVED_SEARCH_NAME,
+            Splunk_Namespace::user('admin', 'search'));
+    }
+    
+    public function testGetEntityInWildcardNamespaceFromCollection()
+    {
+        $service = $this->loginToRealService();
+        $savedSearch = $service->getSavedSearches()->get(
+            self::SAVED_SEARCH_NAME,
+            Splunk_Namespace::user('admin', NULL));
+    }
 }

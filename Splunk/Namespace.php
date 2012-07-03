@@ -30,8 +30,6 @@ class Splunk_Namespace
     
     private function __construct($owner, $app, $sharing)
     {
-        if (($owner === '') || ($app === ''))
-            throw new InvalidArgumentException();
         $this->owner = $owner;
         $this->app = $app;
         $this->sharing = $sharing;
@@ -57,20 +55,18 @@ class Splunk_Namespace
      * Creates the namespace containing objects associated with the specified
      * user and application.
      * 
-     * @param string $owner         name of a Splunk user (ex: "admin"),
-     *                              or "-" to specify all users.
-     * @param string $app           name of a Splunk app (ex: "search"),
-     *                              or "-" to specify all apps.
+     * @param string|NULL $owner    name of a Splunk user (ex: "admin"),
+     *                              or NULL to specify all users.
+     * @param string|NULL $app      name of a Splunk app (ex: "search"),
+     *                              or NULL to specify all apps.
      * @return Splunk_Namespace
      */
     public static function user($owner, $app)
     {
-        if (($owner === '') || ($app === ''))
-            throw new InvalidArgumentException('Blank owner or app.');
-        if ($owner === 'nobody')
-            throw new InvalidArgumentException('Invalid owner "nobody".');
-        if ($app === 'system')
-            throw new InvalidArgumentException('Invalid app "system".');
+        if ($owner === '' || $owner === 'nobody' || $owner === '-')
+            throw new InvalidArgumentException('Invalid owner.');
+        if ($app === '' || $app === 'system' || $app === '-')
+            throw new InvalidArgumentException('Invalid app.');
         if ($owner === NULL)
             $owner = '-';
         if ($app === NULL)
@@ -82,16 +78,14 @@ class Splunk_Namespace
      * Creates the non-global namespace containing objects associated with the
      * specified application.
      * 
-     * @param string $app           name of a Splunk app (ex: "search"),
-     *                              or "-" to specify all apps.
+     * @param string|NULL $app      name of a Splunk app (ex: "search"),
+     *                              or NULL to specify all apps.
      * @return Splunk_Namespace
      */
     public static function app($app)
     {
-        if ($app === '')
-            throw new InvalidArgumentException('Blank app.');
-        if ($app === 'system')
-            throw new InvalidArgumentException('Invalid app "system".');
+        if ($app === '' || $app === 'system' || $app === '-')
+            throw new InvalidArgumentException('Invalid app.');
         if ($app === NULL)
             $app = '-';
         return new Splunk_Namespace('nobody', $app, 'app');
@@ -101,16 +95,14 @@ class Splunk_Namespace
      * Creates the global namespace containing objects associated with the
      * specified application.
      * 
-     * @param string $app           name of a Splunk app (ex: "search"),
-     *                              or "-" to specify all apps.
+     * @param string|NULL $app      name of a Splunk app (ex: "search"),
+     *                              or NULL to specify all apps.
      * @return Splunk_Namespace
      */
     public static function global_($app)
     {
-        if ($app === '')
-            throw new InvalidArgumentException('Blank app.');
-        if ($app === 'system')
-            throw new InvalidArgumentException('Invalid app "system".');
+        if ($app === '' || $app === 'system' || $app === '-')
+            throw new InvalidArgumentException('Invalid app.');
         if ($app === NULL)
             $app = '-';
         return new Splunk_Namespace('nobody', $app, 'global');
@@ -147,6 +139,8 @@ class Splunk_Namespace
             case 'global':
             case 'system':
                 return '/servicesNS/' . urlencode($this->owner) . '/' . urlencode($this->app) . '/';
+            default:
+                throw new Exception("Invalid sharing mode '{$this->sharing}'.");
         }
     }
 }
