@@ -87,6 +87,15 @@ class Splunk_Collection extends Splunk_Endpoint
         ), $args);
         
         $response = $this->service->get($this->path, $args);
+        return $this->loadEntitiesFromResponse($response);
+    }
+    
+    /**
+     * @param $response
+     * @return array                        array of Splunk_Entry.
+     */
+    private function loadEntitiesFromResponse($response)
+    {
         $xml = new SimpleXMLElement($response->body);
         
         $entities = array();
@@ -94,15 +103,18 @@ class Splunk_Collection extends Splunk_Endpoint
         {
             $entities[] = $this->loadEntityFromEntry($entry);
         }
-        
         return $entities;
     }
     
+    /**
+     * @param SimpleXMLElement $entry       an <entry> element.
+     * @return Splunk_Entry
+     */
     private function loadEntityFromEntry($entry)
     {
         return new $this->entitySubclass(
             $this->service,
-            $this->path . urlencode($entry->title),
+            $this->getEntityPath($entry->title),
             $entry);
     }
     
@@ -123,27 +135,30 @@ class Splunk_Collection extends Splunk_Endpoint
      */
     public function get($name, $namespace=NULL)
     {
-        $entities = $this->enumerate(array(
-            'namespace' => $namespace,
-        ));
-        
-        $results = array();
-        foreach ($entities as $entity)
+        try
         {
-            if ($entity->getName() == $name)
-            {
-                $results[] = $entity;
-            }
+            $response = $this->service->get($this->getEntityPath($name), array(
+                'namespace' => $namespace,
+                'count' => 0,
+            ));
+            $entities = $this->loadEntitiesFromResponse($response);
+        }
+        catch (Splunk_HttpException $e)
+        {
+            if ($e->getResponse()->status == 404)
+                $entities = array();
+            else
+                raise;
         }
         
-        if (count($results) == 0)
+        if (count($entities) == 0)
         {
             throw new Splunk_NoSuchKeyException(
                 "No value exists with key '{$name}'.");
         }
-        else if (count($results) == 1)
+        else if (count($entities) == 1)
         {
-            return $results[0];
+            return $entities[0];
         }
         else
         {
@@ -167,7 +182,7 @@ class Splunk_Collection extends Splunk_Endpoint
     {
         return new $this->entitySubclass(
             $this->service,
-            $this->path . urlencode($name),
+            $this->getEntityPath($name),
             NULL,
             $namespace);
     }
@@ -217,6 +232,16 @@ class Splunk_Collection extends Splunk_Endpoint
      */
     public function delete($name, $args=array())
     {
-        $this->service->delete($this->path . urlencode($name), $args);
+        $this->service->delete($this->getEntityPath($name), $args);
+    }
+    
+    // === Utility ===
+    
+    /**
+     * Returns the path of the child entity with the specified name.
+     */
+    private function getEntityPath($name)
+    {
+        return $this->path . urlencode($name);
     }
 }
