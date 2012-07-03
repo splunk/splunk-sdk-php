@@ -26,9 +26,6 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Returns a Splunk_Context connected to a real Splunk server.
-     * 
-     * Written as a test method (with a 'test' prefix) so that other
-     * unit tests can depend on it with the '@depends' annotation.
      */
     public function loginToRealContext()
     {
@@ -40,9 +37,6 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
     
     /**
      * Returns a Splunk_Service connected to a real Splunk server.
-     * 
-     * Written as a test method (with a 'test' prefix) so that other
-     * unit tests can depend on it with the '@depends' annotation.
      */
     public function loginToRealService()
     {
@@ -50,6 +44,32 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
         $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
         $service->login();
         return $service;
+    }
+    
+    /**
+     * Returns a Splunk_Service connected to a mock Http object.
+     */
+    public function loginToMockService()
+    {
+        $http = $this->getMock('Splunk_Http');
+        $service = new Splunk_Service(array(
+            'http' => $http,
+        ));
+        
+        $http_response = (object) array(
+            'status' => 200,
+            'reason' => 'OK',
+            'headers' => array(),
+            'body' => '
+<response>
+<sessionKey>068b3021210eb4b67819b1a292302948</sessionKey>
+</response>');
+        $http->expects($this->once())
+             ->method('post')
+             ->will($this->returnValue($http_response));
+        $service->login();
+        
+        return array($service, $http);
     }
     
     /**

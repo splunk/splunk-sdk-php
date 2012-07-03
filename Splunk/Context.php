@@ -164,8 +164,18 @@ class Splunk_Context
     // === Accessors ===
     
     /**
-     * Returns the token used to authenticate HTTP requests
-     * after logging in.
+     * @return Splunk_Namespace     The default namespace that will be used
+     *                              to perform collection and entity operations
+     *                              when none is explicitly specified.
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+    
+    /**
+     * @return string   The token used to authenticate HTTP requests
+     *                  after logging in.
      */
     public function getToken()
     {

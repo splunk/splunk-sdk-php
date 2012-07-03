@@ -163,4 +163,14 @@ class Splunk_Namespace
                 throw new Exception("Invalid sharing mode '{$this->sharing}'.");
         }
     }
+    
+    /**
+     * Returns whether this is an exact (non-wildcarded) namespace.
+     * 
+     * Within an exact namespace, no two objects can have the same name.
+     */
+    public function isExact()
+    {
+        return ($this->owner !== '-') && ($this->app !== '-');
+    }
 }

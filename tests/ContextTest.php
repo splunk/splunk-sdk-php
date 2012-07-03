@@ -21,6 +21,13 @@ class ContextTest extends SplunkTest
 {
     public function testLoginSuccess()
     {
+        $http = $this->getMock('Splunk_Http');
+        $context = new Splunk_Context(array(
+            'http' => $http,
+        ));
+        
+        $this->assertEquals(NULL, $context->getToken());
+        
         $http_response = (object) array(
             'status' => 200,
             'reason' => 'OK',
@@ -29,18 +36,11 @@ class ContextTest extends SplunkTest
 <response>
 <sessionKey>068b3021210eb4b67819b1a292302948</sessionKey>
 </response>');
-        
-        $http = $this->getMock('Splunk_Http');
         $http->expects($this->once())
              ->method('post')
              ->will($this->returnValue($http_response));
-        
-        $context = new Splunk_Context(array(
-            'http' => $http,
-        ));
-        
-        $this->assertEquals(NULL, $context->getToken());
         $context->login();
+        
         $this->assertEquals(
             'Splunk 068b3021210eb4b67819b1a292302948',
             $context->getToken());
@@ -52,6 +52,11 @@ class ContextTest extends SplunkTest
      */
     public function testLoginFailDueToBadPassword()
     {
+        $http = $this->getMock('Splunk_Http');
+        $context = new Splunk_Context(array(
+            'http' => $http,
+        ));
+        
         $http_response = (object) array(
             'status' => 401,
             'reason' => 'Unauthorized',
@@ -62,16 +67,10 @@ class ContextTest extends SplunkTest
 <msg type="WARN">Login failed</msg>
 </messages>
 </response>');
-        
-        $http = $this->getMock('Splunk_Http');
         $http->expects($this->once())
              ->method('post')
              ->will($this->throwException(
                 new Splunk_HttpException($http_response)));
-        
-        $context = new Splunk_Context(array(
-            'http' => $http,
-        ));
         $context->login();
     }
     

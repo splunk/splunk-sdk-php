@@ -21,24 +21,7 @@ class JobTest extends SplunkTest
 {
     public function testGetTimeout()
     {
-        $http = $this->getMock('Splunk_Http');
-        $service = new Splunk_Service(array(
-            'http' => $http,
-        ));
-        
-        // Login
-        $http_response = (object) array(
-            'status' => 200,
-            'reason' => 'OK',
-            'headers' => array(),
-            'body' => '
-<response>
-<sessionKey>068b3021210eb4b67819b1a292302948</sessionKey>
-</response>');
-        $http->expects($this->once())
-             ->method('post')
-             ->will($this->returnValue($http_response));
-        $service->login();
+        list($service, $http) = $this->loginToMockService();
         
         // Get job
         $http_response = (object) array(

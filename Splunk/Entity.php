@@ -118,6 +118,17 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      */
     public function getNamespace()
     {
+        // If this is an entity reference with an exact namespace, return it
+        if (!$this->loaded)
+        {
+            $effectiveNamespace = $this->namespace;
+            if ($effectiveNamespace === NULL)
+                $effectiveNamespace = $this->service->getNamespace();
+            if ($effectiveNamespace->isExact())
+                return $effectiveNamespace;
+        }
+        
+        // Extract the namespace from this entity's content
         $acl = $this['eai:acl'];
         return Splunk_Namespace::exact(
             $acl['owner'], $acl['app'], $acl['sharing']);

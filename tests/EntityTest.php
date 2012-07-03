@@ -40,24 +40,10 @@ class EntityTest extends SplunkTest
             $response->body);
     }
     
-    public function testGetEntityFromCollection()
-    {
-        $service = $this->loginToRealService();
-        $savedSearch = $service->getSavedSearches()->get(self::SAVED_SEARCH_NAME);
-        return $savedSearch;
-    }
-    
-    /** @depends testGetEntityFromCollection */
-    public function testGetPropertyOfEntityFromCollection($savedSearch)
-    {
-        $this->assertEquals(self::SAVED_SEARCH_QUERY, $savedSearch['search']);
-    }
-    
     public function testGetEntity()
     {
         $service = $this->loginToRealService();
-        $savedSearch = $service->getSavedSearches()->getReference(
-            self::SAVED_SEARCH_NAME);
+        $savedSearch = $service->getSavedSearches()->get(self::SAVED_SEARCH_NAME);
         return $savedSearch;
     }
     
@@ -67,7 +53,21 @@ class EntityTest extends SplunkTest
         $this->assertEquals(self::SAVED_SEARCH_QUERY, $savedSearch['search']);
     }
     
-    public function testGetMissingEntity()
+    public function testGetEntityReference()
+    {
+        $service = $this->loginToRealService();
+        $savedSearch = $service->getSavedSearches()->getReference(
+            self::SAVED_SEARCH_NAME);
+        return $savedSearch;
+    }
+    
+    /** @depends testGetEntityReference */
+    public function testGetPropertyOfEntityReference($savedSearch)
+    {
+        $this->assertEquals(self::SAVED_SEARCH_QUERY, $savedSearch['search']);
+    }
+    
+    public function testGetMissingEntityReference()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->getReference(
@@ -86,7 +86,7 @@ class EntityTest extends SplunkTest
     /**
      * @expectedException Splunk_NoSuchKeyException
      */
-    public function testGetMissingEntityFromCollectionInNamespace()
+    public function testGetMissingEntityInNamespace()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
@@ -94,7 +94,7 @@ class EntityTest extends SplunkTest
             Splunk_Namespace::system());
     }
     
-    public function testGetMissingEntityInNamespace()
+    public function testGetMissingEntityReferenceInNamespace()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->getReference(
@@ -111,7 +111,7 @@ class EntityTest extends SplunkTest
         }
     }
     
-    public function testGetEntityFromCollectionInNamespace()
+    public function testGetEntityInNamespace()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
@@ -119,7 +119,7 @@ class EntityTest extends SplunkTest
             Splunk_Namespace::user('admin', 'search'));
     }
     
-    public function testGetEntityFromCollectionInWildcardNamespace()
+    public function testGetEntityInWildcardNamespace()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
@@ -150,6 +150,22 @@ class EntityTest extends SplunkTest
         ));
         
         $service->getSavedSearches()->delete($entityName);
+    }
+    
+    public function testDeleteEntityReferenceMakesNoGets()
+    {
+        list($service, $http) = $this->loginToMockService();
+        
+        $http->expects($this->never())
+             ->method('get');
+        $http->expects($this->once())
+             ->method('delete')
+             ->will($this->returnValue((object) array(
+                'status' => 200,
+                'reason' => 'OK',
+                'headers' => array(),
+                'body' => '')));
+        $service->getSavedSearches()->getReference('IGNORED_NAME')->delete();
     }
     
     // === Utility ===
