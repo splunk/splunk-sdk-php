@@ -169,4 +169,36 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
             'namespace' => $this->getNamespace(),
         ));
     }
+    
+    /**
+     * Updates this entity's properties.
+     * 
+     * Note that the "name" property cannot be updated.
+     * 
+     * @param array $args   Dictionary of properties that will be changed,
+     *                      along with their new values.
+     * @return              This entity.
+     * @throws Splunk_HttpException
+     */
+    public function update($args)
+    {
+        if (array_key_exists('name', $args))
+            throw new IllegalArgumentException(
+                'Cannot update the name of an entity.');
+        if (array_key_exists('namespace', $args))
+            throw new IllegalArgumentException(
+                'Cannot override the entity\'s namespace.');
+        
+        $params = $args;    // copy by value
+        
+        // Update entity on server
+        $args['namespace'] = $this->getNamespace();
+        $this->service->post($this->path, $args);
+        
+        // Update cached content of entity
+        if ($this->loaded)
+            $this->content = array_merge($this->content, $params);
+        
+        return $this;
+    }
 }

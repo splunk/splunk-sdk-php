@@ -49,7 +49,7 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
     /**
      * Returns a Splunk_Service connected to a mock Http object.
      */
-    public function loginToMockService()
+    public function loginToMockService($secondPostReturnValue=NULL)
     {
         $http = $this->getMock('Splunk_Http');
         $service = new Splunk_Service(array(
@@ -64,9 +64,21 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
 <response>
 <sessionKey>068b3021210eb4b67819b1a292302948</sessionKey>
 </response>');
-        $http->expects($this->once())
-             ->method('post')
-             ->will($this->returnValue($http_response));
+        if ($secondPostReturnValue === NULL)
+        {
+            $http->expects($this->once())
+                 ->method('post')
+                 ->will($this->returnValue($http_response));
+        }
+        else
+        {
+            $http->expects($this->exactly(2))
+                 ->method('post')
+                 ->will($this->onConsecutiveCalls(
+                    $this->returnValue($http_response),
+                    $this->returnValue($secondPostReturnValue)
+                 ));
+        }
         $service->login();
         
         return array($service, $http);

@@ -168,6 +168,42 @@ class EntityTest extends SplunkTest
         $service->getSavedSearches()->getReference('IGNORED_NAME')->delete();
     }
     
+    public function testUpdateEntity()
+    {
+        $entityName = $this->createTempName();
+        
+        $service = $this->loginToRealService();
+        $savedSearch = $service->getSavedSearches()->create($entityName, array(
+            'search' => 'index=_internal',
+        ));
+        $this->assertEquals('index=_internal', $savedSearch['search']);
+        
+        $savedSearch2 = $savedSearch->update(array(
+            'search' => 'index=_internal | head 1',
+        ));
+        $this->assertSame($savedSearch, $savedSearch2);
+        $this->assertEquals('index=_internal | head 1', $savedSearch['search']);
+        
+        $savedSearch->delete();
+    }
+    
+    public function testUpdateEntityReferenceMakesNoGets()
+    {
+        $secondPostReturnValue = (object) array(
+            'status' => 200,
+            'reason' => 'OK',
+            'headers' => array(),
+            'body' => '');
+        
+        list($service, $http) = $this->loginToMockService($secondPostReturnValue);
+        
+        $http->expects($this->never())
+             ->method('get');
+        $service->getSavedSearches()->getReference('IGNORED_NAME')->update(array(
+            'search' => 'index=_internal | head 1',
+        ));
+    }
+    
     // === Utility ===
     
     /**
