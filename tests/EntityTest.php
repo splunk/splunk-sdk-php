@@ -127,6 +127,43 @@ class EntityTest extends SplunkTest
             Splunk_Namespace::user('admin', NULL));
     }
     
+    /**
+     * @expectedException Splunk_AmbiguousKeyException
+     */
+    public function testGetAmbiguousEntity()
+    {
+        $entityName = $this->createTempName();
+        
+        $service = $this->loginToRealService();
+        $savedSearch1 = $service->getSavedSearches()->create(
+            $entityName,
+            array(
+                'namespace' => Splunk_Namespace::user('admin', 'search'),
+                'search' => 'index=_internal | head 1',
+            ));
+        $savedSearch2 = $service->getSavedSearches()->create(
+            $entityName,
+            array(
+                'namespace' => Splunk_Namespace::app('search'),
+                'search' => 'index=_internal | head 2',
+            ));
+        
+        try
+        {
+            $service->getSavedSearches()->get(
+                $entityName,
+                Splunk_Namespace::user(NULL, 'search'));
+        }
+        catch (Exception $e)
+        {
+            // Cleanup
+            $savedSearch1->delete();
+            $savedSearch2->delete();
+            
+            throw $e;
+        }
+    }
+    
     public function testCreateEntity()
     {
         $service = $this->loginToRealService();
