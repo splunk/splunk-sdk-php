@@ -96,9 +96,31 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     // === Accessors ===
     
+    /**
+     * @return array                The properties of this entity.
+     */
+    public function getContent()
+    {
+        return $this->validate()->content;
+    }
+    
+    /**
+     * @return string               The name of this entity.
+     */
     public function getName()
     {
         return (string) $this->validate()->entry->title;
+    }
+    
+    /**
+     * @return Splunk_Namespace     The non-wildcarded namespace that this
+     *                              entity resides in.
+     */
+    public function getNamespace()
+    {
+        $acl = $this['eai:acl'];
+        return Splunk_Namespace::exact(
+            $acl['owner'], $acl['app'], $acl['sharing']);
     }
     
     // === ArrayAccess Methods ===
@@ -121,5 +143,19 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     public function offsetExists($key)
     {
         return isset($this->validate()->content[$key]);
+    }
+    
+    // === Operations ===
+    
+    /**
+     * Deletes this entity.
+     * 
+     * @throws Splunk_HttpException
+     */
+    public function delete()
+    {
+        $this->service->delete($this->path, array(
+            'namespace' => $this->getNamespace(),
+        ));
     }
 }

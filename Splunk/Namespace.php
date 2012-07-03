@@ -123,6 +123,26 @@ class Splunk_Namespace
         return $system;
     }
     
+    /**
+     * Creates a non-wildcarded namespace with the specified properties.
+     * 
+     * @param string $owner         name of a Splunk user (ex: "admin").
+     * @param string $app           name of a Splunk app (ex: "search").
+     * @param string $sharing       one of {'user', 'app', 'global', 'system'}.
+     * @see user()
+     */
+    public static function exact($owner, $app, $sharing)
+    {
+        if (!in_array($sharing, array('user', 'app', 'global', 'system')))
+            throw new InvalidArgumentException('Invalid sharing.');
+        if ($owner === '' || $owner === '-')
+            throw new InvalidArgumentException('Invalid owner.');
+        if ($app === '' || $app === '-')
+            throw new InvalidArgumentException('Invalid app.');
+        
+        return new Splunk_Namespace($owner, $app, $sharing);
+    }
+    
     // === Accessors ===
     
     /**

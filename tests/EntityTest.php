@@ -86,7 +86,7 @@ class EntityTest extends SplunkTest
     /**
      * @expectedException Splunk_NoSuchKeyException
      */
-    public function testGetMissingEntityInNamespaceFromCollection()
+    public function testGetMissingEntityFromCollectionInNamespace()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
@@ -111,7 +111,7 @@ class EntityTest extends SplunkTest
         }
     }
     
-    public function testGetEntityInNamespaceFromCollection()
+    public function testGetEntityFromCollectionInNamespace()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
@@ -119,11 +119,62 @@ class EntityTest extends SplunkTest
             Splunk_Namespace::user('admin', 'search'));
     }
     
-    public function testGetEntityInWildcardNamespaceFromCollection()
+    public function testGetEntityFromCollectionInWildcardNamespace()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
             self::SAVED_SEARCH_NAME,
             Splunk_Namespace::user('admin', NULL));
+    }
+    
+    public function testCreateEntity()
+    {
+        $service = $this->loginToRealService();
+        $savedSearch = $service->getSavedSearches()->create(
+            $this->createTempName(),
+            array(
+                'search' => 'index=_internal',
+            ));
+        
+        // Clean up
+        $savedSearch->delete();
+    }
+    
+    public function testDeleteEntity()
+    {
+        $entityName = $this->createTempName();
+        
+        $service = $this->loginToRealService();
+        $service->getSavedSearches()->create($entityName, array(
+            'search' => 'index=_internal',
+        ));
+        
+        $service->getSavedSearches()->delete($entityName);
+    }
+    
+    // === Utility ===
+    
+    /**
+     * @return      A name for a temporary object that is both easily
+     *              identifiable (to facilitate manual cleanup if needed)
+     *              and unlikely to collide with other objects in the system.
+     */
+    private function createTempName()
+    {
+        return "DELETEME-{$this->createGuid()}";
+    }
+    
+    /** @return     A version 4 (random) UUID. */
+    private function createGuid()
+    {
+        return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X',
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(16384, 20479),
+            mt_rand(32768, 49151),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535));
     }
 }

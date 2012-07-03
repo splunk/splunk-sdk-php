@@ -46,7 +46,7 @@ class Splunk_Collection extends Splunk_Endpoint
      * collections, it is advisable to fetch items using multiple calls with
      * the paging options (i.e. 'offset' and 'count').
      * 
-     * @param $args (optional) {
+     * @param array $args (optional) {
      *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
      *                    to list entities. Defaults to the service's namespace.
      *     'count' => (optional) The maximum number of items to return.
@@ -76,6 +76,7 @@ class Splunk_Collection extends Splunk_Endpoint
      *                    Defaults to "auto".
      * }
      * @return array    the entities in the listing.
+     * @throws Splunk_HttpException
      */
     // NOTE: This method isn't called 'list' only because PHP treats 'list' as a
     //       pseudo-keyword and gets confused when it's used as a method name.
@@ -118,6 +119,7 @@ class Splunk_Collection extends Splunk_Endpoint
      * @throws Splunk_AmbiguousKeyException
      *                      If multiple entities with the specified name
      *                      exist in the specified namespace.
+     * @throws Splunk_HttpException
      */
     public function get($name, $namespace=NULL)
     {
@@ -155,8 +157,10 @@ class Splunk_Collection extends Splunk_Endpoint
      * Returns a reference to the unique entity with the specified name in this
      * collection. Loading of the entity is deferred until its first use.
      * 
-     * @param string $name
+     * @param string $name  The name of the entity to search for.
      * @param Splunk_Namespace|NULL $namespace
+     *                      (optional) {Splunk_Namespace} The namespace in which
+     *                      to search. Defaults to the service's namespace.
      * @return Splunk_Entity
      */
     public function getReference($name, $namespace=NULL)
@@ -166,5 +170,53 @@ class Splunk_Collection extends Splunk_Endpoint
             $this->path . urlencode($name),
             NULL,
             $namespace);
+    }
+    
+    /**
+     * Creates a new entity in this collection.
+     * 
+     * @param string $name  The name of the entity to create.
+     * @param array $args (optional) Entity-specific creation arguments,
+     *                    merged with {
+     *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
+     *                    to create the entity. Defaults to the service's
+     *                    namespace.
+     * }
+     * @throws Splunk_HttpException
+     */
+    public function create($name, $args=array())
+    {
+        $args = array_merge(array(
+            'name' => $name,
+        ), $args);
+        
+        $response = $this->service->post($this->path, $args);
+        if ($response->body === '')
+        {
+            // This endpoint doesn't return the content of the new entity.
+            return $this->getReference($name);
+        }
+        else
+        {
+            $xml = new SimpleXMLElement($response->body);
+            return $this->loadEntityFromEntry($xml->entry);
+        }
+    }
+    
+    /**
+     * Deletes an entity from this collection.
+     * 
+     * @param string $name  The name of the entity to delete.
+     * @param array $args (optional) Entity-specific deletion arguments,
+     *                    merged with {
+     *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
+     *                    to find the entity. Defaults to the service's
+     *                    namespace.
+     * }
+     * @throws Splunk_HttpException
+     */
+    public function delete($name, $args=array())
+    {
+        $this->service->delete($this->path . urlencode($name), $args);
     }
 }

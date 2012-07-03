@@ -28,12 +28,7 @@ class Splunk_Http
      */
     public function get($url, $params=array(), $request_headers=array())
     {
-        $fullUrl = ($params == NULL || count($params) == 0)
-            ? $url
-            : $url . '?' . http_build_query($params);
-        
-        return $this->request(
-            'get', $fullUrl, $request_headers);
+        return $this->requestWithParams('get', $url, $params, $request_headers);
     }
     
     /**
@@ -44,6 +39,25 @@ class Splunk_Http
     {
         return $this->request(
             'post', $url, $request_headers, http_build_query($params));
+    }
+    
+    /**
+     * @param array $params     (optional) query parameters.
+     * @see request()
+     */
+    public function delete($url, $params=array(), $request_headers=array())
+    {
+        return $this->requestWithParams('delete', $url, $params, $request_headers);
+    }
+    
+    private function requestWithParams(
+        $method, $url, $params, $request_headers)
+    {
+        $fullUrl = ($params === NULL || count($params) == 0)
+            ? $url
+            : $url . '?' . http_build_query($params);
+        
+        return $this->request($method, $fullUrl, $request_headers);
     }
     
     /**

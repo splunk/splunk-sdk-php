@@ -98,16 +98,12 @@ class Splunk_Context
      *                    this context's default namespace.
      * }
      * @return object       see the return value of Http::request().
+     * @throws Splunk_HttpException
      * @see Splunk_Http::get()
      */
     public function get($path, $args=array())
     {
-        list($params, $namespace) = $this->extractArgument($args, 'namespace', NULL);
-        
-        return $this->http->get(
-            $this->url($path, $namespace),
-            $params,
-            $this->getRequestHeaders());
+        return $this->request('get', $path, $args);
     }
     
     /**
@@ -120,13 +116,38 @@ class Splunk_Context
      *                    this context's default namespace.
      * }
      * @return object       see the return value of Http::request().
+     * @throws Splunk_HttpException
      * @see Splunk_Http::post()
      */
     public function post($path, $args=array())
     {
-        list($params, $namespace) = $this->extractArgument($args, 'namespace', NULL);
+        return $this->request('post', $path, $args);
+    }
+    
+    /**
+     * Performs an HTTP DELETE request to the endpoint at the specified path.
+     * 
+     * @param string $path  relative or absolute URL path.
+     * @param array $args   (optional) form parameters to send in the request body,
+     *                      merged with {
+     *     'namespace' => (optional) namespace to use, or NULL to use
+     *                    this context's default namespace.
+     * }
+     * @return object       see the return value of Http::request().
+     * @throws Splunk_HttpException
+     * @see Splunk_Http::delete()
+     */
+    public function delete($path, $args=array())
+    {
+        return $this->request('delete', $path, $args);
+    }
+    
+    private function request($method, $path, $args)
+    {
+        list($params, $namespace) = 
+            $this->extractArgument($args, 'namespace', NULL);
         
-        return $this->http->post(
+        return $this->http->$method(
             $this->url($path, $namespace),
             $params,
             $this->getRequestHeaders());
