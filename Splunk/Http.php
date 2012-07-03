@@ -74,6 +74,14 @@ class Splunk_Http
      * @throws Splunk_ConnectException
      * @throws Splunk_HttpException
      */
+    // TODO: Avoid reading the entire response into memory.
+    //       
+    //       cURL provides no straightforward way to avoid this, short of
+    //       downloading a response to file and reading that file.
+    //       
+    //       For continuous streams (that don't end), this solution
+    //       won't work because the temporary file will never finish being
+    //       written.
     private function request(
         $method, $url, $request_headers=array(), $request_body='')
     {
