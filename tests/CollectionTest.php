@@ -19,29 +19,29 @@ require_once 'SplunkTest.php';
 
 class CollectionTest extends SplunkTest
 {
-    public function testEnumerateAll()
+    public function testListAll()
     {
         $service = $this->loginToRealService();
         
-        $entities = $service->getSavedSearches()->enumerate();
+        $entities = $service->getSavedSearches()->items();
         $this->assertGreaterThanOrEqual(2, count($entities),
             'Expected at least two saved searches.');
         
         return $entities;
     }
     
-    /** @depends testEnumerateAll */
-    public function testEnumerateSlices($entities)
+    /** @depends testListAll */
+    public function testListSlices($entities)
     {
         $service = $this->loginToRealService();
         
-        $entityPage1 = $service->getSavedSearches()->enumerate(array(
+        $entityPage1 = $service->getSavedSearches()->items(array(
             'offset' => 0,
             'count' => 1,
         ));
         $this->assertCount(1, $entityPage1);
         
-        $entityPage2 = $service->getSavedSearches()->enumerate(array(
+        $entityPage2 = $service->getSavedSearches()->items(array(
             'offset' => 1,
             'count' => 1,
         ));
@@ -51,12 +51,12 @@ class CollectionTest extends SplunkTest
         $this->assertEquals($entities[1]->getName(), $entityPage2[0]->getName());
     }
     
-    /** @depends testEnumerateAll */
-    public function testEnumerateWithSort($entities)
+    /** @depends testListAll */
+    public function testListWithSort($entities)
     {
         $service = $this->loginToRealService();
         
-        $lastEntityPage = $service->getSavedSearches()->enumerate(array(
+        $lastEntityPage = $service->getSavedSearches()->items(array(
             'count' => 1,
             'sort_dir' => 'desc',
             'sort_mode' => 'alpha_case',
@@ -73,11 +73,11 @@ class CollectionTest extends SplunkTest
             $lastEntity->getName());
     }
     
-    public function testEnumerateInNamespace()
+    public function testListInNamespace()
     {
         $service = $this->loginToRealService();
         
-        $entities = $service->getSavedSearches()->enumerate(array(
+        $entities = $service->getSavedSearches()->items(array(
             'namespace' => Splunk_Namespace::system()
         ));
         $this->assertCount(0, $entities,

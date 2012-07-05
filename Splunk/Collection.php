@@ -80,7 +80,7 @@ class Splunk_Collection extends Splunk_Endpoint
      */
     // NOTE: This method isn't called 'list' only because PHP treats 'list' as a
     //       pseudo-keyword and gets confused when it's used as a method name.
-    public function enumerate($args=array())
+    public function items($args=array())
     {
         $args = array_merge(array(
             'count' => 0,
