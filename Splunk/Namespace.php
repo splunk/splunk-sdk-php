@@ -22,15 +22,15 @@
  */
 class Splunk_Namespace
 {
-    private $owner;
+    private $user;
     private $app;
     private $sharing;
     
     // === Init ===
     
-    private function __construct($owner, $app, $sharing)
+    private function __construct($user, $app, $sharing)
     {
-        $this->owner = $owner;
+        $this->user = $user;
         $this->app = $app;
         $this->sharing = $sharing;
     }
@@ -55,23 +55,23 @@ class Splunk_Namespace
      * Creates the namespace containing objects associated with the specified
      * user and application.
      * 
-     * @param string|NULL $owner    name of a Splunk user (ex: "admin"),
+     * @param string|NULL $user     name of a Splunk user (ex: "admin"),
      *                              or NULL to specify all users.
      * @param string|NULL $app      name of a Splunk app (ex: "search"),
      *                              or NULL to specify all apps.
      * @return Splunk_Namespace
      */
-    public static function user($owner, $app)
+    public static function user($user, $app)
     {
-        if ($owner === '' || $owner === 'nobody' || $owner === '-')
-            throw new InvalidArgumentException('Invalid owner.');
+        if ($user === '' || $user === 'nobody' || $user === '-')
+            throw new InvalidArgumentException('Invalid user.');
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
-        if ($owner === NULL)
-            $owner = '-';
+        if ($user === NULL)
+            $user = '-';
         if ($app === NULL)
             $app = '-';
-        return new Splunk_Namespace($owner, $app, 'user');
+        return new Splunk_Namespace($user, $app, 'user');
     }
     
     /**
@@ -126,21 +126,21 @@ class Splunk_Namespace
     /**
      * Creates a non-wildcarded namespace with the specified properties.
      * 
-     * @param string $owner         name of a Splunk user (ex: "admin").
+     * @param string $user          name of a Splunk user (ex: "admin").
      * @param string $app           name of a Splunk app (ex: "search").
      * @param string $sharing       one of {'user', 'app', 'global', 'system'}.
      * @see user()
      */
-    public static function exact($owner, $app, $sharing)
+    public static function exact($user, $app, $sharing)
     {
         if (!in_array($sharing, array('user', 'app', 'global', 'system')))
             throw new InvalidArgumentException('Invalid sharing.');
-        if ($owner === '' || $owner === '-')
-            throw new InvalidArgumentException('Invalid owner.');
+        if ($user === '' || $user === '-')
+            throw new InvalidArgumentException('Invalid user.');
         if ($app === '' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         
-        return new Splunk_Namespace($owner, $app, $sharing);
+        return new Splunk_Namespace($user, $app, $sharing);
     }
     
     // === Accessors ===
@@ -158,7 +158,7 @@ class Splunk_Namespace
             case 'app':
             case 'global':
             case 'system':
-                return '/servicesNS/' . urlencode($this->owner) . '/' . urlencode($this->app) . '/';
+                return '/servicesNS/' . urlencode($this->user) . '/' . urlencode($this->app) . '/';
             default:
                 throw new Exception("Invalid sharing mode '{$this->sharing}'.");
         }
@@ -171,6 +171,6 @@ class Splunk_Namespace
      */
     public function isExact()
     {
-        return ($this->owner !== '-') && ($this->app !== '-');
+        return ($this->user !== '-') && ($this->app !== '-');
     }
 }
