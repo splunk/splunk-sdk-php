@@ -91,7 +91,7 @@ class EntityTest extends SplunkTest
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
             self::SAVED_SEARCH_NAME,
-            Splunk_Namespace::system());
+            Splunk_Namespace::createSystem());
     }
     
     public function testGetMissingEntityReferenceInNamespace()
@@ -99,7 +99,7 @@ class EntityTest extends SplunkTest
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->getReference(
             self::SAVED_SEARCH_NAME,
-            Splunk_Namespace::system());
+            Splunk_Namespace::createSystem());
         try
         {
             $this->touch($savedSearch);
@@ -116,7 +116,7 @@ class EntityTest extends SplunkTest
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
             self::SAVED_SEARCH_NAME,
-            Splunk_Namespace::user('admin', 'search'));
+            Splunk_Namespace::createUser('admin', 'search'));
     }
     
     public function testGetEntityInWildcardNamespace()
@@ -124,7 +124,7 @@ class EntityTest extends SplunkTest
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->get(
             self::SAVED_SEARCH_NAME,
-            Splunk_Namespace::user('admin', NULL));
+            Splunk_Namespace::createUser('admin', NULL));
     }
     
     /**
@@ -138,13 +138,13 @@ class EntityTest extends SplunkTest
         $savedSearch1 = $service->getSavedSearches()->create(
             $entityName,
             array(
-                'namespace' => Splunk_Namespace::user('admin', 'search'),
+                'namespace' => Splunk_Namespace::createUser('admin', 'search'),
                 'search' => 'index=_internal | head 1',
             ));
         $savedSearch2 = $service->getSavedSearches()->create(
             $entityName,
             array(
-                'namespace' => Splunk_Namespace::app('search'),
+                'namespace' => Splunk_Namespace::createApp('search'),
                 'search' => 'index=_internal | head 2',
             ));
         
@@ -152,7 +152,7 @@ class EntityTest extends SplunkTest
         {
             $service->getSavedSearches()->get(
                 $entityName,
-                Splunk_Namespace::user(NULL, 'search'));
+                Splunk_Namespace::createUser(NULL, 'search'));
         }
         catch (Exception $e)
         {

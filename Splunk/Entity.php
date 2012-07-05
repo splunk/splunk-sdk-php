@@ -131,7 +131,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         
         // Extract the namespace from this entity's content
         $acl = $this['eai:acl'];
-        return Splunk_Namespace::exact(
+        return Splunk_Namespace::createExact(
             $acl['owner'], $acl['app'], $acl['sharing']);
     }
     

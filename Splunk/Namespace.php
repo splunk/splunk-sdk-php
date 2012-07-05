@@ -20,6 +20,10 @@
  * 
  * @package Splunk
  */
+// NOTE: Ideally the static constructors for this class wouldn't have any
+//       prefix (like 'create') or suffix. Unfortunately both 'default' and
+//       'global' are considered keywords in PHP, preventing their use
+//       as static constructor names.
 class Splunk_Namespace
 {
     private $owner;
@@ -43,7 +47,7 @@ class Splunk_Namespace
      * 
      * @return Splunk_Namespace
      */
-    public static function default_()
+    public static function createDefault()
     {
         static $default_ = NULL;
         if ($default_ === NULL)
@@ -61,7 +65,7 @@ class Splunk_Namespace
      *                              or NULL to specify all apps.
      * @return Splunk_Namespace
      */
-    public static function user($owner, $app)
+    public static function createUser($owner, $app)
     {
         if ($owner === '' || $owner === 'nobody' || $owner === '-')
             throw new InvalidArgumentException('Invalid owner.');
@@ -82,7 +86,7 @@ class Splunk_Namespace
      *                              or NULL to specify all apps.
      * @return Splunk_Namespace
      */
-    public static function app($app)
+    public static function createApp($app)
     {
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
@@ -99,7 +103,7 @@ class Splunk_Namespace
      *                              or NULL to specify all apps.
      * @return Splunk_Namespace
      */
-    public static function global_($app)
+    public static function createGlobal($app)
     {
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
@@ -115,7 +119,7 @@ class Splunk_Namespace
      * 
      * @return Splunk_Namespace
      */
-    public static function system()
+    public static function createSystem()
     {
         static $system = NULL;
         if ($system === NULL)
@@ -131,7 +135,7 @@ class Splunk_Namespace
      * @param string $sharing       one of {'user', 'app', 'global', 'system'}.
      * @see user()
      */
-    public static function exact($owner, $app, $sharing)
+    public static function createExact($owner, $app, $sharing)
     {
         if (!in_array($sharing, array('user', 'app', 'global', 'system')))
             throw new InvalidArgumentException('Invalid sharing.');

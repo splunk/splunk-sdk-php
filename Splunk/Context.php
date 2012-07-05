@@ -42,7 +42,7 @@ class Splunk_Context
      *      'port' => (optional) The port of the Splunk server. Defaults to 8089.
      *      'scheme' => (optional) The scheme to use: either "http" or "https". Defaults to "https".
      *      'namespace' => (optional) Namespace that all object lookups will occur in by default.
-     *                     Defaults to `Splunk_Namespace::default_()`.
+     *                     Defaults to `Splunk_Namespace::createDefault()`.
      *      'http' => (optional) An Http object that will be used for performing HTTP requests.
      *                This is intended for testing only.
      * }
@@ -56,7 +56,7 @@ class Splunk_Context
             'host' => 'localhost',
             'port' => 8089,
             'scheme' => 'https',
-            'namespace' => Splunk_Namespace::default_(),
+            'namespace' => Splunk_Namespace::createDefault(),
             'http' => new Splunk_Http(),
         ), $args);
         
@@ -204,7 +204,7 @@ class Splunk_Context
         if ((strlen($path) >= 1) && ($path[0] == '/'))
             return $path;
         if ($namespace === NULL)
-            $namespace = Splunk_Namespace::default_();
+            $namespace = Splunk_Namespace::createDefault();
         
         return $namespace->getPathPrefix() . $path;
     }

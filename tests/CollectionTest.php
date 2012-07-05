@@ -78,7 +78,7 @@ class CollectionTest extends SplunkTest
         $service = $this->loginToRealService();
         
         $entities = $service->getSavedSearches()->items(array(
-            'namespace' => Splunk_Namespace::system()
+            'namespace' => Splunk_Namespace::createSystem()
         ));
         $this->assertCount(0, $entities,
             'Expected no saved searches in the system namespace.');
