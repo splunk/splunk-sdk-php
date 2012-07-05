@@ -46,9 +46,10 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         parent::__construct($service, $path);
         
         $this->entry = $entry;
-        $this->namespace = $namespace;
         if ($this->entry != NULL)
-            $this->loadContentsOfEntry();
+            $this->parseContentsFromEntry();
+        
+        $this->namespace = $namespace;
     }
     
     // === Load ===
@@ -67,15 +68,15 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /** Loads this resource. */
     private function load()
     {
-        $response = $this->loadResponseFromService();
+        $response = $this->fetch();
         $xml = new SimpleXMLElement($response->body);
         
-        $this->entry = $this->loadEntryFromResponse($xml);
-        $this->loadContentsOfEntry();
+        $this->entry = $this->extractEntryFromRootXmlElement($xml);
+        $this->parseContentsFromEntry();
     }
     
     /** Fetches this entity's Atom feed from the Splunk server. */
-    protected function loadResponseFromService()
+    protected function fetch()
     {
         return $this->service->get($this->path, array(
             'namespace' => $this->namespace,
@@ -83,12 +84,12 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     }
     
     /** Returns the <entry> element inside the root element. */
-    protected function loadEntryFromResponse($xml)
+    protected function extractEntryFromRootXmlElement($xml)
     {
         return $xml->entry;
     }
     
-    private function loadContentsOfEntry()
+    private function parseContentsFromEntry()
     {
         $this->content = Splunk_AtomFeed::parseValueInside($this->entry->content);
         $this->loaded = TRUE;

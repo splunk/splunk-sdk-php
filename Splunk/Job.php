@@ -33,11 +33,11 @@ class Splunk_Job extends Splunk_Entity
      * process of being created. To hide this from the caller, transparently
      * retry requests when an HTTP 204 is received.
      */
-    protected function loadResponseFromService()
+    protected function fetch()
     {
         for ($numTries = 0; $numTries < Splunk_Job::MAX_TRIES; $numTries++)
         {
-            $response = parent::loadResponseFromService();
+            $response = parent::fetch();
             if ($response->status != 204)
                 return $response;
             sleep(Splunk_Job::DELAY_PER_RETRY);
@@ -47,7 +47,7 @@ class Splunk_Job extends Splunk_Entity
         throw new Splunk_HttpException($response);
     }
     
-    protected function loadEntryFromResponse($xml)
+    protected function extractEntryFromRootXmlElement($xml)
     {
         // <entry> element is at the root of a job's Atom feed
         return $xml;
