@@ -24,7 +24,7 @@ class Splunk_Job extends Splunk_Entity
 {
     // NOTE: These constants are somewhat arbitrary and could use some tuning
     const DELAY_PER_RETRY = 0.5;  // secs
-    const MAX_TRIES = 5;
+    const MAX_TRIES = 10;
     
     // === Load ===
     
