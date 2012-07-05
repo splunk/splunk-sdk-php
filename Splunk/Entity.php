@@ -54,29 +54,42 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     // === Load ===
     
-    /** Loads this resource if not already done. Returns self. */
-    protected function validate()
+    /**
+     * Loads this resource if not already done. Returns self.
+     * 
+     * @return Splunk_Entity            This entity.
+     * @throws Splunk_HttpException
+     */
+    protected function validate($fetchArgs=array())
     {
         if (!$this->loaded)
         {
-            $this->load();
+            $this->load($fetchArgs);
             assert($this->loaded);
         }
         return $this;
     }
     
-    /** Loads this resource. */
-    private function load()
+    /**
+     * Loads this resource.
+     * 
+     * @throws Splunk_HttpException
+     */
+    private function load($fetchArgs)
     {
-        $response = $this->fetch();
+        $response = $this->fetch($fetchArgs);
         $xml = new SimpleXMLElement($response->body);
         
         $this->entry = $this->extractEntryFromRootXmlElement($xml);
         $this->parseContentsFromEntry();
     }
     
-    /** Fetches this entity's Atom feed from the Splunk server. */
-    protected function fetch()
+    /**
+     * Fetches this entity's Atom feed from the Splunk server.
+     * 
+     * @throws Splunk_HttpException
+     */
+    protected function fetch($fetchArgs)
     {
         return $this->service->get($this->path, array(
             'namespace' => $this->namespace,
@@ -93,6 +106,11 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     {
         $this->content = Splunk_AtomFeed::parseValueInside($this->entry->content);
         $this->loaded = TRUE;
+    }
+    
+    protected function isLoaded()
+    {
+        return $this->loaded;
     }
     
     // === Accessors ===

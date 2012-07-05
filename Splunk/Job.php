@@ -23,8 +23,8 @@
 class Splunk_Job extends Splunk_Entity
 {
     // NOTE: These constants are somewhat arbitrary and could use some tuning
-    const DELAY_PER_RETRY = 0.5;  // secs
-    const MAX_TRIES = 10;
+    const DEFAULT_FETCH_MAX_TRIES = 10;
+    const DEFAULT_FETCH_DELAY_PER_RETRY = 0.5;  // secs
     
     // === Load ===
     
@@ -33,14 +33,19 @@ class Splunk_Job extends Splunk_Entity
      * process of being created. To hide this from the caller, transparently
      * retry requests when an HTTP 204 is received.
      */
-    protected function fetch()
+    protected function fetch($fetchArgs)
     {
-        for ($numTries = 0; $numTries < Splunk_Job::MAX_TRIES; $numTries++)
+        $fetchArgs = array_merge(array(
+            'maxTries' => Splunk_Job::DEFAULT_FETCH_MAX_TRIES,
+            'delayPerRetry' => Splunk_Job::DEFAULT_FETCH_DELAY_PER_RETRY,
+        ), $fetchArgs);
+        
+        for ($numTries = 0; $numTries < $fetchArgs['maxTries']; $numTries++)
         {
-            $response = parent::fetch();
+            $response = parent::fetch($fetchArgs);
             if ($response->status != 204)
                 return $response;
-            sleep(Splunk_Job::DELAY_PER_RETRY);
+            sleep($fetchArgs['delayPerRetry']);
         }
         
         // Give up
@@ -51,5 +56,33 @@ class Splunk_Job extends Splunk_Entity
     {
         // <entry> element is at the root of a job's Atom feed
         return $xml;
+    }
+    
+    // === Ready ===
+    
+    /** @return bool                Whether this job has been loaded. */
+    public function isReady()
+    {
+        return $this->isLoaded();
+    }
+    
+    /**
+     * Loads this job, retrying the specified number of times as necessary.
+     * 
+     * @param int $maxTries         The maximum number of times to try loading
+     *                              this job.
+     * @param float $delayPerRetry  The number of seconds to wait between
+     *                              attempts to retry loading this job.
+     * @return Splunk_Entity        This entity.
+     * @throws Splunk_HttpException
+     */
+    public function makeReady(
+        $maxTries=Splunk_Job::DEFAULT_FETCH_MAX_TRIES,
+        $delayPerRetry=Splunk_Job::DEFAULT_FETCH_DELAY_PER_RETRY)
+    {
+        return $this->validate(/*fetchArgs=*/array(
+            'maxTries' => $maxTries,
+            'delayPerRetry' => $delayPerRetry,
+        ));
     }
 }
