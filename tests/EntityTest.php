@@ -84,7 +84,7 @@ class EntityTest extends SplunkTest
     }
     
     /**
-     * @expectedException Splunk_NoSuchKeyException
+     * @expectedException Splunk_NoSuchEntityException
      */
     public function testGetMissingEntityInNamespace()
     {
@@ -128,9 +128,37 @@ class EntityTest extends SplunkTest
     }
     
     /**
-     * @expectedException Splunk_AmbiguousKeyException
+     * @expectedException Splunk_AmbiguousEntityNameException
      */
     public function testGetAmbiguousEntity()
+    {
+        $this->runAmbiguousEntityTest('doGetAmbiguousEntity');
+    }
+    
+    private function doGetAmbiguousEntity($service, $entityName)
+    {
+        $service->getSavedSearches()->get(
+            $entityName,
+            Splunk_Namespace::createUser(NULL, 'search'));
+    }
+    
+    /**
+     * @expectedException Splunk_AmbiguousEntityNameException
+     */
+    public function testGetAmbiguousEntityReference()
+    {
+        $this->runAmbiguousEntityTest('doGetAmbiguousEntityReference');
+    }
+    
+    private function doGetAmbiguousEntityReference($service, $entityName)
+    {
+        $ambigSavedSearch = $service->getSavedSearches()->getReference(
+            $entityName,
+            Splunk_Namespace::createUser(NULL, 'search'));
+        $this->touch($ambigSavedSearch);
+    }
+    
+    private function runAmbiguousEntityTest($testBodyFunc)
     {
         $entityName = $this->createTempName();
         
@@ -150,9 +178,7 @@ class EntityTest extends SplunkTest
         
         try
         {
-            $service->getSavedSearches()->get(
-                $entityName,
-                Splunk_Namespace::createUser(NULL, 'search'));
+            $this->$testBodyFunc($service, $entityName);
         }
         catch (Exception $e)
         {

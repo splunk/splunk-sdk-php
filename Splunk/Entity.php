@@ -99,6 +99,16 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /** Returns the <entry> element inside the root element. */
     protected function extractEntryFromRootXmlElement($xml)
     {
+        if (!Splunk_XmlUtil::isSingleElement($xml->entry))
+        {
+            // Extract name from path since we can't extract it from the
+            // entity content here.
+            $pathComponents = explode('/', $this->path);
+            $name = $pathComponents[count($pathComponents) - 1];
+            
+            throw new Splunk_AmbiguousEntityNameException($name);
+        }
+        
         return $xml->entry;
     }
     

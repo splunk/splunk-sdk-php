@@ -126,9 +126,9 @@ class Splunk_Collection extends Splunk_Endpoint
      *                      (optional) {Splunk_Namespace} The namespace in which
      *                      to search. Defaults to the service's namespace.
      * @return Splunk_Entity
-     * @throws Splunk_NoSuchKeyException
+     * @throws Splunk_NoSuchEntityException
      *                      If no such entity exists.
-     * @throws Splunk_AmbiguousKeyException
+     * @throws Splunk_AmbiguousEntityNameException
      *                      If multiple entities with the specified name
      *                      exist in the specified namespace.
      * @throws Splunk_HttpException
@@ -148,13 +148,12 @@ class Splunk_Collection extends Splunk_Endpoint
             if ($e->getResponse()->status == 404)
                 $entities = array();
             else
-                raise;
+                throw $e;
         }
         
         if (count($entities) == 0)
         {
-            throw new Splunk_NoSuchKeyException(
-                "No value exists with key '{$name}'.");
+            throw new Splunk_NoSuchEntityException($name);
         }
         else if (count($entities) == 1)
         {
@@ -162,9 +161,7 @@ class Splunk_Collection extends Splunk_Endpoint
         }
         else
         {
-            throw new Splunk_AmbiguousKeyException(
-                "Multiple values exist with key '{$name}'. " .
-                "Specify a namespace to disambiguate.");
+            throw new Splunk_AmbiguousEntityNameException($name);
         }
     }
     

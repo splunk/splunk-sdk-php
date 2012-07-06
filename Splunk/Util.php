@@ -15,7 +15,23 @@
  * under the License.
  */
 
-/**
- * @package Splunk
- */
-class Splunk_NoSuchKeyException extends RuntimeException {}
+class Splunk_Util
+{
+    /**
+     * Extracts the value for the specified $key from the specified $dict.
+     * 
+     * @param array $dict
+     * @param mixed $key
+     * @param mixed $defaultValue
+     * @return array {
+     *     [0] => $dict without $key
+     *     [1] => $dict[$key] if it exists, or $defaultValue if it does not
+     * }
+     */
+    public static function extractArgument($dict, $key, $defaultValue)
+    {
+        $value = array_key_exists($key, $dict) ? $dict[$key] : $defaultValue;
+        unset($dict[$key]);
+        return array($dict, $value);
+    }
+}
