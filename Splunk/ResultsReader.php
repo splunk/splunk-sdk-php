@@ -45,11 +45,14 @@ class Splunk_ResultsReader implements IteratorAggregate
         $xml = new SimpleXMLElement($xmlString);
         
         $this->results = array();
-        foreach ($xml->messages->msg as $msgXml)
+        if (Splunk_XmlUtil::elementExists($xml->messages))
         {
-            $type = Splunk_XmlUtil::getAttributeValue($msgXml, 'type');
-            $text = Splunk_XmlUtil::getTextContent($msgXml);
-            $this->results[] = new Splunk_Message($type, $text);
+            foreach ($xml->messages->msg as $msgXml)
+            {
+                $type = Splunk_XmlUtil::getAttributeValue($msgXml, 'type');
+                $text = Splunk_XmlUtil::getTextContent($msgXml);
+                $this->results[] = new Splunk_Message($type, $text);
+            }
         }
         foreach ($xml->result as $resultXml)
         {

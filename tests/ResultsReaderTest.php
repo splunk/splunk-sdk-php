@@ -47,6 +47,65 @@ class ResultsReaderTest extends SplunkTest
             ),
         );
         
+        $this->assertParsedResultsEquals($expectedResults, $xmlText);
+    }
+    
+    public function testReadResultsWithoutMessages()
+    {
+        $xmlText = trim("
+<?xml version='1.0' encoding='UTF-8'?>
+<results preview='0'>
+    <meta>
+        <fieldOrder>
+            <field>series</field>
+            <field>sum(kb)</field>
+        </fieldOrder>
+    </meta>
+	<result offset='0'>
+		<field k='series'>
+			<value><text>twitter</text></value>
+		</field>
+		<field k='sum(kb)'>
+			<value><text>14372242.758775</text></value>
+		</field>
+	</result>
+</results>
+");
+        $expectedResults = array(
+            array(
+                'series' => 'twitter',
+                'sum(kb)' => '14372242.758775',
+            ),
+        );
+        
+        $this->assertParsedResultsEquals($expectedResults, $xmlText);
+    }
+    
+    public function testReadResultsWithoutResults()
+    {
+        $xmlText = trim("
+<?xml version='1.0' encoding='UTF-8'?>
+<results preview='0'>
+    <meta>
+        <fieldOrder>
+            <field>series</field>
+            <field>sum(kb)</field>
+        </fieldOrder>
+    </meta>
+    <messages>
+        <msg type='DEBUG'>base lispy: [ AND ]</msg>
+    </messages>
+</results>
+");
+        $expectedResults = array(
+            new Splunk_Message('DEBUG', 'base lispy: [ AND ]'),
+        );
+        
+        $this->assertParsedResultsEquals($expectedResults, $xmlText);
+    }
+    
+    private function assertParsedResultsEquals($expectedResults, $xmlText)
+    {
         $resultsReader = new Splunk_ResultsReader($xmlText);
         
         $results = array();
