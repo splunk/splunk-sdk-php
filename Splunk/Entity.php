@@ -123,6 +123,25 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return $this->loaded;
     }
     
+    /**
+     * Forcefully reloads this entity from the Splunk server.
+     * 
+     * @return Splunk_Entity            This entity.
+     * @throws Splunk_HttpException
+     */
+    public function reload()
+    {
+        if ($this->loaded)
+        {
+            // Remember this entity's exact namespace, so that a reload
+            // will occur in the correct namespace.
+            $this->namespace = $this->getNamespace();
+        }
+        
+        $this->loaded = FALSE;
+        return $this->validate();
+    }
+    
     // === Accessors ===
     
     /**

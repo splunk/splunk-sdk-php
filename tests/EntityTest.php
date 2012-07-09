@@ -267,6 +267,18 @@ class EntityTest extends SplunkTest
         ));
     }
     
+    public function testReloadEntityInCustomNamespace()
+    {
+        $service = $this->loginToRealService();
+        
+        $views = new Splunk_Collection($service, 'data/ui/views/');
+        $entity = $views->get(
+            'getstarted',
+            Splunk_Namespace::createApp('gettingstarted'));
+        
+        $entity->reload();
+    }
+    
     // === Utility ===
     
     /**

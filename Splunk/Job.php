@@ -85,4 +85,45 @@ class Splunk_Job extends Splunk_Entity
             'delayPerRetry' => $delayPerRetry,
         ));
     }
+    
+    // === Results ===
+    
+    /**
+     * @return float                Percentage of this job's results that have
+     *                              been computed (0.0-1.0).
+     */ 
+    public function getProgress()
+    {
+        return floatval($this['doneProgress']);
+    }
+    
+    /**
+     * @return boolean              Whether this job's results are available.
+     */
+    public function isDone()
+    {
+        return ($this['isDone'] === '1');
+    }
+    
+    /**
+     * @param array $args           (optional) Additional arguments.
+     *                              For details, see the
+     *                              "GET search/jobs/{search_id}/results"
+     *                              endpoint in the REST API Documentation.
+     * @return string               The results (i.e. transformed events)
+     *                              of this job.
+     * @throws Splunk_JobNotDoneException
+     *                              If the results are not ready yet.
+     *                              Check isDone() to ensure the results are
+     *                              ready prior to calling this method.
+     * @throws Splunk_HttpException
+     * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
+     */
+    public function getResults($args=array())
+    {
+        $response = $this->service->get($this->path . '/results', $args);
+        if ($response->status == 204)
+            throw new Splunk_JobNotDoneException($response);
+        return $response->body;
+    }
 }
