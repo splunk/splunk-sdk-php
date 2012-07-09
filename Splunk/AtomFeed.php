@@ -50,6 +50,14 @@ class Splunk_AtomFeed
         }
     }
     
+    /*
+     * Example of $dictXml:
+     * 
+     * <s:dict>
+     *     <s:key name="k1">v1</s:key>
+     *     <s:key name="k2">v2</s:key>
+     * </s:dict>
+     */
     private static function parseDict($dictXml)
     {
         $dict = array();
@@ -63,6 +71,14 @@ class Splunk_AtomFeed
         return $dict;
     }
     
+    /*
+     * Example of $listXml:
+     * 
+     * <s:list>
+     *     <s:item>e1</s:item>
+     *     <s:item>e2</s:item>
+     * </s:list>
+     */
     private static function parseList($listXml)
     {
         $list = array();

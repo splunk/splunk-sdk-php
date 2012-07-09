@@ -22,21 +22,49 @@
  */
 class Splunk_Http
 {
-    public function get($url, $request_headers=array())
+    /**
+     * @param array $params     (optional) query parameters.
+     * @see request()
+     */
+    public function get($url, $params=array(), $request_headers=array())
     {
-        return $this->request('get', $url, $request_headers);
+        return $this->requestWithParams('get', $url, $params, $request_headers);
     }
     
-    public function post($url, $params=array())
+    /**
+     * @param array $params     (optional) form parameters to send in the request body.
+     * @see request()
+     */
+    public function post($url, $params=array(), $request_headers=array())
     {
-        return $this->request('post', $url, array(), http_build_query($params));
+        return $this->request(
+            'post', $url, $request_headers, http_build_query($params));
+    }
+    
+    /**
+     * @param array $params     (optional) query parameters.
+     * @see request()
+     */
+    public function delete($url, $params=array(), $request_headers=array())
+    {
+        return $this->requestWithParams('delete', $url, $params, $request_headers);
+    }
+    
+    private function requestWithParams(
+        $method, $url, $params, $request_headers)
+    {
+        $fullUrl = ($params === NULL || count($params) == 0)
+            ? $url
+            : $url . '?' . http_build_query($params);
+        
+        return $this->request($method, $fullUrl, $request_headers);
     }
     
     /**
      * @param string $method            HTTP request method (ex: 'get').
      * @param string $url               URL to fetch.
-     * @param array $request_headers    dictionary of header names and values.
-     * @param string $request_body      content to send in the request.
+     * @param array $request_headers    (optional) dictionary of header names and values.
+     * @param string $request_body      (optional) content to send in the request.
      * @return object {
      *      'status' => HTTP status code (ex: 200).
      *      'reason' => HTTP reason string (ex: 'OK').
@@ -46,6 +74,14 @@ class Splunk_Http
      * @throws Splunk_ConnectException
      * @throws Splunk_HttpException
      */
+    // TODO: Avoid reading the entire response into memory.
+    //       
+    //       cURL provides no straightforward way to avoid this, short of
+    //       downloading a response to file and reading that file.
+    //       
+    //       For continuous streams (that don't end), this solution
+    //       won't work because the temporary file will never finish being
+    //       written.
     private function request(
         $method, $url, $request_headers=array(), $request_body='')
     {
@@ -111,50 +147,5 @@ class Splunk_Http
             throw new Splunk_HttpException($response);
         else
             return $response;
-    }
-}
-
-/**
- * Thrown when unable to connect to a Splunk server.
- * 
- * @package Splunk
- */
-class Splunk_ConnectException extends Exception {}
-
-/**
- * Thrown when an HTTP request fails due to a non 2xx status code.
- * 
- * @package Splunk
- */
-class Splunk_HttpException extends Exception
-{
-    private $response;
-    
-    // === Init ===
-    
-    public function __construct($response)
-    {
-        $detail = Splunk_HttpException::parseFirstMessageFrom($response);
-        
-        $message = "HTTP {$response->status} {$response->reason}";
-        if ($detail != NULL)
-            $message .= ' -- ' . $detail;
-        
-        $this->response = $response;
-        parent::__construct($message);
-    }
-    
-    private static function parseFirstMessageFrom($response)
-    {
-        return Splunk_XmlUtil::getTextContentAtXpath(
-            new SimpleXMLElement($response->body),
-            '/response/messages/msg');
-    }
-    
-    // === Accessors ===
-    
-    public function getResponse()
-    {
-        return $this->response;
     }
 }

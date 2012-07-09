@@ -15,16 +15,9 @@
  * under the License.
  */
 
-require_once 'SplunkTest.php';
-
-class HttpTest extends SplunkTest
-{
-    public function testGet()
-    {
-        $http = new Splunk_Http();
-        $response = $http->get('http://www.splunk.com/');
-        
-        $this->assertEquals(200, $response->status);
-        $this->assertContains('<head>', $response->body);
-    }
-}
+/**
+ * Thrown when unable to connect to a Splunk server.
+ * 
+ * @package Splunk
+ */
+class Splunk_ConnectException extends Exception {}

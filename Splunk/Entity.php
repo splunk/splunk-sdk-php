@@ -22,47 +22,135 @@
  */
 class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
 {
-    private $data;
+    private $loaded = FALSE;
+    private $entry;
+    private $namespace;
     private $content;
     
     /**
      * @param Splunk_Service $service
      * @param string $path
-     * @param SimpleXMLElement $data    (optional) The XML of this entity,
+     * @param SimpleXMLElement|NULL $entry
+     *                                  (optional) The <entry> for this entity,
      *                                  as received from the REST API.
      *                                  If omitted, will be loaded on demand.
+     * @param Splunk_Namespace|NULL $namespace
+     *                                  (optional) The namespace from which to
+     *                                  load this entity, or NULL to use the
+     *                                  $service object's default namespace.
+     *                                  Does not apply if this entity is already
+     *                                  loaded (i.e. if $entry is not NULL).
      */
-    public function __construct($service, $path, $data=NULL)
+    public function __construct($service, $path, $entry=NULL, $namespace=NULL)
     {
         parent::__construct($service, $path);
         
-        $this->data = $data;
-        if ($this->data != NULL)
-            $this->loadContentsOfData();
+        $this->entry = $entry;
+        if ($this->entry != NULL)
+            $this->parseContentsFromEntry();
+        
+        $this->namespace = $namespace;
     }
     
     // === Load ===
     
-    protected function load()
+    /**
+     * Loads this resource if not already done. Returns self.
+     * 
+     * @return Splunk_Entity            This entity.
+     * @throws Splunk_HttpException
+     */
+    protected function validate($fetchArgs=array())
     {
-        $response = $this->service->get($this->path);
-        $xml = new SimpleXMLElement($response->body);
-        
-        $this->data = $xml->entry;
-        $this->loadContentsOfData();
+        if (!$this->loaded)
+        {
+            $this->load($fetchArgs);
+            assert($this->loaded);
+        }
+        return $this;
     }
     
-    private function loadContentsOfData()
+    /**
+     * Loads this resource.
+     * 
+     * @throws Splunk_HttpException
+     */
+    private function load($fetchArgs)
     {
-        $this->content = Splunk_AtomFeed::parseValueInside($this->data->content);
+        $response = $this->fetch($fetchArgs);
+        $xml = new SimpleXMLElement($response->body);
+        
+        $this->entry = $this->extractEntryFromRootXmlElement($xml);
+        $this->parseContentsFromEntry();
+    }
+    
+    /**
+     * Fetches this entity's Atom feed from the Splunk server.
+     * 
+     * @throws Splunk_HttpException
+     */
+    protected function fetch($fetchArgs)
+    {
+        return $this->service->get($this->path, array(
+            'namespace' => $this->namespace,
+        ));
+    }
+    
+    /** Returns the <entry> element inside the root element. */
+    protected function extractEntryFromRootXmlElement($xml)
+    {
+        return $xml->entry;
+    }
+    
+    private function parseContentsFromEntry()
+    {
+        $this->content = Splunk_AtomFeed::parseValueInside($this->entry->content);
         $this->loaded = TRUE;
+    }
+    
+    protected function isLoaded()
+    {
+        return $this->loaded;
     }
     
     // === Accessors ===
     
+    /**
+     * @return array                The properties of this entity.
+     */
+    public function getContent()
+    {
+        return $this->validate()->content;
+    }
+    
+    /**
+     * @return string               The name of this entity.
+     */
     public function getName()
     {
-        return (string) $this->validate()->data->title;
+        return (string) $this->validate()->entry->title;
+    }
+    
+    /**
+     * @return Splunk_Namespace     The non-wildcarded namespace that this
+     *                              entity resides in.
+     */
+    public function getNamespace()
+    {
+        // If this is an entity reference with an exact namespace, return it
+        if (!$this->loaded)
+        {
+            $effectiveNamespace = $this->namespace;
+            if ($effectiveNamespace === NULL)
+                $effectiveNamespace = $this->service->getNamespace();
+            if ($effectiveNamespace->isExact())
+                return $effectiveNamespace;
+        }
+        
+        // Extract the namespace from this entity's content
+        $acl = $this['eai:acl'];
+        return Splunk_Namespace::createExact(
+            $acl['owner'], $acl['app'], $acl['sharing']);
     }
     
     // === ArrayAccess Methods ===
@@ -85,5 +173,51 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     public function offsetExists($key)
     {
         return isset($this->validate()->content[$key]);
+    }
+    
+    // === Operations ===
+    
+    /**
+     * Deletes this entity.
+     * 
+     * @throws Splunk_HttpException
+     */
+    public function delete()
+    {
+        $this->service->delete($this->path, array(
+            'namespace' => $this->getNamespace(),
+        ));
+    }
+    
+    /**
+     * Updates this entity's properties.
+     * 
+     * Note that the "name" property cannot be updated.
+     * 
+     * @param array $args   Dictionary of properties that will be changed,
+     *                      along with their new values.
+     * @return              This entity.
+     * @throws Splunk_HttpException
+     */
+    public function update($args)
+    {
+        if (array_key_exists('name', $args))
+            throw new IllegalArgumentException(
+                'Cannot update the name of an entity.');
+        if (array_key_exists('namespace', $args))
+            throw new IllegalArgumentException(
+                'Cannot override the entity\'s namespace.');
+        
+        $params = $args;    // copy by value
+        
+        // Update entity on server
+        $args['namespace'] = $this->getNamespace();
+        $this->service->post($this->path, $args);
+        
+        // Update cached content of entity
+        if ($this->loaded)
+            $this->content = array_merge($this->content, $params);
+        
+        return $this;
     }
 }
