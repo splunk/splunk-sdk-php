@@ -15,74 +15,25 @@
  * under the License.
  */
 
-require_once 'Splunk.php';
-require_once 'settings.php';
+require_once 'SplunkTest.php';
 
-class SavedSearchTest extends PHPUnit_Framework_TestCase
+class SavedSearchTest extends SplunkTest
 {
     // (This search is installed by default on Splunk 4.x.)
     const SAVED_SEARCH_NAME = 'Errors in the last 24 hours';
-    const SAVED_SEARCH_QUERY = 'error OR failed OR severe OR ( sourcetype=access_* ( 404 OR 500 OR 503 ) )';
-    
-    public function testGetSavedSearchCollectionUsingContext()
-    {
-        global $Splunk_testSettings;
-        $context = new Splunk_Service($Splunk_testSettings['connectArgs']);
-        $context->login();
-        
-        $response = $context->get('/servicesNS/nobody/search/saved/searches/');
-        $this->assertContains(
-            '<title>' . self::SAVED_SEARCH_NAME . '</title>',
-            $response->body);
-    }
-    
-    public function testGetSavedSearchFromCollection()
-    {
-        global $Splunk_testSettings;
-        $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
-        $service->login();
-        
-        $savedSearch = $service->getSavedSearches()->get(self::SAVED_SEARCH_NAME);
-        return $savedSearch;
-    }
-    
-    /** @depends testGetSavedSearchFromCollection */
-    public function testGetPropertyOfSavedSearchFromCollection($savedSearch)
-    {
-        $this->assertEquals(self::SAVED_SEARCH_QUERY, $savedSearch['search']);
-    }
     
     public function testGetSavedSearch()
     {
-        global $Splunk_testSettings;
-        $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
-        $service->login();
-        
-        $savedSearch = $service->getSavedSearch(self::SAVED_SEARCH_NAME);
+        $service = $this->loginToRealService();
+        $savedSearch = $service->getSavedSearches()->getReference(
+            self::SAVED_SEARCH_NAME);
         return $savedSearch;
     }
     
     /** @depends testGetSavedSearch */
-    public function testGetPropertyOfSavedSearch($savedSearch)
+    public function testDispatchSearch($savedSearch)
     {
-        $this->assertEquals(self::SAVED_SEARCH_QUERY, $savedSearch['search']);
-    }
-    
-    public function testGetMissingSavedSearch()
-    {
-        global $Splunk_testSettings;
-        $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
-        $service->login();
-        
-        $savedSearch = $service->getSavedSearch('NO_SUCH_SEARCH');
-        try
-        {
-            $savedSearch->getName();    // force load from server
-            $this->assertFail('Expected Splunk_HttpException to be thrown.');
-        }
-        catch (Splunk_HttpException $e)
-        {
-            $this->assertEquals(404, $e->getResponse()->status);
-        }
+        $job = $savedSearch->dispatch();
+        $this->assertEquals('1', $job['isSavedSearch']);
     }
 }

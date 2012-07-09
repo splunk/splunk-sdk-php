@@ -51,7 +51,7 @@ into the repository with git:
 
 ## Requirements
 
-The SDK requires PHP 5.2+
+The SDK requires PHP 5.2+ with the SimpleXML and cURL extensions.
 
 ## ...
 
