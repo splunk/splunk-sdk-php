@@ -106,6 +106,26 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
+     * Returns the results from this job.
+     * 
+     * The format of the results depends on the 'output_mode' argument
+     * (which defaults to "xml"). XML-formatted results can be parsed
+     * using Splunk_ResultsReader. For example:
+     * 
+     *  $job = ...;
+     *  while (!$job->isDone())
+     *  {
+     *      sleep(.5);
+     *      $job->reload();
+     *  }
+     *  $results = new Splunk_ResultsReader($job->getResults());
+     *  foreach ($results as $result)
+     *  {
+     *      // (See documentation for Splunk_ResultsReader to see how to
+     *      //  interpret $result.)
+     *      ...
+     *  }
+     * 
      * @param array $args           (optional) Additional arguments.
      *                              For details, see the
      *                              "GET search/jobs/{search_id}/results"
