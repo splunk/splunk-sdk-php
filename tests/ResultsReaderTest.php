@@ -104,6 +104,44 @@ class ResultsReaderTest extends SplunkTest
         $this->assertParsedResultsEquals($expectedResults, $xmlText);
     }
     
+    public function testReadResultsWithMultipleValues()
+    {
+        $xmlText = trim("
+<?xml version='1.0' encoding='UTF-8'?>
+<results preview='0'>
+<meta>
+<fieldOrder>
+<field>values(sourcetype)</field>
+</fieldOrder>
+</meta>
+	<result offset='0'>
+		<field k='values(sourcetype)'>
+			<value><text>scheduler</text></value>
+			<value><text>searches</text></value>
+			<value><text>splunk_web_access</text></value>
+			<value><text>splunk_web_service</text></value>
+			<value><text>splunkd</text></value>
+			<value><text>splunkd_access</text></value>
+		</field>
+	</result>
+</results>
+");
+        $expectedResults = array(
+            array(
+                'values(sourcetype)' => array(
+                    'scheduler',
+                    'searches',
+                    'splunk_web_access',
+                    'splunk_web_service',
+                    'splunkd',
+                    'splunkd_access',
+                )
+            ),
+        );
+        
+        $this->assertParsedResultsEquals($expectedResults, $xmlText);
+    }
+    
     private function assertParsedResultsEquals($expectedResults, $xmlText)
     {
         $resultsReader = new Splunk_ResultsReader($xmlText);

@@ -20,17 +20,34 @@
  * 
  * Results are obtained by iterating over an instance of this class
  * using a foreach loop. Each result can either be an associative array or
- * a Splunk_Message.
+ * a Splunk_Message. If the result is an associative array, it maps each field
+ * name to either a single value or an array of values.
  * 
+ * $resultsReader = new Splunk_ResultsReader(...);
  * foreach ($resultsReader as $result)
  * {
  *     if (is_array($result))
  *     {
  *         // Process a normal result
+ *         print "{\r\n";
+ *         foreach ($result as $key => $valueOrValues)
+ *         {
+ *             if (is_array($valueOrValues))
+ *             {
+ *                 $valuesString = implode(',', $valueOrValues);
+ *                 print "  {$key} => [{$valuesString}]\r\n";
+ *             }
+ *             else
+ *             {
+ *                 print "  {$key} => {$valueOrValues}\r\n";
+ *             }
+ *         }
+ *         print "}\r\n";
  *     }
  *     else if ($result instanceof Splunk_Message)
  *     {
  *         // Process a message
+ *         print "[{$result->type}] {$result->text}\r\n";
  *     }
  * }
  * 
@@ -51,6 +68,7 @@ class Splunk_ResultsReader implements IteratorAggregate
             {
                 $type = Splunk_XmlUtil::getAttributeValue($msgXml, 'type');
                 $text = Splunk_XmlUtil::getTextContent($msgXml);
+                
                 $this->results[] = new Splunk_Message($type, $text);
             }
         }
@@ -60,8 +78,13 @@ class Splunk_ResultsReader implements IteratorAggregate
             foreach ($resultXml->field as $fieldXml)
             {
                 $k = Splunk_XmlUtil::getAttributeValue($fieldXml, 'k');
-                $v = Splunk_XmlUtil::getTextContent($fieldXml->value->text);
-                $result[$k] = $v;
+                $vs = array();
+                foreach ($fieldXml->value as $valueXml)
+                {
+                    $vs[] = Splunk_XmlUtil::getTextContent($valueXml->text);
+                }
+                
+                $result[$k] = (count($vs) === 1 ? $vs[0] : $vs);
             }
             $this->results[] = $result;
         }
