@@ -99,6 +99,16 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /** Returns the <entry> element inside the root element. */
     protected function extractEntryFromRootXmlElement($xml)
     {
+        if (!Splunk_XmlUtil::isSingleElement($xml->entry))
+        {
+            // Extract name from path since we can't extract it from the
+            // entity content here.
+            $pathComponents = explode('/', $this->path);
+            $name = $pathComponents[count($pathComponents) - 1];
+            
+            throw new Splunk_AmbiguousEntityNameException($name);
+        }
+        
         return $xml->entry;
     }
     
@@ -111,6 +121,25 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     protected function isLoaded()
     {
         return $this->loaded;
+    }
+    
+    /**
+     * Forcefully reloads this entity from the Splunk server.
+     * 
+     * @return Splunk_Entity            This entity.
+     * @throws Splunk_HttpException
+     */
+    public function reload()
+    {
+        if ($this->loaded)
+        {
+            // Remember this entity's exact namespace, so that a reload
+            // will occur in the correct namespace.
+            $this->namespace = $this->getNamespace();
+        }
+        
+        $this->loaded = FALSE;
+        return $this->validate();
     }
     
     // === Accessors ===
