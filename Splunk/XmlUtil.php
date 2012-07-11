@@ -68,4 +68,23 @@ class Splunk_XmlUtil
             ? NULL
             : Splunk_XmlUtil::getTextContent($matchingElements[0]);
     }
+    
+    /**
+     * Returns true if the specified SimpleXMLElement represents a unique
+     * element or false if it represents a collection of elements.
+     * 
+     * @param SimpleXMLElement  $xml
+     * @return bool
+     */
+    public static function isSingleElement($xml)
+    {
+        $count = 0;
+        foreach ($xml as $item)
+        {
+            $count++;
+            if ($count >= 2)
+                return false;
+        }
+        return ($count == 1);
+    }
 }

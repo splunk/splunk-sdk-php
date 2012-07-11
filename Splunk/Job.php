@@ -85,4 +85,70 @@ class Splunk_Job extends Splunk_Entity
             'delayPerRetry' => $delayPerRetry,
         ));
     }
+    
+    // === Results ===
+    
+    /**
+     * @return float                Percentage of this job's results that were
+     *                              computed (0.0-1.0) at the time this job was
+     *                              last loaded or reloaded.
+     * @see Splunk_Entity::reload()
+     */ 
+    public function getProgress()
+    {
+        return floatval($this['doneProgress']);
+    }
+    
+    /**
+     * @return boolean              Whether this job's results were available
+     *                              at the time this job was last loaded or
+     *                              reloaded.
+     * @see Splunk_Entity::reload()
+     */
+    public function isDone()
+    {
+        return ($this['isDone'] === '1');
+    }
+    
+    /**
+     * Returns the results from this job.
+     * 
+     * The format of the results depends on the 'output_mode' argument
+     * (which defaults to "xml"). XML-formatted results can be parsed
+     * using Splunk_ResultsReader. For example:
+     * 
+     *  $job = ...;
+     *  while (!$job->isDone())
+     *  {
+     *      sleep(.5);
+     *      $job->reload();
+     *  }
+     *  $results = new Splunk_ResultsReader($job->getResults());
+     *  foreach ($results as $result)
+     *  {
+     *      // (See documentation for Splunk_ResultsReader to see how to
+     *      //  interpret $result.)
+     *      ...
+     *  }
+     * 
+     * @param array $args           (optional) Additional arguments.
+     *                              For details, see the
+     *                              "GET search/jobs/{search_id}/results"
+     *                              endpoint in the REST API Documentation.
+     * @return string               The results (i.e. transformed events)
+     *                              of this job.
+     * @throws Splunk_JobNotDoneException
+     *                              If the results are not ready yet.
+     *                              Check isDone() to ensure the results are
+     *                              ready prior to calling this method.
+     * @throws Splunk_HttpException
+     * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
+     */
+    public function getResults($args=array())
+    {
+        $response = $this->service->get($this->path . '/results', $args);
+        if ($response->status == 204)
+            throw new Splunk_JobNotDoneException($response);
+        return $response->body;
+    }
 }

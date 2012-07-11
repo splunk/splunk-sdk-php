@@ -27,9 +27,10 @@ class Splunk_SavedSearch extends Splunk_Entity
     /**
      * Runs this saved search and returns the resulting search job.
      * 
-     * @param array $args   Additional dispatch arguments. For details, see the
-     *                      "POST saved/searches/{name}/dispatch" endpoint in
-     *                      the REST API Documentation.
+     * @param array $args   (optional) Additional arguments.
+     *                      For details, see the
+     *                      "POST saved/searches/{name}/dispatch"
+     *                      endpoint in the REST API Documentation.
      * @link http://docs.splunk.com/Documentation/Splunk/4.3.3/RESTAPI/RESTsearch#saved.2Fsearches.2F.7Bname.7D.2Fdispatch
      */
     public function dispatch($args=array())
@@ -38,6 +39,7 @@ class Splunk_SavedSearch extends Splunk_Entity
         $xml = new SimpleXMLElement($response->body);
         $sid = Splunk_XmlUtil::getTextContentAtXpath($xml, '/response/sid');
         
-        return $this->service->getJobs()->getReference($sid);
+        return $this->service->getJobs()->getReference(
+            $sid, $this->getNamespace());
     }
 }

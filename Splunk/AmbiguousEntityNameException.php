@@ -16,6 +16,17 @@
  */
 
 /**
+ * Thrown when an attempt is made to access a Splunk entity with a name
+ * that matches multiple entities in the current (non-exact) namespace.
+ * 
  * @package Splunk
  */
-class Splunk_AmbiguousKeyException extends RuntimeException {}
+class Splunk_AmbiguousEntityNameException extends RuntimeException
+{
+    public function __construct($name)
+    {
+        parent::__construct(
+            "Multiple entities exist with name '{$name}'. " .
+            "Specify an exact namespace to disambiguate.");
+    }
+}

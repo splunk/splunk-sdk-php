@@ -98,4 +98,56 @@ class JobTest extends SplunkTest
         
         $this->assertEquals($job, $job->makeReady());
     }
+    
+    public function testValidResultsForNormalJob()
+    {
+        $service = $this->loginToRealService();
+        
+        // (This search is installed by default on Splunk 4.x.)
+        $ss = $service->getSavedSearches()->get('Top five sourcetypes');
+        $job = $ss->dispatch();
+        
+        while (!$job->isDone())
+        {
+            //printf("%03.1f%%\r\n", $job->getProgress() * 100);
+            sleep(.5);
+            $job->reload();
+        }
+        
+        $resultsXmlString = $job->getResults();
+        $results = new Splunk_ResultsReader($resultsXmlString);
+        
+        $minExpectedSeriesNames = array('splunkd', 'splunkd_access');
+        $actualSeriesNames = array();
+        foreach ($results as $result)
+            if (is_array($result))
+                $actualSeriesNames[] = $result['series'];
+        
+        $remainingSeriesNames = 
+            array_diff($minExpectedSeriesNames, $actualSeriesNames);
+        $this->assertEmpty(
+            $remainingSeriesNames,
+            'Results are missing some expected series names: ' . 
+                implode(',', $remainingSeriesNames));
+    }
+    
+    /**
+     * @expectedException Splunk_JobNotDoneException
+     */
+    public function testResultsNotAvailable()
+    {
+        $service = $this->loginToRealService();
+        
+        // (This search is installed by default on Splunk 4.x.)
+        $ss = $service->getSavedSearches()->get('Top five sourcetypes');
+        $job = $ss->dispatch();
+        
+        if ($job->isDone())
+        {
+            $this->assertTrue(FALSE,
+                'Job completed too fast. Please rewrite this unit test to avoid timing issues.');
+        }
+        
+        $job->getResults();
+    }
 }

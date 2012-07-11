@@ -16,6 +16,35 @@
  */
 
 /**
+ * Represents a message received in a results stream.
+ * 
  * @package Splunk
+ * @see Splunk_ResultsReader
  */
-class Splunk_NoSuchKeyException extends RuntimeException {}
+class Splunk_Message
+{
+    private $type;
+    private $text;
+    
+    public function __construct($type, $text)
+    {
+        $this->type = $type;
+        $this->text = $text;
+    }
+    
+    /**
+     * @return string           The type of this message (ex: 'DEBUG').
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+    
+    /**
+     * @return string           The text of this message.
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+}
