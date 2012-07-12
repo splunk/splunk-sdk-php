@@ -135,6 +135,8 @@ class Splunk_Collection extends Splunk_Endpoint
      */
     public function get($name, $namespace=NULL)
     {
+        $this->checkName($name);
+        
         try
         {
             $response = $this->service->get($this->getEntityPath($name), array(
@@ -177,6 +179,8 @@ class Splunk_Collection extends Splunk_Endpoint
      */
     public function getReference($name, $namespace=NULL)
     {
+        $this->checkName($name);
+        
         return new $this->entitySubclass(
             $this->service,
             $this->getEntityPath($name),
@@ -194,10 +198,13 @@ class Splunk_Collection extends Splunk_Endpoint
      *                    to create the entity. Defaults to the service's
      *                    namespace.
      * }
+     * @return Splunk_Job
      * @throws Splunk_HttpException
      */
     public function create($name, $args=array())
     {
+        $this->checkName($name);
+        
         $args = array_merge(array(
             'name' => $name,
         ), $args);
@@ -229,6 +236,8 @@ class Splunk_Collection extends Splunk_Endpoint
      */
     public function delete($name, $args=array())
     {
+        $this->checkName($name);
+        
         $this->service->delete($this->getEntityPath($name), $args);
     }
     
@@ -240,5 +249,14 @@ class Splunk_Collection extends Splunk_Endpoint
     private function getEntityPath($name)
     {
         return $this->path . urlencode($name);
+    }
+    
+    /**
+     * Ensures that the specified name is not NULL or empty.
+     */
+    private function checkName($name)
+    {
+        if ($name === NULL || $name === '')
+            throw new InvalidArgumentException('Invalid empty name.');
     }
 }

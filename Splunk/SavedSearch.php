@@ -16,7 +16,7 @@
  */
  
 /**
- * Represents a saved search entity in the Splunk REST API.
+ * Represents a saved search.
  * 
  * @package Splunk
  */

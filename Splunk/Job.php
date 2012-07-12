@@ -16,7 +16,7 @@
  */
 
 /**
- * Represents a job entity in the Splunk REST API.
+ * Represents a running or completed search job.
  * 
  * @package Splunk
  */

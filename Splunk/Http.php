@@ -134,7 +134,9 @@ class Splunk_Http
             $headers[$key] = trim($value);
         }
         
-        list($http_version, $_, $reason) = explode(' ', $status_line, 3);
+        $status_line_components = explode(' ', $status_line, 3);
+        $http_version = $status_line_components[0];
+        $reason = count($status_line_components) == 3 ? $status_line_components[2] : '';
         
         $response = (object) array(
             'status' => $status,
