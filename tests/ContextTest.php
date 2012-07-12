@@ -28,7 +28,7 @@ class ContextTest extends SplunkTest
         
         $this->assertEquals(NULL, $context->getToken());
         
-        $http_response = (object) array(
+        $httpResponse = (object) array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
@@ -38,7 +38,7 @@ class ContextTest extends SplunkTest
 </response>');
         $http->expects($this->once())
              ->method('post')
-             ->will($this->returnValue($http_response));
+             ->will($this->returnValue($httpResponse));
         $context->login();
         
         $this->assertEquals(
@@ -57,7 +57,7 @@ class ContextTest extends SplunkTest
             'http' => $http,
         ));
         
-        $http_response = (object) array(
+        $httpResponse = (object) array(
             'status' => 401,
             'reason' => 'Unauthorized',
             'headers' => array(),
@@ -70,7 +70,7 @@ class ContextTest extends SplunkTest
         $http->expects($this->once())
              ->method('post')
              ->will($this->throwException(
-                new Splunk_HttpException($http_response)));
+                new Splunk_HttpException($httpResponse)));
         $context->login();
     }
     

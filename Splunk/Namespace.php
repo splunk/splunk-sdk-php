@@ -49,10 +49,10 @@ class Splunk_Namespace
      */
     public static function createDefault()
     {
-        static $default_ = NULL;
-        if ($default_ === NULL)
-            $default_ = new Splunk_Namespace(NULL, NULL, 'default');
-        return $default_;
+        static $defaultNamespace = NULL;
+        if ($defaultNamespace === NULL)
+            $defaultNamespace = new Splunk_Namespace(NULL, NULL, 'default');
+        return $defaultNamespace;
     }
     
     /**

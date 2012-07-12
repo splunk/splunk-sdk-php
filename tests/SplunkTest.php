@@ -56,7 +56,7 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
             'http' => $http,
         ));
         
-        $http_response = (object) array(
+        $httpResponse = (object) array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
@@ -68,14 +68,14 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
         {
             $http->expects($this->once())
                  ->method('post')
-                 ->will($this->returnValue($http_response));
+                 ->will($this->returnValue($httpResponse));
         }
         else
         {
             $http->expects($this->exactly(2))
                  ->method('post')
                  ->will($this->onConsecutiveCalls(
-                    $this->returnValue($http_response),
+                    $this->returnValue($httpResponse),
                     $this->returnValue($secondPostReturnValue)
                  ));
         }

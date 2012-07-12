@@ -26,45 +26,45 @@ class Splunk_Http
      * @param array $params     (optional) query parameters.
      * @see request()
      */
-    public function get($url, $params=array(), $request_headers=array())
+    public function get($url, $params=array(), $requestHeaders=array())
     {
-        return $this->requestWithParams('get', $url, $params, $request_headers);
+        return $this->requestWithParams('get', $url, $params, $requestHeaders);
     }
     
     /**
      * @param array $params     (optional) form parameters to send in the request body.
      * @see request()
      */
-    public function post($url, $params=array(), $request_headers=array())
+    public function post($url, $params=array(), $requestHeaders=array())
     {
         return $this->request(
-            'post', $url, $request_headers, http_build_query($params));
+            'post', $url, $requestHeaders, http_build_query($params));
     }
     
     /**
      * @param array $params     (optional) query parameters.
      * @see request()
      */
-    public function delete($url, $params=array(), $request_headers=array())
+    public function delete($url, $params=array(), $requestHeaders=array())
     {
-        return $this->requestWithParams('delete', $url, $params, $request_headers);
+        return $this->requestWithParams('delete', $url, $params, $requestHeaders);
     }
     
     private function requestWithParams(
-        $method, $url, $params, $request_headers)
+        $method, $url, $params, $requestHeaders)
     {
         $fullUrl = ($params === NULL || count($params) == 0)
             ? $url
             : $url . '?' . http_build_query($params);
         
-        return $this->request($method, $fullUrl, $request_headers);
+        return $this->request($method, $fullUrl, $requestHeaders);
     }
     
     /**
      * @param string $method            HTTP request method (ex: 'get').
      * @param string $url               URL to fetch.
-     * @param array $request_headers    (optional) dictionary of header names and values.
-     * @param string $request_body      (optional) content to send in the request.
+     * @param array $requestHeaders     (optional) dictionary of header names and values.
+     * @param string $requestBody       (optional) content to send in the request.
      * @return object {
      *      'status' => HTTP status code (ex: 200).
      *      'reason' => HTTP reason string (ex: 'OK').
@@ -83,7 +83,7 @@ class Splunk_Http
     //       won't work because the temporary file will never finish being
     //       written.
     private function request(
-        $method, $url, $request_headers=array(), $request_body='')
+        $method, $url, $requestHeaders=array(), $requestBody='')
     {
         $opts = array(
             CURLOPT_HTTPGET => TRUE,
@@ -95,7 +95,7 @@ class Splunk_Http
             CURLOPT_SSL_VERIFYPEER => FALSE,
         );
         
-        foreach ($request_headers as $k => $v)
+        foreach ($requestHeaders as $k => $v)
             $opts[CURLOPT_HTTPHEADER][] = "$k: $v";
         
         switch ($method)
@@ -105,7 +105,7 @@ class Splunk_Http
                 break;
             case 'post':
                 $opts[CURLOPT_POST] = TRUE;
-                $opts[CURLOPT_POSTFIELDS] = $request_body;
+                $opts[CURLOPT_POSTFIELDS] = $requestBody;
                 break;
             default:
                 $opts[CURLOPT_CUSTOMREQUEST] = strtoupper($method);
@@ -121,22 +121,22 @@ class Splunk_Http
         
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         
-        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $header_text = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
+        $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $headerText = substr($response, 0, $headerSize);
+        $body = substr($response, $headerSize);
         
         $headers = array();
-        $header_lines = explode("\r\n", trim($header_text));
-        $status_line = array_shift($header_lines);
-        foreach ($header_lines as $line)
+        $headerLines = explode("\r\n", trim($headerText));
+        $statusLine = array_shift($headerLines);
+        foreach ($headerLines as $line)
         {
             list($key, $value) = explode(':', $line, 2);
             $headers[$key] = trim($value);
         }
         
-        $status_line_components = explode(' ', $status_line, 3);
-        $http_version = $status_line_components[0];
-        $reason = count($status_line_components) == 3 ? $status_line_components[2] : '';
+        $statusLineComponents = explode(' ', $statusLine, 3);
+        $httpVersion = $statusLineComponents[0];
+        $reason = count($statusLineComponents) == 3 ? $statusLineComponents[2] : '';
         
         $response = (object) array(
             'status' => $status,

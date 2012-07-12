@@ -24,14 +24,14 @@ class JobTest extends SplunkTest
         list($service, $http) = $this->loginToMockService();
         
         // Get job
-        $http_response = (object) array(
+        $httpResponse = (object) array(
             'status' => 204,
             'reason' => 'No Content',
             'headers' => array(),
             'body' => '');
         $http->expects($this->atLeastOnce())
              ->method('get')
-             ->will($this->returnValue($http_response));
+             ->will($this->returnValue($httpResponse));
         $job = $service->getJobs()->getReference('A_JOB');
         
         // Try to touch job when server refuses to return it
@@ -55,14 +55,14 @@ class JobTest extends SplunkTest
         
         list($service, $http) = $this->loginToMockService();
         
-        $http_response = (object) array(
+        $httpResponse = (object) array(
             'status' => 204,
             'reason' => 'No Content',
             'headers' => array(),
             'body' => '');
         $http->expects($this->exactly($maxTries))
              ->method('get')
-             ->will($this->returnValue($http_response));
+             ->will($this->returnValue($httpResponse));
         $job = $service->getJobs()->getReference('A_JOB');
         
         $this->assertFalse($job->isReady());
@@ -81,7 +81,7 @@ class JobTest extends SplunkTest
     {
         list($service, $http) = $this->loginToMockService();
         
-        $http_response = (object) array(
+        $httpResponse = (object) array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
@@ -93,7 +93,7 @@ class JobTest extends SplunkTest
 ');
         $http->expects($this->once())
              ->method('get')
-             ->will($this->returnValue($http_response));
+             ->will($this->returnValue($httpResponse));
         $job = $service->getJobs()->getReference('A_JOB');
         
         $this->assertEquals($job, $job->makeReady());
