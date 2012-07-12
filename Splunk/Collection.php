@@ -198,7 +198,7 @@ class Splunk_Collection extends Splunk_Endpoint
      *                    to create the entity. Defaults to the service's
      *                    namespace.
      * }
-     * @return Splunk_Job
+     * @return Splunk_Entity
      * @throws Splunk_HttpException
      */
     public function create($name, $args=array())
