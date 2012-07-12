@@ -34,7 +34,7 @@ class Splunk_Service extends Splunk_Context
     
     public function getJobs()
     {
-        return new Splunk_Collection($this, 'search/jobs/', 'Splunk_Job');
+        return new Splunk_Jobs($this, 'search/jobs/', 'Splunk_Job');
     }
     
     public function getSavedSearches()
