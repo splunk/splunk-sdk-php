@@ -142,6 +142,33 @@ class ResultsReaderTest extends SplunkTest
         $this->assertParsedResultsEquals($expectedResults, $xmlText);
     }
     
+    // For some reason the _raw field has a special format for its value
+    public function testReadRawField()
+    {
+        // Query: search index=_internal | head 1
+        // Modified to strip all fields other than _raw
+        $xmlText = trim("
+<?xml version='1.0' encoding='UTF-8'?>
+<results preview='0'>
+<meta>
+<fieldOrder>
+<field>_raw</field>
+</fieldOrder>
+</meta>
+	<result offset='0'>
+		<field k='_raw'><v xml:space='preserve' trunc='0'>07-13-2012 09:27:27.307 -0700 INFO  Metrics - group=search_concurrency, system total, active_hist_searches=0, active_realtime_searches=0</v></field>
+	</result>
+</results>
+");
+        $expectedResults = array(
+            array(
+                '_raw' => '07-13-2012 09:27:27.307 -0700 INFO  Metrics - group=search_concurrency, system total, active_hist_searches=0, active_realtime_searches=0',
+            ),
+        );
+        
+        $this->assertParsedResultsEquals($expectedResults, $xmlText);
+    }
+    
     private function assertParsedResultsEquals($expectedResults, $xmlText)
     {
         $resultsReader = new Splunk_ResultsReader($xmlText);
