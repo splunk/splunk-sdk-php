@@ -20,7 +20,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
 
 <h2>Search</h2>
 <form method="get" action="">
-  <input type="text" name="search" placeholder=""
+  <input type="text" name="search" placeholder="" size="100"
     value="<?php echo htmlspecialchars($search); ?>"/>
   <input type="submit" value="Search"/>
 </form>
