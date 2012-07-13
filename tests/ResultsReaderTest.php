@@ -143,7 +143,7 @@ class ResultsReaderTest extends SplunkTest
     }
     
     // For some reason the _raw field has a special format for its value
-    public function testReadRawField()
+    public function testReadResultsWithRawField()
     {
         // Query: search index=_internal | head 1
         // Modified to strip all fields other than _raw
@@ -165,6 +165,15 @@ class ResultsReaderTest extends SplunkTest
                 '_raw' => '07-13-2012 09:27:27.307 -0700 INFO  Metrics - group=search_concurrency, system total, active_hist_searches=0, active_realtime_searches=0',
             ),
         );
+        
+        $this->assertParsedResultsEquals($expectedResults, $xmlText);
+    }
+    
+    public function testReadResultsEmpty()
+    {
+        // Query: search index=_missing
+        $xmlText = '';
+        $expectedResults = array();
         
         $this->assertParsedResultsEquals($expectedResults, $xmlText);
     }

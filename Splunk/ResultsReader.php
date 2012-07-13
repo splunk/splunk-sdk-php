@@ -59,6 +59,13 @@ class Splunk_ResultsReader implements IteratorAggregate
     
     public function __construct($xmlString)
     {
+        // Search jobs lacking results return a blank document (with HTTP 200)
+        if ($xmlString === '')
+        {
+            $this->results = array();
+            return;
+        }
+        
         $xml = new SimpleXMLElement($xmlString);
         
         $this->results = array();
