@@ -20,52 +20,52 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
 
 <h2>Search</h2>
 <form method="get" action="">
-  <input type="text" name="search" placeholder="" size="100"
+  <input type="text" name="search" placeholder="search index=_internal | top sourcetype" size="100"
     value="<?php echo htmlspecialchars($search); ?>"/>
   <input type="submit" value="Search"/>
 </form>
 
 <?php if ($search !== ''): ?>
   <h2>Progress</h2>
-  <ul>
-    <?php
-    try
+  <?php
+  try
+  {
+    // Login and start search job
+    $service = new Splunk_Service($SplunkExamples_connectArguments);
+    // (NOTE: Can throw HTTP 401 if bad credentials)
+    $service->login();
+    // (NOTE: Can throw HTTP 400 if search command not recognized)
+    $job = $service->getJobs()->create($search);
+    
+    // Print progress of the job as it is running
+    echo '<ul>';
+    while (!$job->isDone())
     {
-      // Login and start search job
-      $service = new Splunk_Service($SplunkExamples_connectArguments);
-      // (NOTE: Can throw HTTP 401 if bad credentials)
-      $service->login();
-      // (NOTE: Can throw HTTP 400 if search command not recognized)
-      $job = $service->getJobs()->create($search);
+      echo '<li>';
+      printf("%03.1f%%", $job->getProgress() * 100);
+      echo '</li>';
+      flush();
       
-      // Print progress of the job as it is running
-      while (!$job->isDone())
-      {
-        print '<li>';
-        printf("%03.1f%%", $job->getProgress() * 100);
-        print '</li>';
-        flush();
-        
-        usleep(1000000 * 0.5);
-        $job->reload();
-      }
-      print '<li>Done</li>';
-      
-      // (NOTE: Can throw HTTP 400 if search command arguments not recognized)
-      $resultsText = $job->getResults();
-      $results = new Splunk_ResultsReader($resultsText);
-      $messages = array();
+      usleep(1000000 * 0.5);
+      $job->reload();
     }
-    catch (Exception $e)
-    {
-      $results = array();
-      $messages = array();
-      
-      // Generate fake message that contains the exception message
-      $messages[] = new Splunk_Message('EXCEPTION', $e->getMessage());
-    }
-    ?>
-  </ul>
+    echo '<li>Done</li>';
+    echo '</ul>';
+    
+    // (NOTE: Can throw HTTP 400 if search command arguments not recognized)
+    $resultsText = $job->getResults();
+    $results = new Splunk_ResultsReader($resultsText);
+    $messages = array();
+  }
+  catch (Exception $e)
+  {
+    $results = array();
+    $messages = array();
+    
+    // Generate fake message that contains the exception message
+    $messages[] = new Splunk_Message('EXCEPTION', $e->getMessage());
+  }
+  ?>
   <h2>Results</h2>
   <table>
     <?php
