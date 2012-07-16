@@ -49,10 +49,12 @@ class Splunk_Collection extends Splunk_Endpoint
      * @param array $args (optional) {
      *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
      *                    to list entities. Defaults to the service's namespace.
+     *     
      *     'count' => (optional) The maximum number of items to return.
      *                Defaults to returning all items.
      *     'offset' => (optional) The offset of the first item to return.
      *                 Defaults to 0.
+     *     
      *     'search' => (optional) The search expression to filter responses
      *                 with. For example, "foo" matches any object that has
      *                 "foo" in a substring of a field. Similarly the

@@ -59,6 +59,13 @@ class Splunk_ResultsReader implements IteratorAggregate
     
     public function __construct($xmlString)
     {
+        // Search jobs lacking results return a blank document (with HTTP 200)
+        if ($xmlString === '')
+        {
+            $this->results = array();
+            return;
+        }
+        
         $xml = new SimpleXMLElement($xmlString);
         
         $this->results = array();
@@ -81,7 +88,13 @@ class Splunk_ResultsReader implements IteratorAggregate
                 $vs = array();
                 foreach ($fieldXml->value as $valueXml)
                 {
+                    // Normal field values
                     $vs[] = Splunk_XmlUtil::getTextContent($valueXml->text);
+                }
+                foreach ($fieldXml->v as $vXml)
+                {
+                    // _raw field value
+                    $vs[] = Splunk_XmlUtil::getTextContent($vXml);
                 }
                 
                 $result[$k] = (count($vs) === 1 ? $vs[0] : $vs);

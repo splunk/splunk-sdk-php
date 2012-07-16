@@ -113,6 +113,10 @@ class Splunk_Job extends Splunk_Entity
     /**
      * Returns the results from this job.
      * 
+     * By default, all results are returned. For large
+     * result sets, it is advisable to fetch items using multiple calls with
+     * the paging options (i.e. 'offset' and 'count').
+     * 
      * The format of the results depends on the 'output_mode' argument
      * (which defaults to "xml"). XML-formatted results can be parsed
      * using Splunk_ResultsReader. For example:
@@ -131,10 +135,27 @@ class Splunk_Job extends Splunk_Entity
      *      ...
      *  }
      * 
-     * @param array $args           (optional) Additional arguments.
-     *                              For details, see the
-     *                              "GET search/jobs/{search_id}/results"
-     *                              endpoint in the REST API Documentation.
+     * @param array $args (optional) {
+     *     'count' => (optional) The maximum number of results to return.
+     *                Defaults to returning all results.
+     *     'offset' => (optional) The offset of the first result to return.
+     *                 Defaults to 0.
+     *     
+     *     'field_list' => (optional) Comma-separated list of fields to return
+     *                     in the result set. Defaults to all fields.
+     *     'output_mode' => (optional) The output format of the result. Valid values:
+     *                      - "csv"
+     *                      - "raw"
+     *                      - "xml": The format parsed by Splunk_ResultsReader.
+     *                      - "json"
+     *                      Defaults to "xml".
+     *     'search' => (optional) The search expression to filter results
+     *                 with. For example, "foo" matches any object that has
+     *                 "foo" in a substring of a field. Similarly the
+     *                 expression "field_name=field_value" matches only objects
+     *                 that have a "field_name" field with the value
+     *                 "field_value".
+     * }
      * @return string               The results (i.e. transformed events)
      *                              of this job.
      * @throws Splunk_JobNotDoneException
@@ -146,6 +167,10 @@ class Splunk_Job extends Splunk_Entity
      */
     public function getResults($args=array())
     {
+        $args = array_merge(array(
+            'count' => '0',
+        ), $args);
+        
         $response = $this->service->get($this->path . '/results', $args);
         if ($response->status == 204)
             throw new Splunk_JobNotDoneException($response);
