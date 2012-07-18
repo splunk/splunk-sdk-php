@@ -40,6 +40,83 @@ into the repository with git:
 
 > git clone https://github.com/splunk/splunk-sdk-php.git
 
+
+## Layout of the SDK
+
+<table>
+
+<tr>
+<td>examples</td>
+<td>Examples demonstrating various SDK features</td>
+<tr>
+
+<tr>
+<td>Splunk</td>
+<td>Source for the SDK classes</td>
+<tr>
+
+<tr>
+<td>Splunk.php</td>
+<td>Source for the SDK class autoloader</td>
+<tr>
+
+<tr>
+<td>tests</td>
+<td>Source for unit tests</td>
+<tr>
+
+</table>
+
+### Examples
+
+To run the examples, you will need to install a web server locally that supports PHP.
+
+* On Mac OS X, [MAMP] is recommended.
+* On Windows, [XAMPP] is recommended.
+
+[MAMP]: http://www.mamp.info/en/index.html
+[XAMPP]: http://www.apachefriends.org/en/xampp.html
+
+Then, move the entire `splunk-sdk-php` directory (containing `examples` and
+`Splunk.php`) inside your web server's document root.
+
+* For MAMP, the document root is located at: `/Applications/MAMP/htdocs/`
+* For XAMPP, the document root is location at: `C:\xampp\htdocs\`
+
+Then you should be able to access the SDK examples via a URL similar to:
+
+	http://localhost:8888/splunk-sdk-php/examples/index.php
+
+(You may need to alter the port of the URL to another value such as `8080` or
+ `80`, depending on your web server.)
+
+### Unit Tests
+
+Requirements:
+
+* [PHPUnit 3.6](http://www.phpunit.de/)
+* [Xdebug 2.2.0](http://xdebug.org/) (for code coverage)
+
+To execute the unit tests, run:
+
+    phpunit tests
+
+To generate a code coverage report, run:
+
+    phpunit --coverage-html coverage tests
+    open coverage/Splunk.html
+
+### API Documentation
+
+Requirements:
+
+* [phpDocumentor 2](http://www.phpdoc.org/)
+
+To generate the API documentation, run:
+
+    phpdoc -d Splunk -t apidocs
+
+
 ## Quickstart
 
 The PHP SDK provides an object-oriented interface for interacting with a Splunk server.
@@ -119,7 +196,7 @@ So, for example, to fetch a list of saved searches or search jobs:
 
 ```
 $savedSearches = $service->getSavedSearches()->items();  // in the default namespace
-$jobs = $service->getJobs()->items();                     // in the default namespace
+$jobs = $service->getJobs()->items();                    // in the default namespace
 ```
 
 You can also fetch a particular entity in a collection by name:
@@ -276,7 +353,8 @@ $results = new Splunk_ResultsReader($job->getResults());
 
 ### Running a Saved Search
 
-You can create a normal search job based on a saved search by calling `dispatch()` on the `Splunk_SavedSearch` object.
+You can create a normal search job based on a saved search by calling
+`dispatch()` on the `Splunk_SavedSearch` object.
 
 ```
 $savedSearch = $service->getSavedSearches()->get('Top five sourcetypes');
@@ -345,7 +423,6 @@ If you would like to contribute to the SDK, please follow one of the links
 provided below.
 
 * [Individual contributions](http://dev.splunk.com/goto/individualcontributions)
-
 * [Company contributions](http://dev.splunk.com/view/companycontributions/SP-CAAAEDR)
 
 ### Support
