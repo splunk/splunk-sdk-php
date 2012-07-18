@@ -15,15 +15,36 @@
  * under the License.
  */
 
-require_once 'SplunkTest.php';
-
-class MessageTest extends SplunkTest
+/**
+ * Represents a message received in a results stream.
+ * 
+ * @package Splunk
+ * @see Splunk_ResultsReader
+ */
+class Splunk_ResultsMessage
 {
-    // (Exists solely to give the getters code coverage, preventing
-    //  Splunk_Message from sticking out on code coverage reports.)
-    public function testGetters() {
-        $message = new Splunk_Message('DEBUG', 'Hello World');
-        $this->assertEquals('DEBUG', $message->getType());
-        $this->assertEquals('Hello World', $message->getText());
+    private $type;
+    private $text;
+    
+    public function __construct($type, $text)
+    {
+        $this->type = $type;
+        $this->text = $text;
+    }
+    
+    /**
+     * @return string           The type of this message (ex: 'DEBUG').
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+    
+    /**
+     * @return string           The text of this message.
+     */
+    public function getText()
+    {
+        return $this->text;
     }
 }

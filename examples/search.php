@@ -59,11 +59,10 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
   }
   catch (Exception $e)
   {
+    // Generate fake result that contains the exception message
     $results = array();
     $messages = array();
-    
-    // Generate fake message that contains the exception message
-    $messages[] = new Splunk_Message('EXCEPTION', $e->getMessage());
+    $messages[] = new Splunk_ResultsMessage('EXCEPTION', $e->getMessage());
   }
   ?>
   <h2>Results</h2>
@@ -75,7 +74,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
       // Skip messages and other non-standard results
       if (!is_array($result))
       {
-        if ($result instanceof Splunk_Message)
+        if ($result instanceof Splunk_ResultsMessage)
         {
           $messages[] = $result;
         }

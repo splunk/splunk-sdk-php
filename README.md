@@ -174,7 +174,7 @@ foreach ($results as $result)
         }
         print "}\r\n";
     }
-    else if ($result instanceof Splunk_Message)
+    else if ($result instanceof Splunk_ResultsMessage)
     {
         // Process a message
         print "[{$result->getType()}] {$result->getText()}\r\n";
@@ -293,7 +293,7 @@ foreach ($results as $result)
             // ...
         }
     }
-    else if ($result instanceof Splunk_Message)
+    else if ($result instanceof Splunk_ResultsMessage)
     {
         // Process a message
         print "[{$result->getType()}] {$result->getText()}\r\n";

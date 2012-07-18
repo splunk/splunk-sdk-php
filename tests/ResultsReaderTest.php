@@ -23,8 +23,8 @@ class ResultsReaderTest extends SplunkTest
     {
         $xmlText = file_get_contents('./tests/data/simpleSearchResults.xml');
         $expectedResults = array(
-            new Splunk_Message('DEBUG', 'base lispy: [ AND ]'),
-            new Splunk_Message('DEBUG', 'search context: user="admin", app="search", bs-pathname="/some/path"'),
+            new Splunk_ResultsMessage('DEBUG', 'base lispy: [ AND ]'),
+            new Splunk_ResultsMessage('DEBUG', 'search context: user="admin", app="search", bs-pathname="/some/path"'),
             array(
                 'series' => 'twitter',
                 'sum(kb)' => '14372242.758775',
@@ -98,7 +98,7 @@ class ResultsReaderTest extends SplunkTest
 </results>
 ");
         $expectedResults = array(
-            new Splunk_Message('DEBUG', 'base lispy: [ AND ]'),
+            new Splunk_ResultsMessage('DEBUG', 'base lispy: [ AND ]'),
         );
         
         $this->assertParsedResultsEquals($expectedResults, $xmlText);

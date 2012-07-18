@@ -20,7 +20,7 @@
  * 
  * Results are obtained by iterating over an instance of this class
  * using a foreach loop. Each result can either be an associative array or
- * a Splunk_Message. If the result is an associative array, it maps each field
+ * a Splunk_ResultsMessage. If the result is an associative array, it maps each field
  * name to either a single value or an array of values.
  * 
  * $resultsReader = new Splunk_ResultsReader(...);
@@ -45,7 +45,7 @@
  *         }
  *         print "}\r\n";
  *     }
- *     else if ($result instanceof Splunk_Message)
+ *     else if ($result instanceof Splunk_ResultsMessage)
  *     {
  *         // Process a message
  *         print "[{$result->getType()}] {$result->getText()}\r\n";
@@ -77,7 +77,7 @@ class Splunk_ResultsReader implements IteratorAggregate
                 $type = Splunk_XmlUtil::getAttributeValue($msgXml, 'type');
                 $text = Splunk_XmlUtil::getTextContent($msgXml);
                 
-                $this->results[] = new Splunk_Message($type, $text);
+                $this->results[] = new Splunk_ResultsMessage($type, $text);
             }
         }
         foreach ($xml->result as $resultXml)
