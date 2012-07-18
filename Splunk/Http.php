@@ -123,7 +123,9 @@ class Splunk_Http
         
         $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $headerText = substr($response, 0, $headerSize);
-        $body = substr($response, $headerSize);
+        $body = (strlen($response) == $headerSize)
+            ? ''
+            : substr($response, $headerSize);
         
         $headers = array();
         $headerLines = explode("\r\n", trim($headerText));
