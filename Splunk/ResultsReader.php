@@ -39,7 +39,8 @@
  *             }
  *             else
  *             {
- *                 print "  {$key} => {$valueOrValues}\r\n";
+ *                 $value = $valueOrValues;
+ *                 print "  {$key} => {$value}\r\n";
  *             }
  *         }
  *         print "}\r\n";
@@ -47,7 +48,7 @@
  *     else if ($result instanceof Splunk_Message)
  *     {
  *         // Process a message
- *         print "[{$result->type}] {$result->text}\r\n";
+ *         print "[{$result->getType()}] {$result->getText()}\r\n";
  *     }
  * }
  * 

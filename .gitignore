@@ -2,7 +2,7 @@
 .DS_Store
 
 # Generated documentation
-docs/
+apidocs/
 
 # Generated code coverage report
 coverage/
