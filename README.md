@@ -1,4 +1,4 @@
-# The Splunk Software Development Kit for PHP (Preview)
+# The Splunk Software Development Kit for PHP (Private)
 
 This SDK contains library code and examples designed to enable developers to
 build applications using Splunk.
@@ -18,53 +18,275 @@ are enabled by Splunk's unique capabilities.
 
 ## License
 
-The Splunk Software Development Kit for Python is licensed under the Apache
-License 2.0. Details can be found in the file LICENSE.
-
-## This SDK is a Preview Release
-
-1.  This Preview release is a pre-beta release.  There will also be a beta 
-    release prior to a general release. It is incomplete and may have bugs.
-
-2.  The Apache license only applies to the SDK and no other Software provided 
-    by Splunk.
-
-3.  Splunk in using the Apache license is not providing any warranties, 
-    indemnification or accepting any liabilities  with the Preview SDK.
-
-4.  Splunk is not accepting any Contributions to the Preview release of 
-    the SDK.  
-    All Contributions during the Preview SDK will be returned without review.
-
-## Getting Started
-
-If you haven't already installed Splunk, download it here: 
-http://www.splunk.com/download. 
-
-For more about installing and running Splunk and system requirements, see
-Installing & Running Splunk (http://dev.splunk.com/view/SP-CAAADRV). 
-
-Get a copy of the Splunk PHP SDK from GitHub (https://github.com/) by cloning
-into the repository with git:
-
->  git clone https://github.com/splunk/splunk-sdk-php.git
+The Splunk Software Development Kit for PHP is licensed under the Apache
+License 2.0. Details can be found in the file [LICENSE](https://github.com/splunk/splunk-sdk-php/blob/master/LICENSE).
 
 ## Requirements
 
 The SDK requires PHP 5.2+ with the SimpleXML and cURL extensions.
 
-## ...
+## Getting Started
 
-### Changelog
+If you haven't already installed Splunk, download it here: 
+[http://www.splunk.com/download](http://www.splunk.com/download). 
 
-You can look at the changelog for each version 
-[here](https://github.com/splunk/splunk-sdk-php/blob/master/CHANGELOG.md)
+For more about installing and running Splunk and system requirements, see
+[Installing & Running Splunk](http://dev.splunk.com/view/SP-CAAADRV). 
 
-### Branches
+Get a copy of the Splunk PHP SDK from [GitHub](https://github.com/) by cloning
+into the repository with git:
 
-The `master` branch always represents a stable and released version of the SDK.
-You can read more about our branching model on our 
-[Wiki](https://github.com/splunk/splunk-sdk-php/wiki/Branching-Model).
+> git clone https://github.com/splunk/splunk-sdk-php.git
+
+## Quickstart
+
+The PHP SDK provides an object-oriented interface for interacting with a Splunk server.
+
+To use the SDK, first import `Splunk.php`. This will give you access to all `Splunk_*` classes.
+
+```
+require_once 'Splunk.php';
+```
+
+Then use an instance of `Splunk_Service` to connect to a Splunk server.
+
+```
+$service = new Splunk_Service(array(
+    'host' => 'localhost',
+    'port' => '8089',
+    'username' => 'admin',
+    'password' => 'changeme',
+));
+$service->login();
+```
+
+Once connected, you can manipulate various entities on the server,
+such as saved searches and search jobs.
+
+For example, the following code runs a quick search and prints out the results.
+
+```
+// NOTE: The expression must begin with 'search '
+$searchExpression = 'search index=_internal | head 100 | top sourcetype';
+
+// Create oneshot search and get results
+$resultsXmlString = $service->getJobs()->createOneshot($searchExpression);
+$results = new Splunk_ResultsReader($resultsXmlString);
+
+// Process results
+foreach ($results as $result)
+{
+	if (is_array($result))
+    {
+        // Process a normal result
+        print "{\r\n";
+        foreach ($result as $field => $valueOrValues)
+        {
+            if (is_array($valueOrValues))
+            {
+                $valuesString = implode(',', $valueOrValues);
+                print "  {$key} => [{$valuesString}]\r\n";
+            }
+            else
+            {
+                $value = $valueOrValues;
+                print "  {$key} => {$value}\r\n";
+            }
+        }
+        print "}\r\n";
+    }
+    else if ($result instanceof Splunk_Message)
+    {
+        // Process a message
+        print "[{$result->getType()}] {$result->getText()}\r\n";
+    }
+}
+```
+
+## Core Concepts
+
+### Entities and Collections
+
+An *entity* is an object on a Splunk server. This includes saved searches, search jobs, indexes, inputs, and many others.
+
+Each type of entity lives inside a *collection*.
+Each collection type can be accessed on the `Splunk_Service` object.
+
+So, for example, to fetch a list of saved searches or search jobs:
+
+```
+$savedSearches = $service->getSavedSearches()->items();  // in the default namespace
+$jobs = $service->getJobs()->items();                     // in the default namespace
+```
+
+You can also fetch a particular entity in a collection by name:
+
+```
+$topSourcetypesSearch = $service->getSavedSearches()->get('Top five sourcetypes');
+```
+
+### Namespaces
+
+An entity has a *namespace*, which corresponds to entity's access permissions.
+
+All functions that fetch an individual entity or a list of entities can be
+provided a namespace argument. (If you omit this argument, the `Splunk_Service`'s
+default namespace will be used.)
+
+So, for example, to get the list of saved searches owned by user `admin` in the
+`search` app:
+
+```
+$savedSearches = $service->getSavedSearches()->items(array(
+	'namespace' => Splunk_Namespace::createUser('admin', 'search'),
+));
+```
+
+Or to get an individual entity in a namespace:
+
+```
+$topSourcetypesSearch = $service->getSavedSearches()->get(
+	'Top five sourcetypes',
+	Splunk_Namespace::createApp('search'));
+```
+
+If you typically access lots of objects in the same namespace, it is possible to
+pass a default namespace to the `Splunk_Service` constructor. This allows you to
+avoid passing an explicit namespace on every call to `get()` or `items()`.
+
+```
+$service = new Splunk_Service(array(
+    ...
+    'namespace' => Splunk_Namespace::createUser('admin', 'search'),
+));
+$service->login();
+
+$jobs = $service->getJobs()->items();			// in the admin/search namespace
+$indexes = $service->getIndexes()->items(array(	// in the system namespace
+	'namespace' => Splunk_Namespace::createSystem(),
+));
+```
+
+For reference, the types of namespaces are:
+
+* The default namespace - `Splunk_Namespace::createDefault()`
+	* Contains entities owned by the authenticated user in that user's default app.
+	* For example, if you logged in to `Splunk_Service` as the user `admin` and
+	  the default application for that user was `search`, the default namespace
+	  would include all entities belonging to `admin` in app `search`.
+	* This namespace is used if no explicit namespace is provided.
+* A user namespace - `Splunk_Namespace::createUser($owner, $app)`
+	* Contains entities owned by a particular user in a particular app.
+* An app namespace - `Splunk_Namespace::createApp($app)`
+	* Contains entities in a particular app that have no owner .
+* A global namespace - `Splunk_Namespace::createGlobal($app)`
+	* Contains entities in a particular app that have no owner and that are
+	  accessible to all apps.
+* The system namespace - `Splunk_Namespace::createSystem()`
+	* Contains entities in the `system` app.
+
+## Common Tasks
+
+### Running a Search with a Search Expression
+
+#### Oneshot Searches
+
+For searches that run quickly with a small number of results, it is easiest to
+create a *oneshot* search:
+
+```
+// NOTE: The expression must begin with 'search '
+$searchExpression = 'search index=_internal | head 100 | top sourcetype';
+
+// Create oneshot search and get results
+$resultsXmlString = $service->getJobs()->createOneshot($searchExpression);
+$results = new Splunk_ResultsReader($resultsXmlString);
+
+// Process results
+foreach ($results as $result)
+{
+	if (is_array($result))
+    {
+        // Process a normal result
+        foreach ($result as $field => $valueOrValues)
+        {
+            // ...
+        }
+    }
+    else if ($result instanceof Splunk_Message)
+    {
+        // Process a message
+        print "[{$result->getType()}] {$result->getText()}\r\n";
+    }
+}
+```
+
+A oneshot search blocks until it completes and returns all results immediately.
+
+#### Blocking Search Jobs
+
+For searches that return a large number of results whose progress you don't need
+to monitor, it is easiest to create a *blocking* search job:
+
+```
+// NOTE: The expression must begin with 'search '
+$searchExpression = 'search index=_internal | head 1000';
+
+// Create blocking search job and get results
+$job = $service->getJobs()->create($searchExpression, array(
+	'exec_mode' => 'blocking',
+));
+$results = new Splunk_ResultsReader($job->getResults());
+
+// Process results
+...
+```
+
+Blocking search jobs wait until all results are available.
+
+#### Asynchronous (Normal) Search Jobs
+
+For most searches that could potentially return a large number of results, you
+should create an *asynchronous* (normal) search job.
+
+Asynchronous jobs allow you to monitor their progress while they are running.
+
+```
+// NOTE: The expression must begin with 'search '
+$searchExpression = 'search index=_internal | head 10000';
+
+// Create normal search job
+$job = $service->getJobs()->create($searchExpression);
+
+// Wait for job to complete and get results
+while (!$job->isDone())
+{
+	printf("Progress: %03.1f%%\r\n", $job->getProgress() * 100);
+	sleep(.1);
+	$job->reload();
+}
+$results = new Splunk_ResultsReader($job->getResults());
+
+// Process results
+...
+```
+
+### Running a Saved Search
+
+You can create a normal search job based on a saved search by calling `dispatch()` on the `Splunk_SavedSearch` object.
+
+```
+$savedSearch = $service->getSavedSearches()->get('Top five sourcetypes');
+
+// Create normal search job based on the saved search
+$job = $savedSearch->dispatch();
+
+// Wait for job to complete and get results
+...
+
+// Process results
+...
+```
 
 ## Resources
 
@@ -129,7 +351,7 @@ provided below.
 2. If you are not covered under an existing maintenance/support agreement you can find help through the broader community at:
 <br>Splunk answers - http://splunk-base.splunk.com/answers/ Specific tags (SDK, java, python, javascript) are available to identify your questions
 <br>Splunk dev google group - http://groups.google.com/group/splunkdev
-3. Splunk will NOT provide support for SDKs if the core library (this is the code in the splunklib directory) has been modified. If you modify an SDK and want support, you can find help through the broader community and Splunk answers (see above). We also want to know about why you modified the core library. You can send feedback to: devinfo@splunk.com
+3. Splunk will NOT provide support for SDKs if the core library (this is the code in the Splunk directory) has been modified. If you modify an SDK and want support, you can find help through the broader community and Splunk answers (see above). We also want to know about why you modified the core library. You can send feedback to: devinfo@splunk.com
 
 ### Contact Us
 
