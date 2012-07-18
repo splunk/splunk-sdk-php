@@ -1,4 +1,4 @@
-# The Splunk Software Development Kit for PHP (Private)
+# The Splunk Software Development Kit for PHP (Preview)
 
 This SDK contains library code and examples designed to enable developers to
 build applications using Splunk.
@@ -19,7 +19,9 @@ are enabled by Splunk's unique capabilities.
 ## License
 
 The Splunk Software Development Kit for PHP is licensed under the Apache
-License 2.0. Details can be found in the file [LICENSE](https://github.com/splunk/splunk-sdk-php/blob/master/LICENSE).
+License 2.0. Details can be found in the file [LICENSE].
+
+[LICENSE]: https://github.com/splunk/splunk-sdk-php/blob/master/LICENSE
 
 ## Requirements
 
@@ -107,7 +109,8 @@ foreach ($results as $result)
 
 ### Entities and Collections
 
-An *entity* is an object on a Splunk server. This includes saved searches, search jobs, indexes, inputs, and many others.
+An *entity* is an object on a Splunk server. This includes saved searches,
+search jobs, indexes, inputs, and many others.
 
 Each type of entity lives inside a *collection*.
 Each collection type can be accessed on the `Splunk_Service` object.
