@@ -32,11 +32,17 @@ class Splunk_Service extends Splunk_Context
     
     // === Endpoints ===
     
+    /**
+     * @return Splunk_Jobs          The collection of search jobs on this server.
+     */
     public function getJobs()
     {
         return new Splunk_Jobs($this, 'search/jobs/', 'Splunk_Job');
     }
     
+    /**
+     * @return Splunk_Collection    The collection of saved searches on this server.
+     */
     public function getSavedSearches()
     {
         return new Splunk_Collection($this, 'saved/searches/', 'Splunk_SavedSearch');
