@@ -65,12 +65,7 @@ class Splunk_Http
      * @param string $url               URL to fetch.
      * @param array $requestHeaders     (optional) dictionary of header names and values.
      * @param string $requestBody       (optional) content to send in the request.
-     * @return object {
-     *      'status' => HTTP status code (ex: 200).
-     *      'reason' => HTTP reason string (ex: 'OK').
-     *      'headers' => Dictionary of headers. (ex: array('Content-Length' => '0')).
-     *      'body' => Content of the response.
-     * }
+     * @return Splunk_HttpResponse
      * @throws Splunk_ConnectException
      * @throws Splunk_HttpException
      */
@@ -140,12 +135,12 @@ class Splunk_Http
         $httpVersion = $statusLineComponents[0];
         $reason = count($statusLineComponents) == 3 ? $statusLineComponents[2] : '';
         
-        $response = (object) array(
+        $response = new Splunk_HttpResponse(array(
             'status' => $status,
             'reason' => $reason,
             'headers' => $headers,
             'body' => $body,
-        );
+        ));
         
         if ($status >= 400)
             throw new Splunk_HttpException($response);

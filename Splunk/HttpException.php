@@ -51,7 +51,7 @@ class Splunk_HttpException extends Exception
     // === Accessors ===
     
     /**
-     * @return object   see the return value of Http::request().
+     * @return Splunk_HttpResponse
      */
     public function getResponse()
     {
