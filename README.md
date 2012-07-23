@@ -25,7 +25,7 @@ License 2.0. Details can be found in the file [LICENSE].
 
 ## Requirements
 
-The SDK requires PHP 5.2+ with the SimpleXML and cURL extensions.
+The SDK requires PHP 5.2+ with the SimpleXML extension.
 
 ## Getting Started
 

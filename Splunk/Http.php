@@ -37,6 +37,8 @@ class Splunk_Http
      */
     public function post($url, $params=array(), $requestHeaders=array())
     {
+        $requestHeaders['Content-Type'] = 'application/x-www-form-urlencoded';
+        
         return $this->request(
             'post', $url, $requestHeaders, http_build_query($params));
     }
@@ -69,61 +71,39 @@ class Splunk_Http
      * @throws Splunk_ConnectException
      * @throws Splunk_HttpException
      */
-    // TODO: Avoid reading the entire response into memory.
-    //       
-    //       cURL provides no straightforward way to avoid this, short of
-    //       downloading a response to file and reading that file.
-    //       
-    //       For continuous streams (that don't end), this solution
-    //       won't work because the temporary file will never finish being
-    //       written.
     private function request(
         $method, $url, $requestHeaders=array(), $requestBody='')
     {
-        $opts = array(
-            CURLOPT_HTTPGET => TRUE,
-            CURLOPT_URL => $url,
-            CURLOPT_TIMEOUT => 60,  // secs
-            CURLOPT_RETURNTRANSFER => TRUE,
-            CURLOPT_HEADER => TRUE,
-            // disable SSL certificate validation
-            CURLOPT_SSL_VERIFYPEER => FALSE,
-        );
-        
-        foreach ($requestHeaders as $k => $v)
-            $opts[CURLOPT_HTTPHEADER][] = "$k: $v";
-        
-        switch ($method)
+        if ((substr($url, 0, strlen('http:')) !== 'http:') &&
+            (substr($url, 0, strlen('https:')) !== 'https:'))
         {
-            case 'get':
-                $opts[CURLOPT_HTTPGET] = TRUE;
-                break;
-            case 'post':
-                $opts[CURLOPT_POST] = TRUE;
-                $opts[CURLOPT_POSTFIELDS] = $requestBody;
-                break;
-            default:
-                $opts[CURLOPT_CUSTOMREQUEST] = strtoupper($method);
-                break;
+            throw new InvalidArgumentException(
+                'URL scheme must be either HTTP or HTTPS.');
         }
         
-        if (!($curl = curl_init()))
-            throw new Splunk_ConnectException('Unable to initialize cURL.');
-        if (!(curl_setopt_array($curl, $opts)))
-            throw new Splunk_ConnectException(curl_error($curl));
-        if (!($response = curl_exec($curl)))
-            throw new Splunk_ConnectException(curl_error($curl));
+        $requestHeaderLines = array();
+        foreach ($requestHeaders as $k => $v)
+            $requestHeaderLines[] = "{$k}: {$v}";
         
-        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $fopenContext = stream_context_create(array(
+            'http' => array(
+                'method' => strtoupper($method),
+                'header' => $requestHeaderLines,
+                'content' => $requestBody,
+                // NOTE: Maintainers, if you change 'follow_location' to TRUE,
+                //       you will need to update the header line parsing code
+                //       below to get the header lines of the final HTTP response,
+                //       ignoring the header lines of preceding 3xx responses.
+                'follow_location' => FALSE, // don't follow HTTP 3xx automatically
+                'ignore_errors' => TRUE,    // don't throw exceptions on bad status codes
+            ),
+        ));
         
-        $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $headerText = substr($response, 0, $headerSize);
-        $body = (strlen($response) == $headerSize)
-            ? ''
-            : substr($response, $headerSize);
+        // NOTE: PHP does not perform certificate validation for HTTPS URLs.
+        // NOTE: fopen() magically sets the $http_response_header local variable.
+        $bodyStream = fopen($url, 'r', /*use_include_path=*/false, $fopenContext);
         
-        $headers = array();
-        $headerLines = explode("\r\n", trim($headerText));
+        $headerLines = $http_response_header;
         $statusLine = array_shift($headerLines);
         foreach ($headerLines as $line)
         {
@@ -133,13 +113,16 @@ class Splunk_Http
         
         $statusLineComponents = explode(' ', $statusLine, 3);
         $httpVersion = $statusLineComponents[0];
-        $reason = count($statusLineComponents) == 3 ? $statusLineComponents[2] : '';
+        $status = intval($statusLineComponents[1]);
+        $reason = (count($statusLineComponents) == 3)
+            ? $statusLineComponents[2]
+            : '';
         
         $response = new Splunk_HttpResponse(array(
             'status' => $status,
             'reason' => $reason,
             'headers' => $headers,
-            'body' => $body,
+            'bodyStream' => $bodyStream,
         ));
         
         if ($status >= 400)

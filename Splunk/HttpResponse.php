@@ -22,19 +22,36 @@
  * - status {integer}   HTTP status code (ex: 200).
  * - reason {string}    HTTP reason string (ex: 'OK').
  * - headers {array}    Dictionary of headers. (ex: array('Content-Length' => '0')).
- * - body {string}      Content of the response.
+ * - body {string}      Content of the response, as a single byte string.
+ * - bodyStream {resource}
+ *                      Content of the response, as a stream (of the type
+ *                      returned by fopen()).
  */
 class Splunk_HttpResponse
 {
     private $state;
+    private $body;  // lazy
     
     public function __construct($state)
     {
         $this->state = $state;
+        $this->body = NULL;
     }
+    
+    // === Accessors ===
     
     public function __get($key)
     {
-        return $this->state[$key];
+        if ($key === 'body')
+            return $this->getBody();
+        else
+            return $this->state[$key];
+    }
+    
+    private function getBody()
+    {
+        if ($this->body === NULL)
+            $this->body = stream_get_contents($this->bodyStream);
+        return $this->body;
     }
 }
