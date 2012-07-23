@@ -342,7 +342,7 @@ $job = $service->getJobs()->create($searchExpression);
 while (!$job->isDone())
 {
 	printf("Progress: %03.1f%%\r\n", $job->getProgress() * 100);
-	sleep(.1);
+	usleep(0.5 * 1000000);
 	$job->reload();
 }
 $results = new Splunk_ResultsReader($job->getResults());

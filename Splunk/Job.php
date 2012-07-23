@@ -24,7 +24,7 @@ class Splunk_Job extends Splunk_Entity
 {
     // NOTE: These constants are somewhat arbitrary and could use some tuning
     const DEFAULT_FETCH_MAX_TRIES = 10;
-    const DEFAULT_FETCH_DELAY_PER_RETRY = 0.5;  // secs
+    const DEFAULT_FETCH_DELAY_PER_RETRY = 0.0;  // secs
     
     // === Load ===
     
@@ -45,7 +45,7 @@ class Splunk_Job extends Splunk_Entity
             $response = parent::fetch($fetchArgs);
             if ($response->status != 204)
                 return $response;
-            sleep($fetchArgs['delayPerRetry']);
+            usleep($fetchArgs['delayPerRetry'] * 1000000);
         }
         
         // Give up
@@ -124,7 +124,7 @@ class Splunk_Job extends Splunk_Entity
      *  $job = ...;
      *  while (!$job->isDone())
      *  {
-     *      sleep(.5);
+     *      usleep(0.5 * 1000000);
      *      $job->reload();
      *  }
      *  $results = new Splunk_ResultsReader($job->getResults());

@@ -46,7 +46,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
       echo '</li>';
       flush();
       
-      usleep(1000000 * 0.5);
+      usleep(0.5 * 1000000);
       $job->reload();
     }
     echo '<li>Done</li>';
