@@ -18,6 +18,10 @@
 /**
  * Represents a response received from an HTTP request.
  * 
+ * When reading a potentially large response, the 'bodyStream'
+ * property should be used used in preference to the 'body' property,
+ * since it will only keep the current part of the body loaded in memory.
+ * 
  * Has the following read-only properties:
  * - status {integer}   HTTP status code (ex: 200).
  * - reason {string}    HTTP reason string (ex: 'OK').
