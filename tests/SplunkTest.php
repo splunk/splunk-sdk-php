@@ -24,6 +24,23 @@ require_once 'settings.php';
  */
 abstract class SplunkTest extends PHPUnit_Framework_TestCase
 {
+    private $initialOpenStreamCount = -1;
+    
+    public function setUp()
+    {
+        $this->initialOpenStreamCount = Splunk_StreamStream::getOpenStreamCount();
+    }
+    
+    public function tearDown()
+    {
+        // Make sure all streams are being closed appropriately
+        // (especially in error scenarios).
+        $finalOpenStreamCount = Splunk_StreamStream::getOpenStreamCount();
+        $this->assertEquals($this->initialOpenStreamCount, $finalOpenStreamCount,
+            "Number of open streams after test ({$finalOpenStreamCount}) " .
+            "does not match number before test ({$this->initialOpenStreamCount}).");
+    }
+    
     /**
      * Returns a Splunk_Context connected to a real Splunk server.
      */

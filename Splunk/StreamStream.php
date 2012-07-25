@@ -43,6 +43,16 @@ class Splunk_StreamStream
         return 'splunkstream://' . $streamId;
     }
     
+    /**
+     * @return integer              The number of streams that have been
+     *                              registered with createUriForStream()
+     *                              that haven't been closed.
+     */
+    public static function getOpenStreamCount()
+    {
+        return count(Splunk_StreamStream::$registeredStreams);
+    }
+    
     // === Stream ===
     
     private $stream;
