@@ -29,4 +29,22 @@ class StreamStreamTest extends SplunkTest
         $stream2 = fopen($streamUri, 'rb');
         $this->assertEquals($content, stream_get_contents($stream2));
     }
+    
+    public function testParseXmlFromMemoryStream()
+    {
+        $stream = fopen('php://memory', 'rb');
+        $streamUri = Splunk_StreamStream::createUriForStream($stream);
+        
+        $xmlReader = new XMLReader();
+        $xmlReader->open($streamUri);
+    }
+    
+    public function testParseXmlFromHttpStream()
+    {
+        $stream = fopen('http://www.splunk.com/', 'rb');
+        $streamUri = Splunk_StreamStream::createUriForStream($stream);
+        
+        $xmlReader = new XMLReader();
+        $xmlReader->open($streamUri);
+    }
 }

@@ -70,6 +70,16 @@ class Splunk_StreamStream
         return fread($this->stream, $count);
     }
     
+    public function stream_write($data)
+    {
+        return fwrite($this->stream, $data);
+    }
+    
+    public function stream_seek($offset, $whence = SEEK_SET)
+    {
+        return fseek($this->stream, $offset, $whence);
+    }
+    
     public function stream_tell()
     {
         return ftell($this->stream);
@@ -83,6 +93,11 @@ class Splunk_StreamStream
     public function stream_stat()
     {
         return fstat($this->stream);
+    }
+    
+    public function stream_flush()
+    {
+        return fflush($this->stream);
     }
     
     public function stream_close()
@@ -99,7 +114,38 @@ class Splunk_StreamStream
         if (array_key_exists($streamId, Splunk_StreamStream::$registeredStreams))
         {
             $stream = Splunk_StreamStream::$registeredStreams[$streamId];
-            return fstat($stream);
+            $statResult = fstat($stream);
+            if ($statResult === FALSE)
+            {
+                /* 
+                 * The API for url_stat() always requires a valid (non-FALSE),
+                 * result, even though fstat() can return FALSE. The docs say
+                 * to set unknown values to "a rational value (usually 0)".
+                 *
+                 * XMLReader::open() enforces this, printing out a cryptic
+                 * "Unable to open source data" error if a FALSE result for
+                 * url_stat() is returned.
+                 */
+                return array(
+                    'dev' => 0,
+                    'ino' => 0,
+                    'mode' => 0,
+                    'nlink' => 1,
+                    'uid' => 0,
+                    'gid' => 0,
+                    'rdev' => -1,
+                    'size' => 0,
+                    'atime' => 0,
+                    'mtime' => 0,
+                    'ctime' => 0,
+                    'blksize' => -1,
+                    'blocks' => -1,
+                );
+            }
+            else
+            {
+                return $statResult;
+            }
         }
         else
         {
