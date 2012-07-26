@@ -111,6 +111,59 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
+     * Returns an iterator over the results from this job.
+     * 
+     * Large result sets will be paginated automatically.
+     * 
+     * Example:
+     * 
+     *  $job = ...;
+     *  foreach ($job->getPaginatedResults() as $result)
+     *  {
+     *      // (See documentation for Splunk_ResultsReader to see how to
+     *      //  interpret $result.)
+     *      ...
+     *  }
+     * 
+     * @param array $args (optional) {
+     *     'count' => (optional) The maximum number of results to return.
+     *                Defaults to returning all results.
+     *     'offset' => (optional) The offset of the first result to return.
+     *                 Defaults to 0.
+     *     'pagesize' => (optional) The number of results to fetch from the
+     *                   server on each request when paginating internally.
+     *                   Defaults to returning as many results as possible.
+     *     
+     *     'field_list' => (optional) Comma-separated list of fields to return
+     *                     in the result set. Defaults to all fields.
+     *     'output_mode' => (optional) The output format of the result. Valid values:
+     *                      - "csv"
+     *                      - "raw"
+     *                      - "xml": The format parsed by Splunk_ResultsReader.
+     *                      - "json"
+     *                      Defaults to "xml".
+     *     'search' => (optional) The search expression to filter results
+     *                 with. For example, "foo" matches any object that has
+     *                 "foo" in a substring of a field. Similarly the
+     *                 expression "field_name=field_value" matches only objects
+     *                 that have a "field_name" field with the value
+     *                 "field_value".
+     * }
+     * @return Iterator             The results (i.e. transformed events)
+     *                              of this job, via an iterator.
+     * @throws Splunk_JobNotDoneException
+     *                              If the results are not ready yet.
+     *                              Check isDone() to ensure the results are
+     *                              ready prior to calling this method.
+     * @throws Splunk_HttpException
+     * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
+     */
+    public function getPaginatedResults($args=array())
+    {
+        return new Splunk_PaginatedResultsReader($this, $args);
+    }
+    
+    /**
      * Returns the results from this job.
      * 
      * By default, all results are returned. For large
@@ -122,11 +175,6 @@ class Splunk_Job extends Splunk_Entity
      * using Splunk_ResultsReader. For example:
      * 
      *  $job = ...;
-     *  while (!$job->isDone())
-     *  {
-     *      usleep(0.5 * 1000000);
-     *      $job->reload();
-     *  }
      *  $results = new Splunk_ResultsReader($job->getResults());
      *  foreach ($results as $result)
      *  {
@@ -168,7 +216,7 @@ class Splunk_Job extends Splunk_Entity
     public function getResults($args=array())
     {
         $args = array_merge(array(
-            'count' => '0',
+            'count' => 0,
         ), $args);
         
         $response = $this->service->get($this->path . '/results', $args);

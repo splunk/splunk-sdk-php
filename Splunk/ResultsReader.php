@@ -117,6 +117,7 @@ class Splunk_ResultsReader implements Iterator
     public function next()
     {
         $this->currentElement = $this->readNextElement();
+        $this->atStart = FALSE;
     }
     
     public function current()
@@ -137,9 +138,6 @@ class Splunk_ResultsReader implements Iterator
         
         if ($this->emptyXml)
             return NULL;
-        
-        // Prevent subsequent invocations of rewind()
-        $this->atStart = FALSE;
         
         while ($xr->read())
         {

@@ -110,7 +110,7 @@ class JobTest extends SplunkTest
         while (!$job->isDone())
         {
             //printf("%03.1f%%\r\n", $job->getProgress() * 100);
-            usleep(0.5 * 1000000);
+            usleep(0.1 * 1000000);
             $job->reload();
         }
         
