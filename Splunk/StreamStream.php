@@ -113,7 +113,13 @@ class Splunk_StreamStream
     public function stream_close()
     {
         fclose($this->stream);
-        unset(Splunk_StreamStream::$registeredStreams[$this->streamId]);
+        
+        // (When called from a shutdown hook, sometimes this variable no
+        //  longer exists when this method is called.)
+        if (isset(Splunk_StreamStream::$registeredStreams))
+        {
+            unset(Splunk_StreamStream::$registeredStreams[$this->streamId]);
+        }
     }
     
     public function url_stat($path, $flags)
