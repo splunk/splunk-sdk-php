@@ -97,7 +97,7 @@ class Splunk_Context
      *     'namespace' => (optional) namespace to use, or NULL to use
      *                    this context's default namespace.
      * }
-     * @return object       see the return value of Http::request().
+     * @return Splunk_HttpResponse
      * @throws Splunk_HttpException
      * @see Splunk_Http::get()
      */
@@ -115,7 +115,7 @@ class Splunk_Context
      *     'namespace' => (optional) namespace to use, or NULL to use
      *                    this context's default namespace.
      * }
-     * @return object       see the return value of Http::request().
+     * @return Splunk_HttpResponse
      * @throws Splunk_HttpException
      * @see Splunk_Http::post()
      */
@@ -133,7 +133,7 @@ class Splunk_Context
      *     'namespace' => (optional) namespace to use, or NULL to use
      *                    this context's default namespace.
      * }
-     * @return object       see the return value of Http::request().
+     * @return Splunk_HttpResponse
      * @throws Splunk_HttpException
      * @see Splunk_Http::delete()
      */

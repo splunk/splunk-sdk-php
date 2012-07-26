@@ -156,8 +156,8 @@ class Splunk_Job extends Splunk_Entity
      *                 that have a "field_name" field with the value
      *                 "field_value".
      * }
-     * @return string               The results (i.e. transformed events)
-     *                              of this job.
+     * @return resource             The results (i.e. transformed events)
+     *                              of this job, as a stream.
      * @throws Splunk_JobNotDoneException
      *                              If the results are not ready yet.
      *                              Check isDone() to ensure the results are
@@ -174,6 +174,6 @@ class Splunk_Job extends Splunk_Entity
         $response = $this->service->get($this->path . '/results', $args);
         if ($response->status == 204)
             throw new Splunk_JobNotDoneException($response);
-        return $response->body;
+        return $response->bodyStream;
     }
 }

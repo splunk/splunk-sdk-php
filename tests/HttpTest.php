@@ -19,6 +19,14 @@ require_once 'SplunkTest.php';
 
 class HttpTest extends SplunkTest
 {
+    // NOTE: Ideally there would be tests that would create a local HTTP
+    //       server and send canned responses to the Http class.
+    //       Unfortunately there is no threading in PHP and forking
+    //       requires the PCNTL extension, which is not installed by default.
+    //       
+    //       Therefore most of the testing of Http is indirect, via all the
+    //       other unit tests that depend on it indirectly to work correctly.
+    
     public function testGet()
     {
         $http = new Splunk_Http();

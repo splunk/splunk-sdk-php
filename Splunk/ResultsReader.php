@@ -34,7 +34,8 @@
  *         {
  *             if (is_array($valueOrValues))
  *             {
- *                 $valuesString = implode(',', $valueOrValues);
+ *                 $values = $valueOrValues;
+ *                 $valuesString = implode(',', $values);
  *                 print "  {$key} => [{$valuesString}]\r\n";
  *             }
  *             else
@@ -54,64 +55,200 @@
  * 
  * @package Splunk
  */
-class Splunk_ResultsReader implements IteratorAggregate
+class Splunk_ResultsReader implements Iterator
 {
-    private $results;
+    private $emptyXml;
+    private $xmlReader;
     
-    public function __construct($xmlString)
+    private $currentElement;
+    private $atStart;
+    
+    public function __construct($streamOrXmlString)
     {
-        // Search jobs lacking results return a blank document (with HTTP 200)
-        if ($xmlString === '')
+        if (is_string($streamOrXmlString))
         {
-            $this->results = array();
+            $string = $streamOrXmlString;
+            $stream = Splunk_ResultsReader::createStringStream($string);
+        }
+        else
+        {
+            $stream = $streamOrXmlString;
+        }
+        
+        // Search jobs lacking results return a blank document (with HTTP 200)
+        if (feof($stream))
+        {
+            $this->emptyXml = TRUE;
+            
+            $this->currentElement = NULL;
+            $this->atStart = TRUE;
             return;
         }
-        
-        $xml = new SimpleXMLElement($xmlString);
-        
-        $this->results = array();
-        if (Splunk_XmlUtil::elementExists($xml->messages))
+        else
         {
-            foreach ($xml->messages->msg as $msgXml)
-            {
-                $type = Splunk_XmlUtil::getAttributeValue($msgXml, 'type');
-                $text = Splunk_XmlUtil::getTextContent($msgXml);
-                
-                $this->results[] = new Splunk_ResultsMessage($type, $text);
-            }
+            $this->emptyXml = FALSE;
         }
-        foreach ($xml->result as $resultXml)
-        {
-            $result = array();
-            foreach ($resultXml->field as $fieldXml)
-            {
-                $k = Splunk_XmlUtil::getAttributeValue($fieldXml, 'k');
-                $vs = array();
-                foreach ($fieldXml->value as $valueXml)
-                {
-                    // Normal field values
-                    $vs[] = Splunk_XmlUtil::getTextContent($valueXml->text);
-                }
-                foreach ($fieldXml->v as $vXml)
-                {
-                    // _raw field value
-                    $vs[] = Splunk_XmlUtil::getTextContent($vXml);
-                }
-                
-                $result[$k] = (count($vs) === 1 ? $vs[0] : $vs);
-            }
-            $this->results[] = $result;
-        }
+        
+        $streamUri = Splunk_StreamStream::createUriForStream($stream);
+        
+        $this->xmlReader = new XMLReader();
+        $this->xmlReader->open($streamUri);
+        
+        $this->currentElement = $this->readNextElement();
+        $this->atStart = TRUE;
     }
     
-    // === IteratorAggregate Methods ===
+    // === Iterator Methods ===
     
-    /**
-     * Returns an iterator over the results from this reader.
-     */
-    public function getIterator()
+    public function rewind()
     {
-        return new ArrayIterator($this->results);
+        if ($this->atStart)
+            return;
+        
+        throw new Splunk_UnsupportedOperationException(
+            'Cannot rewind after reading past the first element.');
+    }
+    
+    public function valid()
+    {
+        return ($this->currentElement !== NULL);
+    }
+    
+    public function next()
+    {
+        $this->currentElement = $this->readNextElement();
+    }
+    
+    public function current()
+    {
+        return $this->currentElement;
+    }
+    
+    public function key()
+    {
+        return NULL;
+    }
+    
+    // === Read Next Element ===
+    
+    private function readNextElement()
+    {
+        $xr = $this->xmlReader;
+        
+        if ($this->emptyXml)
+            return NULL;
+        
+        // Prevent subsequent invocations of rewind()
+        $this->atStart = FALSE;
+        
+        while ($xr->read())
+        {
+            // Read: /messages/msg
+            if ($xr->nodeType == XMLReader::ELEMENT &&
+                $xr->name === 'msg')
+            {
+                $type = $xr->getAttribute('type');
+                
+                // Read: /messages/msg/[TEXT]
+                if (!$xr->read())
+                    break;
+                assert ($xr->nodeType == XMLReader::TEXT);
+                $text = $xr->value;
+                
+                return new Splunk_ResultsMessage($type, $text);
+            }
+            
+            // Read: /result
+            if ($xr->nodeType == XMLReader::ELEMENT &&
+                $xr->name === 'result')
+            {
+                return $this->readResult();
+            }
+        }
+        return NULL;
+    }
+    
+    private function readResult()
+    {
+        $xr = $this->xmlReader;
+        
+        $lastKey = NULL;
+        $lastValues = array();
+        $insideValue = FALSE;
+        
+        $result = array();
+        while ($xr->read())
+        {
+            // Begin: /result/field
+            if ($xr->nodeType == XMLReader::ELEMENT &&
+                $xr->name === 'field')
+            {
+                $lastKey = $xr->getAttribute('k');
+                $lastValues = array();
+            }
+            
+            // Begin: /result/field/value
+            // Begin: /result/field/v
+            if ($xr->nodeType == XMLReader::ELEMENT &&
+                ($xr->name === 'value' || $xr->name === 'v'))
+            {
+                $insideValue = TRUE;
+            }
+            
+            // Read: /result/field/value/text/[TEXT]
+            // Read: /result/field/v/[TEXT]
+            if ($insideValue &&
+                $xr->nodeType == XMLReader::TEXT)
+            {
+                $lastValues[] = $xr->value;
+            }
+            
+            // End: /result/field/value
+            // End: /result/field/v
+            if ($xr->nodeType == XMLReader::END_ELEMENT &&
+                ($xr->name === 'value' || $xr->name === 'v'))
+            {
+                $insideValue = FALSE;
+            }
+            
+            // End: /result/field
+            if ($xr->nodeType == XMLReader::END_ELEMENT &&
+                $xr->name === 'field')
+            {
+                if (count($lastValues) === 1)
+                {
+                    $lastValues = $lastValues[0];
+                }
+                $result[$lastKey] = $lastValues;
+            }
+            
+            // End: /result
+            if ($xr->nodeType == XMLReader::END_ELEMENT &&
+                $xr->name === 'result')
+            {
+                break;
+            }
+        }
+        return $result;
+    }
+    
+    // === Utility ===
+    
+    private static function createStringStream($string)
+    {
+        $stream = fopen('php://memory', 'rwb');
+        fwrite($stream, $string);
+        fseek($stream, 0);
+        
+        /*
+         * fseek() causes the next call to feof() to always return FALSE,
+         * which is undesirable if we seeked to the EOF. In this case,
+         * attempt a read past EOF so that the next call to feof() returns
+         * TRUE as expected.
+         */
+        if ($string === '')
+            fread($stream, 1);  // trigger EOF explicitly
+        
+        return $stream;
     }
 }
-

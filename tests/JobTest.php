@@ -114,8 +114,8 @@ class JobTest extends SplunkTest
             $job->reload();
         }
         
-        $resultsXmlString = $job->getResults();
-        $results = new Splunk_ResultsReader($resultsXmlString);
+        $resultsStream = $job->getResults();
+        $results = new Splunk_ResultsReader($resultsStream);
         
         $minExpectedSeriesNames = array('splunkd', 'splunkd_access');
         $actualSeriesNames = array();
