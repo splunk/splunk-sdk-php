@@ -23,7 +23,7 @@ class PaginatedResultsReaderTest extends SplunkTest
     {
         list($job, $results1) = $this->createJobWithTwelveResults();
         
-        $resultsIter2 = $job->getPaginatedResults();
+        $resultsIter2 = $job->getResults();
         $results2 = $this->createListFromIterator($resultsIter2);
         $this->assertEquals($results1, $results2);
     }
@@ -32,10 +32,7 @@ class PaginatedResultsReaderTest extends SplunkTest
     {
         list($job, $results1) = $this->createJobWithTwelveResults();
         
-        // TODO: Make this the default way of getting results:
-        //         * Rename getResults() -> getResultsPage()
-        //         * Rename getPaginatedResults() -> getResults()
-        $resultsIter2 = $job->getPaginatedResults(array(
+        $resultsIter2 = $job->getResults(array(
             'pagesize' => 1,
         ));
         $results2 = $this->createListFromIterator($resultsIter2);
@@ -45,7 +42,7 @@ class PaginatedResultsReaderTest extends SplunkTest
         $this->assertEquals(
             array_slice($results1, 4, 6),
             $this->createListFromIterator(
-                $job->getPaginatedResults(array(
+                $job->getResults(array(
                     'offset' => 4,
                     'count' => 6,
                     'pagesize' => 4,
@@ -56,7 +53,7 @@ class PaginatedResultsReaderTest extends SplunkTest
         $this->assertEquals(
             array_slice($results1, 8, 6),
             $this->createListFromIterator(
-                $job->getPaginatedResults(array(
+                $job->getResults(array(
                     'offset' => 8,
                     'count' => 6,
                     'pagesize' => 4,
@@ -75,7 +72,7 @@ class PaginatedResultsReaderTest extends SplunkTest
             )
         );
         
-        $resultsIter1 = new Splunk_ResultsReader($job->getResults());
+        $resultsIter1 = new Splunk_ResultsReader($job->getResultsPage());
         $results1 = $this->createListFromIterator($resultsIter1);
         $this->assertEquals(12, count($results1),
             'Update the search expression to return the expected number of results.');

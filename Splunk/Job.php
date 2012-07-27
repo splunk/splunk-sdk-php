@@ -118,7 +118,7 @@ class Splunk_Job extends Splunk_Entity
      * Example:
      * 
      *  $job = ...;
-     *  foreach ($job->getPaginatedResults() as $result)
+     *  foreach ($job->getResults() as $result)
      *  {
      *      // (See documentation for Splunk_ResultsReader to see how to
      *      //  interpret $result.)
@@ -160,7 +160,7 @@ class Splunk_Job extends Splunk_Entity
      * @throws Splunk_HttpException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
      */
-    public function getPaginatedResults($args=array())
+    public function getResults($args=array())
     {
         return new Splunk_PaginatedResultsReader($this, $args);
     }
@@ -168,7 +168,7 @@ class Splunk_Job extends Splunk_Entity
     /**
      * Returns a single page of results from this job.
      * 
-     * Most potential callers should use getPaginatedResults() instead.
+     * Most potential callers should use getResults() instead.
      * Only use this method if you wish to parse job results yourself
      * or want to control pagination manually.
      * 
@@ -181,7 +181,7 @@ class Splunk_Job extends Splunk_Entity
      * using Splunk_ResultsReader. For example:
      * 
      *  $job = ...;
-     *  $results = new Splunk_ResultsReader($job->getResults());
+     *  $results = new Splunk_ResultsReader($job->getResultsPage());
      *  foreach ($results as $result)
      *  {
      *      // (See documentation for Splunk_ResultsReader to see how to
@@ -220,7 +220,7 @@ class Splunk_Job extends Splunk_Entity
      * @throws Splunk_HttpException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
      */
-    public function getResults($args=array())
+    public function getResultsPage($args=array())
     {
         $args = array_merge(array(
             'count' => -1,

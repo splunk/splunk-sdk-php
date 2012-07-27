@@ -53,7 +53,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
     echo '</ul>';
     
     // (NOTE: Can throw HTTP 400 if search command arguments not recognized)
-    $results = $job->getPaginatedResults();
+    $results = $job->getResults();
     $messages = array();
   }
   catch (Exception $e)

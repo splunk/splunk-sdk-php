@@ -316,7 +316,7 @@ $searchExpression = 'search index=_internal | head 1000';
 $job = $service->getJobs()->create($searchExpression, array(
 	'exec_mode' => 'blocking',
 ));
-$results = $job->getPaginatedResults();
+$results = $job->getResults();
 
 // Process results
 ...
@@ -345,7 +345,7 @@ while (!$job->isDone())
 	usleep(0.5 * 1000000);
 	$job->reload();
 }
-$results = $job->getPaginatedResults();
+$results = $job->getResults();
 
 // Process results
 ...

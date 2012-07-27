@@ -35,7 +35,7 @@ class Splunk_PaginatedResultsReader implements Iterator
     
     /**
      * Do not instantiate this class directly.
-     * Please call Splunk_Job::getPaginatedResults() instead.
+     * Please call Splunk_Job::getResults() instead.
      */
     public function __construct($job, $args)
     {
@@ -123,10 +123,10 @@ class Splunk_PaginatedResultsReader implements Iterator
             
             $curPageMaxSize = min($this->pageMaxSize, $numRemaining);
             if ($curPageMaxSize == PHP_INT_MAX)
-                $curPageMaxSize = -1;    // infinity value for getResults()
+                $curPageMaxSize = -1;    // infinity value for getResultsPage()
             
             $this->curPageResultsIterator = new Splunk_ResultsReader(
-                $this->job->getResults(
+                $this->job->getResultsPage(
                     array_merge($this->args, array(
                         'offset' => $this->curOffset,
                         'count' => $curPageMaxSize,

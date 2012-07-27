@@ -114,7 +114,7 @@ class JobTest extends SplunkTest
             $job->reload();
         }
         
-        $resultsStream = $job->getResults();
+        $resultsStream = $job->getResultsPage();
         $results = new Splunk_ResultsReader($resultsStream);
         
         $minExpectedSeriesNames = array('splunkd', 'splunkd_access');
@@ -148,6 +148,6 @@ class JobTest extends SplunkTest
                 'Job completed too fast. Please rewrite this unit test to avoid timing issues.');
         }
         
-        $job->getResults();
+        $job->getResultsPage();
     }
 }
