@@ -126,12 +126,14 @@ class Splunk_Job extends Splunk_Entity
      *  }
      * 
      * @param array $args (optional) {
-     *     'count' => (optional) The maximum number of results to return.
-     *                Defaults to returning all results.
+     *     'count' => (optional) The maximum number of results to return,
+     *                or -1 to return as many results as possible.
+     *                Defaults to returning as many results as possible.
      *     'offset' => (optional) The offset of the first result to return.
      *                 Defaults to 0.
      *     'pagesize' => (optional) The number of results to fetch from the
-     *                   server on each request when paginating internally.
+     *                   server on each request when paginating internally,
+     *                   or -1 to return as many results as possible.
      *                   Defaults to returning as many results as possible.
      *     
      *     'field_list' => (optional) Comma-separated list of fields to return
@@ -184,8 +186,9 @@ class Splunk_Job extends Splunk_Entity
      *  }
      * 
      * @param array $args (optional) {
-     *     'count' => (optional) The maximum number of results to return.
-     *                Defaults to returning all results.
+     *     'count' => (optional) The maximum number of results to return,
+     *                or -1 to return as many results as possible.
+     *                Defaults to returning as many results as possible.
      *     'offset' => (optional) The offset of the first result to return.
      *                 Defaults to 0.
      *     
@@ -216,8 +219,15 @@ class Splunk_Job extends Splunk_Entity
     public function getResults($args=array())
     {
         $args = array_merge(array(
-            'count' => 0,
+            'count' => -1,
         ), $args);
+        
+        if ($args['count'] <= 0 && $args['count'] != -1)
+            throw new IllegalArgumentException(
+                'Count must be positive or -1 (infinity).');
+        
+        if ($args['count'] == -1)
+            $args['count'] = 0;     // infinity value for the REST API
         
         $response = $this->service->get($this->path . '/results', $args);
         if ($response->status == 204)

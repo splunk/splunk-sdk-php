@@ -26,7 +26,7 @@ class Splunk_PaginatedResultsReader implements Iterator
     private $curPageResultsIterator;
     private $curOffset;
     private $limOffset;
-    private $pageSize;
+    private $pageMaxSize;
     
     private $currentElement;
     private $atStart;
@@ -35,24 +35,35 @@ class Splunk_PaginatedResultsReader implements Iterator
     //       Please call Splunk_Job::getPaginatedResults() instead.
     public function __construct($job, $args)
     {
-        list($args, $pageSize) =
+        list($args, $pageMaxSize) =
             Splunk_Util::extractArgument($args, 'pagesize', -1);
         list($args, $offset) =
             Splunk_Util::extractArgument($args, 'offset', 0);
         list($args, $count) =
             Splunk_Util::extractArgument($args, 'count', -1);
         
-        if ($pageSize <= 0 && $pageSize != -1)
+        if ($pageMaxSize <= 0 && $pageMaxSize != -1)
             throw new InvalidArgumentException(
-                'Page size must be positive or -1.');
+                'Page size must be positive or -1 (infinity).');
+        if ($offset < 0)
+            throw new InvalidArgumentException(
+                'Offset must be >= 0.');
+        if ($count <= 0 && $count != -1)
+            throw new InvalidArgumentException(
+                'Count must be positive or -1 (infinity).');
+        
+        if ($pageMaxSize == -1)
+            $pageMaxSize = PHP_INT_MAX;     // internal infinity value
+        if ($count == -1)
+            $count = PHP_INT_MAX;           // internal infinity value
         
         $this->job = $job;
         $this->args = $args;
         
         $this->curPageResults = NULL;
         $this->curOffset = $offset;
-        $this->limOffset = ($count == -1) ? PHP_INT_MAX : ($offset + $count);
-        $this->pageSize = $pageSize;
+        $this->limOffset = ($count == PHP_INT_MAX) ? PHP_INT_MAX : ($offset + $count);
+        $this->pageMaxSize = $pageMaxSize;
         
         $this->currentElement = $this->readNextElement();
         $this->atStart = TRUE;
@@ -97,17 +108,24 @@ class Splunk_PaginatedResultsReader implements Iterator
         if ($this->curPageResultsIterator == NULL ||
             !$this->curPageResultsIterator->valid())
         {
-            $numRemaining = $this->limOffset - $this->curOffset;
-            if ($numRemaining === 0)
+            if ($this->curOffset >= $this->limOffset)
             {
                 return NULL;    // at EOF
             }
+            
+            $numRemaining = ($this->limOffset == PHP_INT_MAX)
+                ? PHP_INT_MAX
+                : ($this->limOffset - $this->curOffset);
+            
+            $curPageMaxSize = min($this->pageMaxSize, $numRemaining);
+            if ($curPageMaxSize == PHP_INT_MAX)
+                $curPageMaxSize = -1;    // infinity value for getResults()
             
             $this->curPageResultsIterator = new Splunk_ResultsReader(
                 $this->job->getResults(
                     array_merge($this->args, array(
                         'offset' => $this->curOffset,
-                        'count' => min($this->pageSize, $numRemaining),
+                        'count' => $curPageMaxSize,
                         'output_mode' => 'xml',
                     ))));
             if (!$this->curPageResultsIterator->valid())

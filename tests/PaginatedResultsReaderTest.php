@@ -21,19 +21,16 @@ class PaginatedResultsReaderTest extends SplunkTest
 {
     public function testResultsPagination()
     {
-        $service = $this->loginToRealService();
+        list($job, $results1) = $this->createJobWithTwelveResults();
         
-        $job = $service->getJobs()->create(
-            'search index=_internal | head 12',
-            array(
-                'exec_mode' => 'blocking',
-            )
-        );
-        
-        $resultsIter1 = new Splunk_ResultsReader($job->getResults());
-        $results1 = $this->createListFromIterator($resultsIter1);
-        $this->assertEquals(12, count($results1),
-            'Update the search expression to return the expected number of results.');
+        $resultsIter2 = $job->getPaginatedResults();
+        $results2 = $this->createListFromIterator($resultsIter2);
+        $this->assertEquals($results1, $results2);
+    }
+    
+    public function testResultsPaginationWithCustomPageSize()
+    {
+        list($job, $results1) = $this->createJobWithTwelveResults();
         
         // TODO: Make this the default way of getting results:
         //         * Rename getResults() -> getResultsPage()
@@ -65,6 +62,25 @@ class PaginatedResultsReaderTest extends SplunkTest
                     'pagesize' => 4,
                 ))
             ));
+    }
+    
+    private function createJobWithTwelveResults()
+    {
+        $service = $this->loginToRealService();
+        
+        $job = $service->getJobs()->create(
+            'search index=_internal | head 12',
+            array(
+                'exec_mode' => 'blocking',
+            )
+        );
+        
+        $resultsIter1 = new Splunk_ResultsReader($job->getResults());
+        $results1 = $this->createListFromIterator($resultsIter1);
+        $this->assertEquals(12, count($results1),
+            'Update the search expression to return the expected number of results.');
+        
+        return array($job, $results1);
     }
     
     // === Utility ===
