@@ -316,7 +316,7 @@ $searchExpression = 'search index=_internal | head 1000';
 $job = $service->getJobs()->create($searchExpression, array(
 	'exec_mode' => 'blocking',
 ));
-$results = new Splunk_ResultsReader($job->getResults());
+$results = $job->getPaginatedResults();
 
 // Process results
 ...
@@ -345,7 +345,7 @@ while (!$job->isDone())
 	usleep(0.5 * 1000000);
 	$job->reload();
 }
-$results = new Splunk_ResultsReader($job->getResults());
+$results = $job->getPaginatedResults();
 
 // Process results
 ...

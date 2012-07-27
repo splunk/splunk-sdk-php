@@ -16,6 +16,8 @@
  */
 
 /**
+ * (This class is private.)
+ * 
  * @package Splunk
  */
 class Splunk_PaginatedResultsReader implements Iterator
@@ -31,8 +33,10 @@ class Splunk_PaginatedResultsReader implements Iterator
     private $currentElement;
     private $atStart;
     
-    // NOTE: This class should not be instantiated directly.
-    //       Please call Splunk_Job::getPaginatedResults() instead.
+    /**
+     * Do not instantiate this class directly.
+     * Please call Splunk_Job::getPaginatedResults() instead.
+     */
     public function __construct($job, $args)
     {
         list($args, $pageMaxSize) =

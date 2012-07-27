@@ -166,7 +166,11 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
-     * Returns the results from this job.
+     * Returns a single page of results from this job.
+     * 
+     * Most potential callers should use getPaginatedResults() instead.
+     * Only use this method if you wish to parse job results yourself
+     * or want to control pagination manually.
      * 
      * By default, all results are returned. For large
      * result sets, it is advisable to fetch items using multiple calls with
