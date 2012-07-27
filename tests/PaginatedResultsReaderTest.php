@@ -28,7 +28,7 @@ class PaginatedResultsReaderTest extends SplunkTest
         $this->assertEquals($results1, $results2);
     }
     
-    public function testResultsPaginationWithCustomPageSize()
+    public function testResultsPaginationWithCustomBounds()
     {
         list($job, $results1) = $this->createJobWithTwelveResults();
         
@@ -61,6 +61,54 @@ class PaginatedResultsReaderTest extends SplunkTest
             ));
     }
     
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testResultsPaginationWithZeroCount()
+    {
+        list($job, $results1) = $this->createJobWithTwelveResults();
+        
+        $job->getResults(array(
+            'count' => 0,
+        ));
+    }
+    
+    public function testResultsPaginationWithInfinityCount()
+    {
+        list($job, $results1) = $this->createJobWithTwelveResults();
+        
+        $results2Iter = $job->getResults(array(
+            'count' => -1,
+        ));
+        $results2 = $this->createListFromIterator($results2Iter);
+        $this->assertEquals($results1, $results2);
+    }
+    
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testResultsPaginationWithZeroPagesize()
+    {
+        list($job, $results1) = $this->createJobWithTwelveResults();
+        
+        $job->getResults(array(
+            'pagesize' => 0,
+        ));
+    }
+    
+    public function testResultsPaginationWithInfinityPagesize()
+    {
+        list($job, $results1) = $this->createJobWithTwelveResults();
+        
+        $results2Iter = $job->getResults(array(
+            'pagesize' => -1,
+        ));
+        $results2 = $this->createListFromIterator($results2Iter);
+        $this->assertEquals($results1, $results2);
+    }
+    
+    // === Utility ===
+    
     private function createJobWithTwelveResults()
     {
         $service = $this->loginToRealService();
@@ -79,8 +127,6 @@ class PaginatedResultsReaderTest extends SplunkTest
         
         return array($job, $results1);
     }
-    
-    // === Utility ===
     
     private function createListFromIterator($iter)
     {

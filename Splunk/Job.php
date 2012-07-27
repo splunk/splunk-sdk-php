@@ -127,8 +127,8 @@ class Splunk_Job extends Splunk_Entity
      * 
      * @param array $args (optional) {
      *     'count' => (optional) The maximum number of results to return,
-     *                or -1 to return as many results as possible.
-     *                Defaults to returning as many results as possible.
+     *                or -1 to return as many as possible.
+     *                Defaults to returning as many as possible.
      *     'offset' => (optional) The offset of the first result to return.
      *                 Defaults to 0.
      *     'pagesize' => (optional) The number of results to fetch from the
@@ -191,8 +191,8 @@ class Splunk_Job extends Splunk_Entity
      * 
      * @param array $args (optional) {
      *     'count' => (optional) The maximum number of results to return,
-     *                or -1 to return as many results as possible.
-     *                Defaults to returning as many results as possible.
+     *                or -1 to return as many as possible.
+     *                Defaults to returning as many as possible.
      *     'offset' => (optional) The offset of the first result to return.
      *                 Defaults to 0.
      *     
@@ -227,7 +227,7 @@ class Splunk_Job extends Splunk_Entity
         ), $args);
         
         if ($args['count'] <= 0 && $args['count'] != -1)
-            throw new IllegalArgumentException(
+            throw new InvalidArgumentException(
                 'Count must be positive or -1 (infinity).');
         
         if ($args['count'] == -1)
