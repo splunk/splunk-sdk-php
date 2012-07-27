@@ -53,8 +53,8 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
     echo '</ul>';
     
     // (NOTE: Can throw HTTP 400 if search command arguments not recognized)
-    $resultsText = $job->getResults();
-    $results = new Splunk_ResultsReader($resultsText);
+    $resultsStream = $job->getResults();
+    $results = new Splunk_ResultsReader($resultsStream);
     $messages = array();
   }
   catch (Exception $e)
