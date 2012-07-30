@@ -35,6 +35,7 @@ class Splunk_StreamStream
      * @param resource $stream      A stream created by fopen().
      * @return string               A URI that the provided stream can be
      *                              opened with via another fopen() call.
+     *                              For example "splunkstream://5016d2d5c9d90".
      */
     public static function createUriForStream($stream)
     {
