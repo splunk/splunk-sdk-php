@@ -97,9 +97,13 @@ Requirements:
 * [PHPUnit 3.6](http://www.phpunit.de/)
 * [Xdebug 2.2.0](http://xdebug.org/) (for code coverage)
 
-To execute the unit tests, run:
+To execute all unit tests, run:
 
     phpunit tests
+
+To execute only fast unit tests, run:
+
+    phpunit --exclude-group slow tests
 
 To generate a code coverage report, run:
 
@@ -368,6 +372,15 @@ $job = $savedSearch->dispatch();
 // Process results
 ...
 ```
+
+### Running a Realtime Search
+
+A realtime search must be run as an *asynchronous* search job.
+The *blocking* and *oneshot* modes do not work, because a realtime search
+never actually completes.
+
+To get results from a realtime search, the `getResultsPreviewPage()` method
+must be used instead of the `getResults()` method.
 
 ## Resources
 

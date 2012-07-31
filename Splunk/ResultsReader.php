@@ -68,7 +68,7 @@ class Splunk_ResultsReader implements Iterator
         if (is_string($streamOrXmlString))
         {
             $string = $streamOrXmlString;
-            $stream = Splunk_ResultsReader::createStringStream($string);
+            $stream = Splunk_StringStream::create($string);
         }
         else
         {
@@ -228,25 +228,5 @@ class Splunk_ResultsReader implements Iterator
             }
         }
         return $result;
-    }
-    
-    // === Utility ===
-    
-    private static function createStringStream($string)
-    {
-        $stream = fopen('php://memory', 'rwb');
-        fwrite($stream, $string);
-        fseek($stream, 0);
-        
-        /*
-         * fseek() causes the next call to feof() to always return FALSE,
-         * which is undesirable if we seeked to the EOF. In this case,
-         * attempt a read past EOF so that the next call to feof() returns
-         * TRUE as expected.
-         */
-        if ($string === '')
-            fread($stream, 1);  // trigger EOF explicitly
-        
-        return $stream;
     }
 }
