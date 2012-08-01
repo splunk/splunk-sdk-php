@@ -90,11 +90,8 @@ class Splunk_Http
                 'method' => strtoupper($method),
                 'header' => $requestHeaderLines,
                 'content' => $requestBody,
-                // NOTE: Maintainers, if you change 'follow_location' to TRUE,
-                //       you will need to update the header line parsing code
-                //       below to get the header lines of the final HTTP response,
-                //       ignoring the header lines of preceding 3xx responses.
-                'follow_location' => FALSE, // don't follow HTTP 3xx automatically
+                'follow_location' => 0,     // don't follow HTTP 3xx automatically
+                'max_redirects' => 0,       // [PHP 5.2] don't follow HTTP 3xx automatically
                 'ignore_errors' => TRUE,    // don't throw exceptions on bad status codes
             ),
         ));
