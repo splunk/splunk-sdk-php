@@ -27,6 +27,8 @@ License 2.0. Details can be found in the file [LICENSE].
 
 The SDK requires PHP 5.2+ with the SimpleXML extension.
 
+OpenSSL support for PHP is required to access Splunk over `https://` URLs.
+
 ## Getting Started
 
 If you haven't already installed Splunk, download it here: 
@@ -94,8 +96,8 @@ Then you should be able to access the SDK examples via a URL similar to:
 
 Requirements:
 
-* [PHPUnit 3.6](http://www.phpunit.de/)
-* [Xdebug 2.2.0](http://xdebug.org/) (for code coverage)
+* [PHPUnit](http://www.phpunit.de/) 3.6+
+* [Xdebug](http://xdebug.org/) 2.0.5+ (for code coverage)
 
 To execute the unit tests, run:
 
