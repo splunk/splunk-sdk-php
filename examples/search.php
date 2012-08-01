@@ -68,54 +68,56 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
   <h2>Results</h2>
   <table>
     <?php
-    $isFirstRow = TRUE;
+    $anyRows = FALSE;
+    $columnNames = NULL;
     foreach ($results as $result)
     {
-      // Skip messages and other non-standard results
-      if (!is_array($result))
+      if ($result instanceof Splunk_ResultsFieldOrder)
       {
-        if ($result instanceof Splunk_ResultsMessage)
-        {
-          $messages[] = $result;
-        }
-        continue;
-      }
-      
-      if ($isFirstRow)
-      {
-        $columnNames = array_keys($result);
+        $columnNames = $result->getFieldNames();
+        
         echo '<tr>';
         foreach ($columnNames as $columnName)
           echo '<th>' . htmlspecialchars($columnName) . '</th>';
         echo '</tr>';
         echo "\n";
-        
-        $isFirstRow = FALSE;
       }
-      
-      echo '<tr>';
-      foreach ($columnNames as $columnName)
+      else if ($result instanceof Splunk_ResultsMessage)
       {
-        $cellValue = array_key_exists($columnName, $result) ? $result[$columnName] : NULL;
-        echo '<td>';
-        if ($cellValue !== NULL)
-        {
-          if (is_array($cellValue))
-          {
-            echo '<ul>';
-            foreach ($cellValue as $value)
-              echo '<li>' . htmlspecialchars($value) . '</li>';
-            echo '</ul>';
-          }
-          else
-          {
-            echo htmlspecialchars($cellValue);
-          }
-        }
-        echo '</td>';
+        $messages[] = $result;
       }
-      echo '</tr>';
-      echo "\n";
+      else if (is_array($result))
+      {
+        $anyRows = TRUE;
+        
+        // (We should have received information about the field ordering prior
+        //  to receiving any rows.)
+        assert ($columnNames !== NULL);
+        
+        echo '<tr>';
+        foreach ($columnNames as $columnName)
+        {
+          $cellValue = array_key_exists($columnName, $result) ? $result[$columnName] : NULL;
+          echo '<td>';
+          if ($cellValue !== NULL)
+          {
+            if (is_array($cellValue))
+            {
+              echo '<ul>';
+              foreach ($cellValue as $value)
+                echo '<li>' . htmlspecialchars($value) . '</li>';
+              echo '</ul>';
+            }
+            else
+            {
+              echo htmlspecialchars($cellValue);
+            }
+          }
+          echo '</td>';
+        }
+        echo '</tr>';
+        echo "\n";
+      }
     }
     ?>
   </table>
@@ -130,7 +132,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
       ?>
     </ul>
   <?php endif; ?>
-  <?php if ($isFirstRow && (count($messages) === 0)): ?>
+  <?php if (!$anyRows && (count($messages) === 0)): ?>
     <p>No results.</p>
   <?php endif; ?>
 <?php endif; ?>
