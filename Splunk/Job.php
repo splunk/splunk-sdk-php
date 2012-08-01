@@ -125,6 +125,9 @@ class Splunk_Job extends Splunk_Entity
      *      ...
      *  }
      * 
+     * This method cannot be used to access results from realtime jobs,
+     * which are never done. Use getResultsPreviewPage() instead.
+     * 
      * @param array $args (optional) {
      *     'count' => (optional) The maximum number of results to return,
      *                or -1 to return as many as possible.
@@ -189,6 +192,9 @@ class Splunk_Job extends Splunk_Entity
      *      ...
      *  }
      * 
+     * This method cannot be used to access results from realtime jobs,
+     * which are never done. Use getResultsPreviewPage() instead.
+     * 
      * @param array $args (optional) {
      *     'count' => (optional) The maximum number of results to return,
      *                or -1 to return as many as possible.
@@ -222,6 +228,39 @@ class Splunk_Job extends Splunk_Entity
      */
     public function getResultsPage($args=array())
     {
+        $response = $this->fetchPage('results', $args);
+        if ($response->status == 204)
+            throw new Splunk_JobNotDoneException($response);
+        return $response->bodyStream;
+    }
+    
+    /**
+     * Returns a single page of results from this job,
+     * which may or may not be done running.
+     * 
+     * Arguments and return values are exactly the same as
+     * Splunk_Job::getResultsPage().
+     * 
+     * @return resource             The results (i.e. transformed events)
+     *                              of this job, as a stream.
+     * @throws Splunk_HttpException
+     * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults_preview
+     */
+    public function getResultsPreviewPage($args=array())
+    {
+        $response = $this->fetchPage('results_preview', $args);
+        if ($response->status == 204)
+        {
+            // The REST API throws a 204 when a preview is being generated
+            // and no results are available. This isn't a friendly behavior
+            // for clients.
+            return Splunk_StringStream::create('');
+        }
+        return $response->bodyStream;
+    }
+    
+    private function fetchPage($pageType, $args)
+    {
         $args = array_merge(array(
             'count' => -1,
         ), $args);
@@ -233,9 +272,31 @@ class Splunk_Job extends Splunk_Entity
         if ($args['count'] == -1)
             $args['count'] = 0;     // infinity value for the REST API
         
-        $response = $this->service->get($this->path . '/results', $args);
-        if ($response->status == 204)
-            throw new Splunk_JobNotDoneException($response);
-        return $response->bodyStream;
+        $response = $this->service->get(
+            $this->path . '/' . $pageType,
+            $args);
+        return $response;
+    }
+    
+    // === Control ===
+    
+    /**
+     * Stops this search job and deletes the results.
+     * 
+     * @throws Splunk_HttpException
+     */
+    public function cancel()
+    {
+        $this->sendControlAction('cancel');
+    }
+    
+    /**
+     * @throws Splunk_HttpException
+     */
+    private function sendControlAction($actionName)
+    {
+        $response = $this->service->post("{$this->path}/control", array(
+            'action' => $actionName,
+        ));
     }
 }
