@@ -19,16 +19,29 @@
  * Parses XML search results received from jobs.
  * 
  * Results are obtained by iterating over an instance of this class
- * using a foreach loop. Each result can either be an associative array or
- * a Splunk_ResultsMessage. If the result is an associative array, it maps each field
- * name to either a single value or an array of values.
+ * using a foreach loop. Each result can be a Splunk_ResultsFieldOrder,
+ * a Splunk_ResultsMessage, an associative array, or potentially instances
+ * of other classes in the future.
+ * 
+ * If the result is an associative array, it maps each
+ * field name to either a single value or an array of values.
  * 
  * $resultsReader = new Splunk_ResultsReader(...);
  * foreach ($resultsReader as $result)
  * {
- *     if (is_array($result))
+ *     if ($result instanceof Splunk_ResultsFieldOrder)
  *     {
- *         // Process a normal result
+ *         // Process the field order
+ *         print "FIELDS: " . implode(',', $result->getFieldNames()) . "\r\n";
+ *     }
+ *     else if ($result instanceof Splunk_ResultsMessage)
+ *     {
+ *         // Process a message
+ *         print "[{$result->getType()}] {$result->getText()}\r\n";
+ *     }
+ *     else if (is_array($result))
+ *     {
+ *         // Process a row
  *         print "{\r\n";
  *         foreach ($result as $key => $valueOrValues)
  *         {
@@ -46,10 +59,9 @@
  *         }
  *         print "}\r\n";
  *     }
- *     else if ($result instanceof Splunk_ResultsMessage)
+ *     else
  *     {
- *         // Process a message
- *         print "[{$result->getType()}] {$result->getText()}\r\n";
+ *         // Ignore unknown result type
  *     }
  * }
  * 
@@ -143,6 +155,13 @@ class Splunk_ResultsReader implements Iterator
         
         while ($xr->read())
         {
+            // Read: /meta
+            if ($xr->nodeType == XMLReader::ELEMENT &&
+                $xr->name === 'meta')
+            {
+                return $this->readMeta();
+            }
+            
             // Read: /messages/msg
             if ($xr->nodeType == XMLReader::ELEMENT &&
                 $xr->name === 'msg')
@@ -166,6 +185,39 @@ class Splunk_ResultsReader implements Iterator
             }
         }
         return NULL;
+    }
+    
+    private function readMeta()
+    {
+        $xr = $this->xmlReader;
+        
+        $insideFieldOrder = FALSE;
+        $fieldsNames = NULL;
+        
+        while ($xr->read())
+        {
+            // Begin: /meta/fieldOrder
+            if ($xr->nodeType == XMLReader::ELEMENT &&
+                $xr->name === 'fieldOrder')
+            {
+                $insideFieldOrder = TRUE;
+                $fieldsNames = array();
+            }
+            
+            // Read: /meta/fieldOrder/field/[TEXT]
+            if ($insideFieldOrder &&
+                $xr->nodeType == XMLReader::TEXT)
+            {
+                $fieldsNames[] = $xr->value;
+            }
+            
+            // End: /meta/fieldOrder
+            if ($xr->nodeType == XMLReader::END_ELEMENT &&
+                $xr->name === 'fieldOrder')
+            {
+                return new Splunk_ResultsFieldOrder($fieldsNames);
+            }
+        }
     }
     
     private function readResult()

@@ -157,9 +157,19 @@ $results = new Splunk_ResultsReader($resultsXmlString);
 // Process results
 foreach ($results as $result)
 {
-	if (is_array($result))
+    if ($result instanceof Splunk_ResultsFieldOrder)
     {
-        // Process a normal result
+        // Process the field order
+        print "FIELDS: " . implode(',', $result->getFieldNames()) . "\r\n";
+    }
+    else if ($result instanceof Splunk_ResultsMessage)
+    {
+        // Process a message
+        print "[{$result->getType()}] {$result->getText()}\r\n";
+    }
+    else if (is_array($result))
+    {
+        // Process a row
         print "{\r\n";
         foreach ($result as $field => $valueOrValues)
         {
@@ -176,10 +186,9 @@ foreach ($results as $result)
         }
         print "}\r\n";
     }
-    else if ($result instanceof Splunk_ResultsMessage)
+    else
     {
-        // Process a message
-        print "[{$result->getType()}] {$result->getText()}\r\n";
+        // Ignore unknown result type
     }
 }
 ```
@@ -287,18 +296,27 @@ $results = new Splunk_ResultsReader($resultsXmlString);
 // Process results
 foreach ($results as $result)
 {
-	if (is_array($result))
+    if ($result instanceof Splunk_ResultsFieldOrder)
     {
-        // Process a normal result
-        foreach ($result as $field => $valueOrValues)
-        {
-            // ...
-        }
+        // Process the field order
+        // ...
     }
     else if ($result instanceof Splunk_ResultsMessage)
     {
         // Process a message
         print "[{$result->getType()}] {$result->getText()}\r\n";
+    }
+	else if (is_array($result))
+    {
+        // Process a row
+        foreach ($result as $field => $valueOrValues)
+        {
+            // ...
+        }
+    }
+    else
+    {
+        // Ignore unknown result type
     }
 }
 ```

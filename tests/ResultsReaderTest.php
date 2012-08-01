@@ -23,6 +23,10 @@ class ResultsReaderTest extends SplunkTest
     {
         $xmlText = file_get_contents('./tests/data/simpleSearchResults.xml');
         $expectedResults = array(
+            new Splunk_ResultsFieldOrder(array(
+                'series',
+                'sum(kb)',
+            )),
             new Splunk_ResultsMessage('DEBUG', 'base lispy: [ AND ]'),
             new Splunk_ResultsMessage('DEBUG', 'search context: user="admin", app="search", bs-pathname="/some/path"'),
             array(
@@ -72,6 +76,10 @@ class ResultsReaderTest extends SplunkTest
 </results>
 ");
         $expectedResults = array(
+            new Splunk_ResultsFieldOrder(array(
+                'series',
+                'sum(kb)',
+            )),
             array(
                 'series' => 'twitter',
                 'sum(kb)' => '14372242.758775',
@@ -98,6 +106,10 @@ class ResultsReaderTest extends SplunkTest
 </results>
 ");
         $expectedResults = array(
+            new Splunk_ResultsFieldOrder(array(
+                'series',
+                'sum(kb)',
+            )),
             new Splunk_ResultsMessage('DEBUG', 'base lispy: [ AND ]'),
         );
         
@@ -127,6 +139,9 @@ class ResultsReaderTest extends SplunkTest
 </results>
 ");
         $expectedResults = array(
+            new Splunk_ResultsFieldOrder(array(
+                'values(sourcetype)',
+            )),
             array(
                 'values(sourcetype)' => array(
                     'scheduler',
@@ -161,6 +176,9 @@ class ResultsReaderTest extends SplunkTest
 </results>
 ");
         $expectedResults = array(
+            new Splunk_ResultsFieldOrder(array(
+                '_raw',
+            )),
             array(
                 '_raw' => '07-13-2012 09:27:27.307 -0700 INFO  Metrics - group=search_concurrency, system total, active_hist_searches=0, active_realtime_searches=0',
             ),
@@ -177,6 +195,8 @@ class ResultsReaderTest extends SplunkTest
         
         $this->assertParsedResultsEquals($expectedResults, $xmlText);
     }
+    
+    // === Utility ===
     
     private function assertParsedResultsEquals($expectedResults, $xmlText)
     {
