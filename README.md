@@ -1,7 +1,8 @@
 # The Splunk Software Development Kit for PHP (Preview)
 
-This SDK contains library code and examples designed to enable developers to
-build applications using Splunk.
+This SDK makes it easy for PHP applications to communicate with and control a Splunk server. Such applications may start searches, display results, and perform administration tasks.
+
+### About Splunk
 
 Splunk is a search engine and analytic environment that uses a distributed
 map-reduce architecture to efficiently index, search and process large 
@@ -11,10 +12,6 @@ The Splunk product is popular with system administrators for aggregation and
 monitoring of IT machine data, security, compliance and a wide variety of other
 scenarios that share a requirement to efficiently index, search, analyze and
 generate real-time notifications from large volumes of time series data.
-
-The Splunk developer platform enables developers to take advantage of the same
-technology used by the Splunk product to build exciting new applications that
-are enabled by Splunk's unique capabilities.
 
 ## License
 
@@ -202,7 +199,8 @@ foreach ($results as $result)
         {
             if (is_array($valueOrValues))
             {
-                $valuesString = implode(',', $valueOrValues);
+                $values = $valueOrValues;
+                $valuesString = implode(',', $values);
                 print "  {$key} => [{$valuesString}]\r\n";
             }
             else
