@@ -147,12 +147,12 @@ class Splunk_Job extends Splunk_Entity
      *                      - "xml": The format parsed by Splunk_ResultsReader.
      *                      - "json"
      *                      Defaults to "xml".
-     *     'search' => (optional) The search expression to filter results
-     *                 with. For example, "foo" matches any object that has
-     *                 "foo" in a substring of a field. Similarly the
-     *                 expression "field_name=field_value" matches only objects
-     *                 that have a "field_name" field with the value
-     *                 "field_value".
+     *                      You should not change this unless you are parsing
+     *                      results yourself.
+     *     'search' => (optional) The post processing search to apply to
+     *                 results. Can be any valid search language string.
+     *                 For example "search sourcetype=splunkd" will match any
+     *                 result whose "sourcetype" field is "splunkd".
      * }
      * @return Iterator             The results (i.e. transformed events)
      *                              of this job, via an iterator.
@@ -210,12 +210,12 @@ class Splunk_Job extends Splunk_Entity
      *                      - "xml": The format parsed by Splunk_ResultsReader.
      *                      - "json"
      *                      Defaults to "xml".
-     *     'search' => (optional) The search expression to filter results
-     *                 with. For example, "foo" matches any object that has
-     *                 "foo" in a substring of a field. Similarly the
-     *                 expression "field_name=field_value" matches only objects
-     *                 that have a "field_name" field with the value
-     *                 "field_value".
+     *                      You should not change this unless you are parsing
+     *                      results yourself.
+     *     'search' => (optional) The post processing search to apply to
+     *                 results. Can be any valid search language string.
+     *                 For example "search sourcetype=splunkd" will match any
+     *                 result whose "sourcetype" field is "splunkd".
      * }
      * @return resource             The results (i.e. transformed events)
      *                              of this job, as a stream.

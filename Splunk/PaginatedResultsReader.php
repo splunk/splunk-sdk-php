@@ -56,6 +56,8 @@ class Splunk_PaginatedResultsReader implements Iterator
             throw new InvalidArgumentException(
                 'Count must be positive or -1 (infinity).');
         
+        // (Use PHP_INT_MAX for infinity internally because it works
+        //  well with the min() function.)
         if ($pageMaxSize == -1)
             $pageMaxSize = PHP_INT_MAX;     // internal infinity value
         if ($count == -1)
