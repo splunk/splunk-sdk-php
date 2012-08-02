@@ -5,7 +5,7 @@
  */
 
 // Credentials to connect to a test instance of Splunk
-$Splunk_testSettings['connectArgs'] = array(
+$SplunkTests_connectArguments = array(
     //'host' => 'localhost',
     //'port' => 8089,
     //'username' => 'admin',

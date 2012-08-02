@@ -1,12 +1,15 @@
 <?php
 
+/*
+ * Configuration for examples.
+ */
+
 // Credentials to connect to your Splunk instance.
 $SplunkExamples_connectArguments = array(
-    'username' => 'admin',
+    //'host' => 'localhost',
+    //'port' => 8089,
+    //'username' => 'admin',
     'password' => 'changeme',
-    
-    'host' => 'localhost',
-    'port' => 8089,
 );
 
 // Enable for better error reporting

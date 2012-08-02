@@ -46,8 +46,8 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
      */
     public function loginToRealContext()
     {
-        global $Splunk_testSettings;
-        $context = new Splunk_Context($Splunk_testSettings['connectArgs']);
+        global $SplunkTests_connectArguments;
+        $context = new Splunk_Context($SplunkTests_connectArguments);
         $context->login();
         return $context;
     }
@@ -57,8 +57,8 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
      */
     public function loginToRealService()
     {
-        global $Splunk_testSettings;
-        $service = new Splunk_Service($Splunk_testSettings['connectArgs']);
+        global $SplunkTests_connectArguments;
+        $service = new Splunk_Service($SplunkTests_connectArguments);
         $service->login();
         return $service;
     }
