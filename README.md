@@ -116,9 +116,13 @@ Requirements:
 * [PHPUnit](http://www.phpunit.de/) 3.6+
 * [Xdebug](http://xdebug.org/) 2.0.5+ (for code coverage)
 
-To execute the unit tests, run:
+To execute all unit tests, run:
 
     phpunit tests
+
+To execute only fast unit tests, run:
+
+    phpunit --exclude-group slow tests
 
 To generate a code coverage report, run:
 
@@ -353,7 +357,7 @@ $searchExpression = 'search index=_internal | head 1000';
 $job = $service->getJobs()->create($searchExpression, array(
 	'exec_mode' => 'blocking',
 ));
-$results = new Splunk_ResultsReader($job->getResults());
+$results = $job->getResults();
 
 // Process results
 ...
@@ -382,7 +386,7 @@ while (!$job->isDone())
 	usleep(0.5 * 1000000);
 	$job->reload();
 }
-$results = new Splunk_ResultsReader($job->getResults());
+$results = $job->getResults();
 
 // Process results
 ...
@@ -405,6 +409,15 @@ $job = $savedSearch->dispatch();
 // Process results
 ...
 ```
+
+### Running a Realtime Search
+
+A realtime search must be run as an *asynchronous* search job.
+The *blocking* and *oneshot* modes do not work, because a realtime search
+never actually completes.
+
+To get results from a realtime search, the `getResultsPreviewPage()` method
+must be used instead of the `getResults()` method.
 
 ## Resources
 

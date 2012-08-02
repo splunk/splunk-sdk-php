@@ -50,8 +50,9 @@ class Splunk_Collection extends Splunk_Endpoint
      *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
      *                    to list entities. Defaults to the service's namespace.
      *     
-     *     'count' => (optional) The maximum number of items to return.
-     *                Defaults to returning all items.
+     *     'count' => (optional) The maximum number of items to return,
+     *                or -1 to return as many as possible.
+     *                Defaults to returning as many as possible.
      *     'offset' => (optional) The offset of the first item to return.
      *                 Defaults to 0.
      *     
@@ -85,8 +86,15 @@ class Splunk_Collection extends Splunk_Endpoint
     public function items($args=array())
     {
         $args = array_merge(array(
-            'count' => 0,
+            'count' => -1,
         ), $args);
+        
+        if ($args['count'] <= 0 && $args['count'] != -1)
+            throw new InvalidArgumentException(
+                'Count must be positive or -1 (infinity).');
+        
+        if ($args['count'] == -1)
+            $args['count'] = 0;     // infinity value for the REST API
         
         $response = $this->service->get($this->path, $args);
         return $this->loadEntitiesFromResponse($response);

@@ -145,7 +145,7 @@ class Splunk_Context
     private function request($method, $path, $args)
     {
         list($params, $namespace) = 
-            $this->extractArgument($args, 'namespace', NULL);
+            Splunk_Util::extractArgument($args, 'namespace', NULL);
         
         return $this->http->$method(
             $this->url($path, $namespace),
@@ -207,23 +207,5 @@ class Splunk_Context
             $namespace = Splunk_Namespace::createDefault();
         
         return $namespace->getPathPrefix() . $path;
-    }
-    
-    /**
-     * Extracts the value for the specified $key from the specified $map.
-     * 
-     * @param array $map
-     * @param mixed $key
-     * @param mixed $defaultValue
-     * @return array {
-     *     [0] => $map without $key
-     *     [1] => $map[$key] if it exists, or $defaultValue if it does not
-     * }
-     */
-    private function extractArgument($map, $key, $defaultValue)
-    {
-        $value = array_key_exists($key, $map) ? $map[$key] : $defaultValue;
-        unset($map[$key]);
-        return array($map, $value);
     }
 }

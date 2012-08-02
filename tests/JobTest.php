@@ -110,11 +110,11 @@ class JobTest extends SplunkTest
         while (!$job->isDone())
         {
             //printf("%03.1f%%\r\n", $job->getProgress() * 100);
-            usleep(0.5 * 1000000);
+            usleep(0.1 * 1000000);
             $job->reload();
         }
         
-        $resultsStream = $job->getResults();
+        $resultsStream = $job->getResultsPage();
         $results = new Splunk_ResultsReader($resultsStream);
         
         $minExpectedSeriesNames = array('splunkd', 'splunkd_access');
@@ -134,7 +134,7 @@ class JobTest extends SplunkTest
     /**
      * @expectedException Splunk_JobNotDoneException
      */
-    public function testResultsNotAvailable()
+    public function testResultsNotDone()
     {
         $service = $this->loginToRealService();
         
@@ -142,12 +142,86 @@ class JobTest extends SplunkTest
         $ss = $service->getSavedSearches()->get('Top five sourcetypes');
         $job = $ss->dispatch();
         
-        if ($job->isDone())
+        $this->assertFalse($job->isDone(),
+            'Job completed too fast. Please rewrite this unit test to avoid timing issues.');
+        
+        $job->getResultsPage();
+    }
+    
+    /**
+     * @group slow
+     */
+    public function testPreview()
+    {
+        /* Setup */
+        
+        $service = $this->loginToRealService();
+        
+        $rtjob = $service->getJobs()->create('search index=_internal', array(
+            'earliest_time' => 'rt',
+            'latest_time' => 'rt',
+        ));
+        
+        $this->assertTrue($rtjob['isRealTimeSearch'] === '1',
+            'This should be a realtime job.');
+        
+        $this->assertTrue($rtjob['isPreviewEnabled'] === '1',
+            'Preview should be automatically enabled for all realtime jobs. ' +
+            'Otherwise there would be no way to get results from them.');
+        
+        /*
+         * Subtest #1
+         * 
+         * Previews that don't have any results yet should report an empty
+         * page of results (and not throw any exception).
+         */
+        
+        $this->assertEquals(0, $rtjob['resultPreviewCount'],
+            'Job yielded preview results too fast. ' .
+            'Please rewrite this unit test to avoid timing issues.');
+        
+        // NOTE: Should NOT throw a Splunk_HttpException (HTTP 204)
+        $page = $rtjob->getResultsPreviewPage();
+        $this->assertFalse($this->pageHasResults($page),
+            'Job claimed to have no preview results, yet results were obtained. ' .
+            'This might indicate a timing issue in this unit test.');
+        
+        /*
+         * Subtest #2
+         * 
+         * It should be possible to obtain preview results from a job
+         * without that job being done generating results.
+         */
+        
+        // Wait until some results...
+        // (NOTE: This takes about 5 seconds on Splunk 4.3.2. A lot of time.)
+        while ($rtjob['resultPreviewCount'] == 0)
         {
-            $this->assertTrue(FALSE,
-                'Job completed too fast. Please rewrite this unit test to avoid timing issues.');
+            usleep(0.2 * 1000000);
+            $rtjob->reload();
         }
         
-        $job->getResults();
+        // ...but not all
+        $this->assertFalse($rtjob->isDone(),
+            'Realtime job reported self as completed. ' .
+            'Realtime jobs should never complete.');
+        
+        $page = $rtjob->getResultsPreviewPage();
+        $this->assertTrue($this->pageHasResults($page),
+            'Job claimed to have preview results, yet none were obtained.');
+        
+        /* Teardown */
+        
+        $rtjob->cancel();
+    }
+    
+    // === Utility ===
+    
+    private function pageHasResults($resultsPage)
+    {
+        $pageHasResults = FALSE;
+        foreach (new Splunk_ResultsReader($resultsPage) as $result)
+            $pageHasResults = TRUE;
+        return $pageHasResults;
     }
 }
