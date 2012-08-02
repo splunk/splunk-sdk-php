@@ -28,17 +28,18 @@ OpenSSL support for PHP is required to access Splunk over `https://` URLs.
 
 Tested PHP versions:
 
-* PHP 5.2.x
-  * PHP 5.2.6 - Not supported by PHPUnit 2.6.
-  * PHP 5.2.7 - Recalled due to security flaw.
-  * PHP 5.2.9 - Broken due to [bug 45092].
-  * PHP 5.2.10 - Broken due to [bug 48182].
-  * **PHP 5.2.11 - OK.** Earliest PHP 5.2.x version known to work.
-  * **PHP 5.2.17 - OK.** Last version of PHP 5.2.x.
-* PHP 5.3.x
-  * **PHP 5.3.10 - OK.** Default PHP for Mac OS X 10.7 (Lion).
 * PHP 5.4.x
   * **PHP 5.4.5 - OK.** Latest PHP as of 2012-08-01.
+* PHP 5.3.x
+  * **PHP 5.3.10 - OK.** Default PHP for Mac OS X 10.7 (Lion).
+* PHP 5.2.x
+  * **PHP 5.2.17 - OK.** Last version of PHP 5.2.x.
+  * **PHP 5.2.11 - OK.** Earliest PHP 5.2.x version known to work.
+  * PHP 5.2.10 - Broken due to [bug 48182].
+  * PHP 5.2.9 - Broken due to [bug 45092].
+  * PHP 5.2.7 - Recalled due to security flaw.
+  * PHP 5.2.6 - Not supported by PHPUnit 2.6.
+
 
 [bug 45092]: https://bugs.php.net/bug.php?id=45092
 [bug 48182]: https://bugs.php.net/bug.php?id=48182
