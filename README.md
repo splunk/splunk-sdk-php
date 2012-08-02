@@ -102,6 +102,9 @@ Then, move the entire `splunk-sdk-php` directory (containing `examples` and
 * For MAMP, the document root is located at: `/Applications/MAMP/htdocs/`
 * For XAMPP, the document root is location at: `C:\xampp\htdocs\`
 
+Finally, copy `settings.default.php` in the `examples` directory to
+`settings.local.php` and update it with your Splunk server's credentials.
+
 Then you should be able to access the SDK examples via a URL similar to:
 
 	http://localhost:8888/splunk-sdk-php/examples/index.php
@@ -115,6 +118,9 @@ Requirements:
 
 * [PHPUnit](http://www.phpunit.de/) 3.6+
 * [Xdebug](http://xdebug.org/) 2.0.5+ (for code coverage)
+* Copy `settings.default.php` in the `tests` directory to
+  `settings.local.php` and update it with the credentials of a Splunk server
+  reserved for testing.
 
 To execute all unit tests, run:
 
