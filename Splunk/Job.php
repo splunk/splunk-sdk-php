@@ -111,7 +111,69 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
-     * Returns the results from this job.
+     * Returns an iterator over the results from this job.
+     * 
+     * Large result sets will be paginated automatically.
+     * 
+     * Example:
+     * 
+     *  $job = ...;
+     *  foreach ($job->getResults() as $result)
+     *  {
+     *      // (See documentation for Splunk_ResultsReader to see how to
+     *      //  interpret $result.)
+     *      ...
+     *  }
+     * 
+     * This method cannot be used to access results from realtime jobs,
+     * which are never done. Use getResultsPreviewPage() instead.
+     * 
+     * @param array $args (optional) {
+     *     'count' => (optional) The maximum number of results to return,
+     *                or -1 to return as many as possible.
+     *                Defaults to returning as many as possible.
+     *     'offset' => (optional) The offset of the first result to return.
+     *                 Defaults to 0.
+     *     'pagesize' => (optional) The number of results to fetch from the
+     *                   server on each request when paginating internally,
+     *                   or -1 to return as many results as possible.
+     *                   Defaults to returning as many results as possible.
+     *     
+     *     'field_list' => (optional) Comma-separated list of fields to return
+     *                     in the result set. Defaults to all fields.
+     *     'output_mode' => (optional) The output format of the result. Valid values:
+     *                      - "csv"
+     *                      - "raw"
+     *                      - "xml": The format parsed by Splunk_ResultsReader.
+     *                      - "json"
+     *                      Defaults to "xml".
+     *                      You should not change this unless you are parsing
+     *                      results yourself.
+     *     'search' => (optional) The post processing search to apply to
+     *                 results. Can be any valid search language string.
+     *                 For example "search sourcetype=splunkd" will match any
+     *                 result whose "sourcetype" field is "splunkd".
+     * }
+     * @return Iterator             The results (i.e. transformed events)
+     *                              of this job, via an iterator.
+     * @throws Splunk_JobNotDoneException
+     *                              If the results are not ready yet.
+     *                              Check isDone() to ensure the results are
+     *                              ready prior to calling this method.
+     * @throws Splunk_HttpException
+     * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
+     */
+    public function getResults($args=array())
+    {
+        return new Splunk_PaginatedResultsReader($this, $args);
+    }
+    
+    /**
+     * Returns a single page of results from this job.
+     * 
+     * Most potential callers should use getResults() instead.
+     * Only use this method if you wish to parse job results yourself
+     * or want to control pagination manually.
      * 
      * By default, all results are returned. For large
      * result sets, it is advisable to fetch items using multiple calls with
@@ -122,12 +184,7 @@ class Splunk_Job extends Splunk_Entity
      * using Splunk_ResultsReader. For example:
      * 
      *  $job = ...;
-     *  while (!$job->isDone())
-     *  {
-     *      usleep(0.5 * 1000000);
-     *      $job->reload();
-     *  }
-     *  $results = new Splunk_ResultsReader($job->getResults());
+     *  $results = new Splunk_ResultsReader($job->getResultsPage());
      *  foreach ($results as $result)
      *  {
      *      // (See documentation for Splunk_ResultsReader to see how to
@@ -135,9 +192,13 @@ class Splunk_Job extends Splunk_Entity
      *      ...
      *  }
      * 
+     * This method cannot be used to access results from realtime jobs,
+     * which are never done. Use getResultsPreviewPage() instead.
+     * 
      * @param array $args (optional) {
-     *     'count' => (optional) The maximum number of results to return.
-     *                Defaults to returning all results.
+     *     'count' => (optional) The maximum number of results to return,
+     *                or -1 to return as many as possible.
+     *                Defaults to returning as many as possible.
      *     'offset' => (optional) The offset of the first result to return.
      *                 Defaults to 0.
      *     
@@ -149,12 +210,12 @@ class Splunk_Job extends Splunk_Entity
      *                      - "xml": The format parsed by Splunk_ResultsReader.
      *                      - "json"
      *                      Defaults to "xml".
-     *     'search' => (optional) The search expression to filter results
-     *                 with. For example, "foo" matches any object that has
-     *                 "foo" in a substring of a field. Similarly the
-     *                 expression "field_name=field_value" matches only objects
-     *                 that have a "field_name" field with the value
-     *                 "field_value".
+     *                      You should not change this unless you are parsing
+     *                      results yourself.
+     *     'search' => (optional) The post processing search to apply to
+     *                 results. Can be any valid search language string.
+     *                 For example "search sourcetype=splunkd" will match any
+     *                 result whose "sourcetype" field is "splunkd".
      * }
      * @return resource             The results (i.e. transformed events)
      *                              of this job, as a stream.
@@ -165,15 +226,77 @@ class Splunk_Job extends Splunk_Entity
      * @throws Splunk_HttpException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
      */
-    public function getResults($args=array())
+    public function getResultsPage($args=array())
     {
-        $args = array_merge(array(
-            'count' => '0',
-        ), $args);
-        
-        $response = $this->service->get($this->path . '/results', $args);
+        $response = $this->fetchPage('results', $args);
         if ($response->status == 204)
             throw new Splunk_JobNotDoneException($response);
         return $response->bodyStream;
+    }
+    
+    /**
+     * Returns a single page of results from this job,
+     * which may or may not be done running.
+     * 
+     * Arguments and return values are exactly the same as
+     * Splunk_Job::getResultsPage().
+     * 
+     * @return resource             The results (i.e. transformed events)
+     *                              of this job, as a stream.
+     * @throws Splunk_HttpException
+     * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults_preview
+     */
+    public function getResultsPreviewPage($args=array())
+    {
+        $response = $this->fetchPage('results_preview', $args);
+        if ($response->status == 204)
+        {
+            // The REST API throws a 204 when a preview is being generated
+            // and no results are available. This isn't a friendly behavior
+            // for clients.
+            return Splunk_StringStream::create('');
+        }
+        return $response->bodyStream;
+    }
+    
+    private function fetchPage($pageType, $args)
+    {
+        $args = array_merge(array(
+            'count' => -1,
+        ), $args);
+        
+        if ($args['count'] <= 0 && $args['count'] != -1)
+            throw new InvalidArgumentException(
+                'Count must be positive or -1 (infinity).');
+        
+        if ($args['count'] == -1)
+            $args['count'] = 0;     // infinity value for the REST API
+        
+        $response = $this->service->get(
+            $this->path . '/' . $pageType,
+            $args);
+        return $response;
+    }
+    
+    // === Control ===
+    
+    /**
+     * Stops this search job and deletes the results.
+     * 
+     * @throws Splunk_HttpException
+     */
+    public function cancel()
+    {
+        $this->sendControlAction('cancel');
+    }
+    
+    /**
+     * @throws Splunk_HttpException
+     */
+    private function sendControlAction($actionName)
+    {
+        $response = $this->service->post("{$this->path}/control", array(
+            'action' => $actionName,
+        ));
     }
 }

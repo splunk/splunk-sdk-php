@@ -231,10 +231,10 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     public function update($args)
     {
         if (array_key_exists('name', $args))
-            throw new IllegalArgumentException(
+            throw new InvalidArgumentException(
                 'Cannot update the name of an entity.');
         if (array_key_exists('namespace', $args))
-            throw new IllegalArgumentException(
+            throw new InvalidArgumentException(
                 'Cannot override the entity\'s namespace.');
         
         $params = $args;    // copy by value

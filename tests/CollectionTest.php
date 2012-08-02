@@ -19,6 +19,29 @@ require_once 'SplunkTest.php';
 
 class CollectionTest extends SplunkTest
 {
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testListZero()
+    {
+        $service = $this->loginToRealService();
+        
+        $entities = $service->getSavedSearches()->items(array(
+            'count' => 0,
+        ));
+    }
+    
+    public function testListAllExplicitly()
+    {
+        $service = $this->loginToRealService();
+        
+        $entities = $service->getSavedSearches()->items(array(
+            'count' => -1,
+        ));
+        $this->assertGreaterThanOrEqual(2, count($entities),
+            'Expected at least two saved searches.');
+    }
+    
     public function testListAll()
     {
         $service = $this->loginToRealService();
