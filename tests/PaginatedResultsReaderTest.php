@@ -24,7 +24,7 @@ class PaginatedResultsReaderTest extends SplunkTest
         list($job, $results1) = $this->createJobWithTwelveResults();
         
         $resultsIter2 = $job->getResults();
-        $results2 = $this->createListFromIterator($resultsIter2);
+        $results2 = $this->createListFromRowsInIterator($resultsIter2);
         $this->assertEquals($results1, $results2);
     }
     
@@ -35,13 +35,13 @@ class PaginatedResultsReaderTest extends SplunkTest
         $resultsIter2 = $job->getResults(array(
             'pagesize' => 1,
         ));
-        $results2 = $this->createListFromIterator($resultsIter2);
+        $results2 = $this->createListFromRowsInIterator($resultsIter2);
         $this->assertEquals($results1, $results2);
         
         // Request sublist
         $this->assertEquals(
             array_slice($results1, 4, 6),
-            $this->createListFromIterator(
+            $this->createListFromRowsInIterator(
                 $job->getResults(array(
                     'offset' => 4,
                     'count' => 6,
@@ -52,7 +52,7 @@ class PaginatedResultsReaderTest extends SplunkTest
         // Request sublist that extends past the end
         $this->assertEquals(
             array_slice($results1, 8, 6),
-            $this->createListFromIterator(
+            $this->createListFromRowsInIterator(
                 $job->getResults(array(
                     'offset' => 8,
                     'count' => 6,
@@ -80,7 +80,7 @@ class PaginatedResultsReaderTest extends SplunkTest
         $results2Iter = $job->getResults(array(
             'count' => -1,
         ));
-        $results2 = $this->createListFromIterator($results2Iter);
+        $results2 = $this->createListFromRowsInIterator($results2Iter);
         $this->assertEquals($results1, $results2);
     }
     
@@ -103,7 +103,7 @@ class PaginatedResultsReaderTest extends SplunkTest
         $results2Iter = $job->getResults(array(
             'pagesize' => -1,
         ));
-        $results2 = $this->createListFromIterator($results2Iter);
+        $results2 = $this->createListFromRowsInIterator($results2Iter);
         $this->assertEquals($results1, $results2);
     }
     
@@ -121,18 +121,19 @@ class PaginatedResultsReaderTest extends SplunkTest
         );
         
         $resultsIter1 = new Splunk_ResultsReader($job->getResultsPage());
-        $results1 = $this->createListFromIterator($resultsIter1);
+        $results1 = $this->createListFromRowsInIterator($resultsIter1);
         $this->assertEquals(12, count($results1),
             'Update the search expression to return the expected number of results.');
         
         return array($job, $results1);
     }
     
-    private function createListFromIterator($iter)
+    private function createListFromRowsInIterator($iter)
     {
         $list = array();
         foreach ($iter as $element)
-            $list[] = $element;
+            if (is_array($element))
+                $list[] = $element;
         return $list;
     }
 }

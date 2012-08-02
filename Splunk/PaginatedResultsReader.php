@@ -29,6 +29,7 @@ class Splunk_PaginatedResultsReader implements Iterator
     private $curOffset;
     private $limOffset;
     private $pageMaxSize;
+    private $fieldOrderWasReturned;
     
     private $currentElement;
     private $atStart;
@@ -70,6 +71,7 @@ class Splunk_PaginatedResultsReader implements Iterator
         $this->curOffset = $offset;
         $this->limOffset = ($count == PHP_INT_MAX) ? PHP_INT_MAX : ($offset + $count);
         $this->pageMaxSize = $pageMaxSize;
+        $this->fieldOrderWasReturned = FALSE;
         
         $this->currentElement = $this->readNextElement();
         $this->atStart = TRUE;
@@ -145,7 +147,25 @@ class Splunk_PaginatedResultsReader implements Iterator
         $element = $this->curPageResultsIterator->current();
         $this->curPageResultsIterator->next();
         
-        $this->curOffset++;
+        if ($element instanceof Splunk_ResultsFieldOrder)
+        {
+            // Only return the field order once.
+            if ($this->fieldOrderWasReturned)
+            {
+                // Don't return the field order again.
+                // Skip to the next element.
+                return $this->readNextElement();
+            }
+            else
+            {
+                $this->fieldOrderWasReturned = TRUE;
+            }
+        }
+        else if (is_array($element))
+        {
+            $this->curOffset++;
+        }
+        
         return $element;
     }
 }
