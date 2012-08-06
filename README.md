@@ -33,17 +33,18 @@ Tested PHP versions:
 * PHP 5.3.x
   * **PHP 5.3.10 - OK.** Default PHP for Mac OS X 10.7 (Lion).
   * **PHP 5.3.7 - OK.**
-  * **PHP 5.3.6 - Mostly OK.**
-    * Suffers from [bug 54137], which prevents authentication to a Splunk
-      server on localhost over HTTPS.
+  * **PHP 5.3.6 - Mostly OK&dagger;.**
 * PHP 5.2.x
-  * **PHP 5.2.17 - Mostly OK.** Last version of PHP 5.2.x.
-  * **PHP 5.2.11 - Mostly OK.** Earliest PHP 5.2.x version known to work.
+  * **PHP 5.2.17 - Mostly OK&dagger;.** Last version of PHP 5.2.x.
+  * **PHP 5.2.11 - Mostly OK&dagger;.** Earliest PHP 5.2.x version known to work.
   * PHP 5.2.10 - Broken due to [bug 48182].
   * PHP 5.2.9 - Broken due to [bug 45092].
+    Earliest recommended PHP for PHPUnit 3.6.
   * PHP 5.2.7 - Recalled due to security flaw.
-  * PHP 5.2.6 - Not supported by PHPUnit 2.6.
+    Earliest PHP supported by PHPUnit 3.6.
 
+&dagger; Suffers from [bug 54137], which prevents authentication to a
+Splunk server on localhost over HTTPS.
 
 [bug 45092]: https://bugs.php.net/bug.php?id=45092
 [bug 48182]: https://bugs.php.net/bug.php?id=48182
@@ -95,6 +96,7 @@ To run the examples, you will need to install a web server locally that supports
 
 * On Mac OS X, [MAMP] is recommended.
 * On Windows, [XAMPP] is recommended.
+* On Linux, install Apache and PHP from your package manager.
 
 [MAMP]: http://www.mamp.info/en/index.html
 [XAMPP]: http://www.apachefriends.org/en/xampp.html
