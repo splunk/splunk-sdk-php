@@ -1,2 +1,11 @@
-fuel/app/logs/*/*/*
-fuel/app/cache/*/*
+# OS X
+.DS_Store
+
+# Generated documentation
+apidocs/
+
+# Generated code coverage report
+coverage/
+
+# Local settings
+*.local.php
