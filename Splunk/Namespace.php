@@ -49,6 +49,8 @@ class Splunk_Namespace
      */
     public static function createDefault()
     {
+        Splunk_Namespace::assertArgumentCountEquals(0, func_num_args());
+        
         static $defaultNamespace = NULL;
         if ($defaultNamespace === NULL)
             $defaultNamespace = new Splunk_Namespace(NULL, NULL, 'default');
@@ -67,6 +69,7 @@ class Splunk_Namespace
      */
     public static function createUser($owner, $app)
     {
+        Splunk_Namespace::assertArgumentCountEquals(2, func_num_args());
         if ($owner === '' || $owner === 'nobody' || $owner === '-')
             throw new InvalidArgumentException('Invalid owner.');
         if ($app === '' || $app === 'system' || $app === '-')
@@ -88,6 +91,7 @@ class Splunk_Namespace
      */
     public static function createApp($app)
     {
+        Splunk_Namespace::assertArgumentCountEquals(1, func_num_args());
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         if ($app === NULL)
@@ -105,6 +109,7 @@ class Splunk_Namespace
      */
     public static function createGlobal($app)
     {
+        Splunk_Namespace::assertArgumentCountEquals(1, func_num_args());
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         if ($app === NULL)
@@ -121,6 +126,8 @@ class Splunk_Namespace
      */
     public static function createSystem()
     {
+        Splunk_Namespace::assertArgumentCountEquals(0, func_num_args());
+        
         static $system = NULL;
         if ($system === NULL)
             $system = new Splunk_Namespace('nobody', 'system', 'system');
@@ -137,6 +144,7 @@ class Splunk_Namespace
      */
     public static function createExact($owner, $app, $sharing)
     {
+        Splunk_Namespace::assertArgumentCountEquals(3, func_num_args());
         if (!in_array($sharing, array('user', 'app', 'global', 'system')))
             throw new InvalidArgumentException('Invalid sharing.');
         if ($owner === NULL || $owner === '' || $owner === '-')
@@ -176,5 +184,17 @@ class Splunk_Namespace
     public function isExact()
     {
         return ($this->owner !== '-') && ($this->app !== '-');
+    }
+    
+    // === Utility ===
+    
+    // (Explicitly check the argument count because many creation function 
+    //  names do not make the required number of arguments clear and PHP
+    //  does not check under certain circumstances.)
+    private static function assertArgumentCountEquals($expected, $actual)
+    {
+        if ($actual !== $expected)
+            throw new InvalidArgumentException(
+                "Expected exactly ${expected} arguments.");
     }
 }
