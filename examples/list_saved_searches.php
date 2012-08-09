@@ -8,6 +8,12 @@ require_once 'settings.php';
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Saved Searches | Splunk PHP SDK Examples</title>
+  <style>
+    table { border-collapse: collapse; }
+    table, th, td { border: 1px solid black; }
+    th, td { padding: 5px; }
+    th { text-align: left; }
+  </style>
 </head>
 <body>
 
@@ -24,14 +30,29 @@ $savedSearches = $service->getSavedSearches()->items(array(
 ));
 
 ?>
-<ul>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Actions</th>
+  </tr>
   <?php
   foreach ($savedSearches as $savedSearch)
   {
-    echo '<li><a href="saved_search.php?id=' . urlencode($savedSearch->getName()) . '">';
-    echo htmlspecialchars($savedSearch->getName()) . '</li>';
+    echo '<tr><td>';
+    echo htmlspecialchars($savedSearch->getName());
+    echo '</td><td>';
+    echo '<a href="saved_search.php?action=run&id=' . urlencode($savedSearch->getName()) . '">Run</a>';
+    echo ' | ';
+    echo '<a href="saved_search.php?action=edit&id=' . urlencode($savedSearch->getName()) . '">Edit</a>';
+    echo ' | ';
+    echo '<a href="saved_search.php?action=delete&id=' . urlencode($savedSearch->getName()) . '">Delete</a>';
+    echo '</td></tr>';
   }
   ?>
-</ul>
+</table>
+<br/>
+<a href="saved_search.php?action=create">Create New</a>
+
 </body>
 </html>
