@@ -105,7 +105,7 @@ Then, move the entire `splunk-sdk-php` directory (containing `examples` and
 `Splunk.php`) inside your web server's document root.
 
 * For MAMP, the document root is located at: `/Applications/MAMP/htdocs/`
-* For XAMPP, the document root is location at: `C:\xampp\htdocs\`
+* For XAMPP, the document root is located at: `C:\xampp\htdocs\`
 
 Finally, copy `settings.default.php` in the `examples` directory to
 `settings.local.php` and update it with your Splunk server's credentials.
