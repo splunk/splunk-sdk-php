@@ -139,9 +139,9 @@ class Splunk_Namespace
     {
         if (!in_array($sharing, array('user', 'app', 'global', 'system')))
             throw new InvalidArgumentException('Invalid sharing.');
-        if ($owner === '' || $owner === '-')
+        if ($owner === NULL || $owner === '' || $owner === '-')
             throw new InvalidArgumentException('Invalid owner.');
-        if ($app === '' || $app === '-')
+        if ($app === NULL || $app === '' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         
         return new Splunk_Namespace($owner, $app, $sharing);
