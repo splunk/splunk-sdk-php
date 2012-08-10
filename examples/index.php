@@ -73,8 +73,10 @@ catch (Exception $e)
 
 <h2>Actions</h2>
 <ul>
-  <li><a href="list_saved_searches.php">List Saved Searches</a></li>
+  <!-- (arranged in order from most useful to least useful) -->
   <li><a href="search.php">Search</a></li>
+  <li><a href="list_saved_searches.php">List Saved Searches</a></li>
+  <li><a href="list_jobs.php">List Jobs</a></li>
 </ul>
 
 </body>

@@ -13,7 +13,6 @@ $service->login();
 
 if ($id !== '')
 {
-  // Get the specific saved search
   $savedSearch = $service->getSavedSearches()->get(
     $id,
     Splunk_Namespace::createUser(NULL, NULL)     // all owners, all apps
@@ -28,23 +27,19 @@ if ($method === 'POST')
   {
     $name = $_POST['name'];
     
-    // Perform create
     $service->getSavedSearches()->create($name, array(
       'search' => $search,
     ));
     
-    // Redirect to list of all saved searches
     header('Location: list_saved_searches.php');
     exit;
   }
   else if ($action === 'edit')
   {
-    // Perform edit
     $savedSearch->update(array(
       'search' => $search,
     ));
     
-    // Redirect to list of all saved searches
     header('Location: list_saved_searches.php');
     exit;
   }
@@ -57,36 +52,32 @@ else if ($method === 'GET')
 {
   if ($action === 'help')
   {
-    // Redirect to list of all saved searches
     header('Location: list_saved_searches.php');
     exit;
   }
   else if ($action === 'run')
   {
-    // Redirect to the manual search page
     $search = $savedSearch['search'];
+    
     header('Location: search.php?search=' . urlencode('search ' . $search));
     exit;
   }
   else if ($action === 'create')
   {
     $search = '';
+    
     // (continue)
   }
   else if ($action === 'edit')
   {
     $search = $savedSearch['search'];
+    
     // (continue)
   }
   else if ($action === 'delete')
   {
-    // NOTE: This really should be a POST action instead of a GET one,
-    //       but this example is more straightforward with it as a GET.
-    
-    // Perform the delete
     $savedSearch->delete();
     
-    // Redirect to list of all saved searches
     header('Location: list_saved_searches.php');
     exit;
   }

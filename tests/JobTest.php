@@ -232,7 +232,47 @@ class JobTest extends SplunkTest
         
         /* Teardown */
         
+        $rtjob->delete();
+    }
+    
+    public function testControlActions()
+    {
+        /* Setup */
+        
+        $service = $this->loginToRealService();
+        
+        $rtjob = $service->getJobs()->create('search index=_internal', array(
+            'earliest_time' => 'rt',
+            'latest_time' => 'rt',
+        ));
+        
+        $this->assertTrue($rtjob['isRealTimeSearch'] === '1',
+            'This should be a realtime job.');
+        
+        /* Tests & Teardown */
+        
+        $rtjob->pause();
+        $rtjob->reload();
+        $this->assertEquals(1, $rtjob['isPaused']);
+        
+        $rtjob->unpause();
+        $rtjob->reload();
+        $this->assertEquals(0, $rtjob['isPaused']);
+        
+        $rtjob->finalize();
+        $rtjob->reload();
+        $this->assertEquals(1, $rtjob['isFinalized']);
+        
         $rtjob->cancel();
+        try
+        {
+            $rtjob->reload();
+            $this->fail('Expected a cancelled job to be deleted.');
+        }
+        catch (Splunk_HttpException $e)
+        {
+            $this->assertEquals(404, $e->getResponse()->status);
+        }
     }
     
     /**
