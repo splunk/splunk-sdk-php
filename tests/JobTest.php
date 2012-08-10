@@ -117,6 +117,11 @@ class JobTest extends SplunkTest
         $resultsStream = $job->getResultsPage();
         $results = new Splunk_ResultsReader($resultsStream);
         
+        // NOTE: Disabled because this is a brittle test.
+        //       There might not be events with the "splunkd" or
+        //       "splunkd_access" sourcetype immediately after Splunk
+        //       is installed.
+        /*
         $minExpectedSeriesNames = array('splunkd', 'splunkd_access');
         $actualSeriesNames = array();
         foreach ($results as $result)
@@ -129,6 +134,21 @@ class JobTest extends SplunkTest
             $remainingSeriesNames,
             'Results are missing some expected series names: ' . 
                 implode(',', $remainingSeriesNames));
+        */
+        
+        $hasFieldOrder = FALSE;
+        $hasAnyRows = FALSE;
+        foreach ($results as $result)
+        {
+            if ($result instanceof Splunk_ResultsFieldOrder)
+                $hasFieldOrder = TRUE;
+            else if (is_array($result))
+                $hasAnyRows = TRUE;
+        }
+        $this->assertTrue($hasFieldOrder,
+            "Field order was not reported in the job results.");
+        $this->assertTrue($hasAnyRows,
+            "No rows were reported in the job results.");
     }
     
     /**
