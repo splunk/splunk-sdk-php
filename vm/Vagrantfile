@@ -1,0 +1,55 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require "./boxes.rb"
+
+Vagrant::Config.run do |config|
+  PHP_VERSIONS.each do |php_version|
+    box_name = "php-" + php_version
+    config.vm.define box_name.to_sym do |config|
+      # Base image
+      config.vm.box = "lucid32"
+      config.vm.box_url = "http://files.vagrantup.com/lucid32.box"
+      
+      # Set network identity
+      config.vm.network :hostonly, BOX_NAME_2_IP[box_name]
+      
+      # Share "splunk-sdk-php" to the path "/vagrant_data" in the guest VM
+      config.vm.share_folder "v-data", "/vagrant_data", ".."
+      
+      # make (required by everything)
+      config.vm.provision :shell, :path => "provision/make-latest.sh"
+      
+      # libxml (required by PHP)
+      config.vm.provision :shell, :path => "provision/libxml-latest.sh"
+      # openssl (required by PHP for https:// URL support)
+      config.vm.provision :shell, :path => "provision/openssl-latest.sh"
+      # PHP
+      config.vm.provision :shell, :path => "provision/php-" + php_version + ".sh"
+      
+      # PEAR 1.9.4 (required by PHPUnit 3.6.11)
+      config.vm.provision :shell, :path => "provision/pear-1.9.4.sh"
+      # PHPUnit 3.6.11
+      config.vm.provision :shell, :path => "provision/phpunit-3.6.11.sh"
+      
+      # Configure SDK
+      config.vm.provision :shell, :path => "provision/splunksdk-config.sh"
+    end
+  end
+  
+  SPLUNK_VERSIONS.each do |splunk_version|
+    box_name = "splunk-" + splunk_version
+    config.vm.define box_name.to_sym do |config|
+      # Base image
+      config.vm.box = "lucid32"
+      config.vm.box_url = "http://files.vagrantup.com/lucid32.box"
+      
+      # Set network identity
+      config.vm.network :hostonly, BOX_NAME_2_IP[box_name]
+      
+      # Splunk 4.3.2
+      config.vm.provision :shell, :path => "provision/splunk-" + splunk_version + ".sh"
+    end
+  end
+end
+
