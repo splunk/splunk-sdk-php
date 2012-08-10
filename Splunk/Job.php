@@ -86,6 +86,15 @@ class Splunk_Job extends Splunk_Entity
         ));
     }
     
+    // === Accessors ===
+    
+    // Overrides superclass to return the correct ID of this job,
+    // which can be used to lookup this job from the Jobs collection.
+    public function getName()
+    {
+        return $this['sid'];
+    }
+    
     // === Results ===
     
     /**

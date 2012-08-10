@@ -25,6 +25,19 @@ class Splunk_Jobs extends Splunk_Collection
     // === Operations ===
     
     /**
+     * @see Splunk_Collection::get()
+     */
+    public function get($name, $namespace=NULL)
+    {
+        $this->checkName($name);
+        $this->checkNamespace($namespace);
+        
+        // Delegate to Job, which already has the special handling to
+        // fetch an individual Job entity.
+        return $this->getReference($name, $namespace)->makeReady();
+    }
+    
+    /**
      * Creates a new search job.
      * 
      * @param string $search    The search query for the job to perform.

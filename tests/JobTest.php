@@ -235,6 +235,35 @@ class JobTest extends SplunkTest
         $rtjob->cancel();
     }
     
+    /**
+     * Ensures that a job can be looked up by its reported name.
+     * That is: $service->getJobs()->get($job->getName(), ...) == $job
+     * 
+     * NOTE: As currently written, this test actually invokes a lot of
+     *       special-cased behavior beyond the core of what it is supposed to
+     *       test. Therefore if multiple unit tests are failing, look at the
+     *       others first.
+     */
+    public function testGetName()
+    {
+        $service = $this->loginToRealService();
+        
+        // (This search is installed by default on Splunk 4.x.)
+        $ss = $service->getSavedSearches()->get('Top five sourcetypes');
+        $job = $ss->dispatch();
+        
+        // Ensure that we have a fully loaded Job
+        $this->touch($job);
+        
+        // Sanity check: Make sure reload is possible.
+        // If reload breaks here then GET probably won't work.
+        $job->reload();
+        
+        $job2 = $service->getJobs()->get($job->getName(), $job->getNamespace());
+        $this->assertEquals($job->getName(), $job2->getName(),
+            'Fetching a job by its own name returned a different job.');
+    }
+    
     // === Utility ===
     
     private function pageHasResults($resultsPage)
