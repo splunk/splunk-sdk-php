@@ -59,6 +59,14 @@ else if ($method === 'GET')
   {
     $search = $savedSearch['search'];
     
+    /*
+     * Here, a search job is being created manually, based on the
+     * search expression stored in the saved search.
+     * 
+     * In a real application it would be easier (and more accurate) to
+     * call $savedSearch->dispatch() to automatically create an aynchronous
+     * search job with the correct settings.
+     */
     header('Location: search.php?search=' . urlencode('search ' . $search));
     exit;
   }
