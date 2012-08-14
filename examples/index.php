@@ -27,43 +27,23 @@ catch (Exception $e)
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Search | Splunk PHP SDK Examples</title>
   <link rel="stylesheet" type="text/css" href="style.css" />
-  <style>
-    .box {
-      margin-bottom: 10px;
-    }
-    .warning-box {
-      background: yellow;
-    }
-    .error-box {
-      background: red; color: white;
-    }
-  </style>
 </head>
 <body>
 
 <?php if ($usingDefaultCredentials): ?>
-  <table class="warning-box box">
-    <tr><td>
-      It doesn't look like you have configured the PHP examples with
-      your server's username and password.<br/>
-      <br/>
-      Please copy the
-      <strong>settings.default.php</strong> file in this directory to
-      <strong>settings.local.php</strong> and edit the settings appropriately.
-    </td></tr>
-  </table>
+  <div class="alert">
+    <h4 class="alert-heading">Examples Unconfigured.</h4>
+    You are using the default name and password. Please copy the
+    <strong>settings.default.php</strong> file in this directory to
+    <strong>settings.local.php</strong> and edit it appropriately.
+  </div>
 <?php endif; ?>
 
 <?php if ($loginFailed): ?>
-  <table class="error-box box">
-    <tr><td>
-      Unable to login to your Splunk server.<br/>
-      <br/>
-      Reason: <code><?php echo htmlspecialchars($loginFailReason); ?></code><br/>
-      <br/>
-      None of the examples will work until login is successful.
-    </td></tr>
-  </table>
+  <div class="alert alert-error">
+    <h4 class="alert-heading">Login Failed.</h4>
+    Reason: <code><?php echo htmlspecialchars($loginFailReason); ?></code>
+  </div>
 <?php endif; ?>
 
 <h2>Actions</h2>
