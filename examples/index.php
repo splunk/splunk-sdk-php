@@ -47,7 +47,7 @@ catch (Exception $e)
   </div>
 <?php endif; ?>
 
-<h2>Actions</h2>
+<h2>Examples</h2>
 <ul>
   <!-- (arranged in order from most useful to least useful) -->
   <li><a href="search.php">Search</a></li>
