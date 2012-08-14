@@ -6,14 +6,9 @@ require_once 'settings.php';
 ?><!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Saved Searches | Splunk PHP SDK Examples</title>
-  <style>
-    table { border-collapse: collapse; }
-    table, th, td { border: 1px solid black; }
-    th, td { padding: 5px; }
-    th { text-align: left; }
-  </style>
+  <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
 
@@ -31,11 +26,13 @@ $savedSearches = $service->getSavedSearches()->items(array(
 
 ?>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Actions</th>
-  </tr>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
   <?php
   foreach ($savedSearches as $savedSearch)
   {
@@ -43,16 +40,15 @@ $savedSearches = $service->getSavedSearches()->items(array(
     echo htmlspecialchars($savedSearch->getName());
     echo '</td><td>';
     echo '<a href="saved_search.php?action=run&id=' . urlencode($savedSearch->getName()) . '">Run</a>';
-    echo ' | ';
+    echo '<span class="pipe"> | </span>';
     echo '<a href="saved_search.php?action=edit&id=' . urlencode($savedSearch->getName()) . '">Edit</a>';
-    echo ' | ';
+    echo '<span class="pipe"> | </span>';
     echo '<a href="saved_search.php?action=delete&id=' . urlencode($savedSearch->getName()) . '">Delete</a>';
     echo '</td></tr>';
   }
   ?>
 </table>
-<br/>
-<a href="saved_search.php?action=create">Create New</a>
+<a href="saved_search.php?action=create" class="btn">Create New</a>
 
 </body>
 </html>

@@ -20,14 +20,9 @@ function getJobStatus($job)
 ?><!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Jobs | Splunk PHP SDK Examples</title>
-  <style>
-    table { border-collapse: collapse; }
-    table, th, td { border: 1px solid black; }
-    th, td { padding: 5px; }
-    th { text-align: left; }
-  </style>
+  <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
 
@@ -45,14 +40,16 @@ $jobs = $service->getJobs()->items(array(
 
 ?>
 
-<table>
-  <tr>
-    <th>Search Expression</th>
-    <th>Owner</th>
-    <th>App</th>
-    <th>Status</th>
-    <th>Actions</th>
-  </tr>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Search Expression</th>
+      <th>Owner</th>
+      <th>App</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
   <?php
   foreach ($jobs as $job)
   {
@@ -69,22 +66,21 @@ $jobs = $service->getJobs()->items(array(
     if ($job['isDone'] !== '1' &&
         $job['isFinalized'] !== '1')
     {
-      echo ' | ';
+      echo '<span class="pipe"> | </span>';
       if ($job['isPaused'] !== '1')
         echo '<a href="job.php?action=pause&id=' . urlencode($job->getName()) . '">Pause</a>';
       else
         echo '<a href="job.php?action=unpause&id=' . urlencode($job->getName()) . '">Unpause</a>';
-      echo ' | ';
+      echo '<span class="pipe"> | </span>';
       echo '<a href="job.php?action=finalize&id=' . urlencode($job->getName()) . '">Finalize</a>';
     }
-    echo ' | ';
+    echo '<span class="pipe"> | </span>';
     echo '<a href="job.php?action=delete&id=' . urlencode($job->getName()) . '">Delete</a>';
     echo '</td></tr>';
   }
   ?>
 </table>
-<br/>
-<a href="search.php">Create New</a>
+<a href="search.php" class="btn">Create New</a>
 
 </body>
 </html>

@@ -71,20 +71,20 @@ else
 ?><!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Job | Splunk PHP SDK Examples</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
   <style>
-    table { border-collapse: collapse; }
-    table, th, td { border: 1px solid black; }
-    th, td { padding: 5px; }
-    th { text-align: left; }
+    #job-meta {
+      margin-bottom: 1em;
+    }
   </style>
 </head>
 <body>
 
 <h2>View Job</h2>
 
-<table>
+<table id="job-meta" class="table">
   <tr>
     <th>SID</th>
     <td><?php echo htmlspecialchars($job->getName()); ?></td>
@@ -94,8 +94,7 @@ else
     <td><?php echo htmlspecialchars($job->getSearch()); ?></td>
   </tr>
 </table>
-<br/>
-<table>
+<table class="table table-condensed table-striped">
   <?php foreach ($job->getContent() as $k => $v): ?>
     <tr>
       <th><?php echo htmlspecialchars($k); ?></th>
@@ -103,8 +102,7 @@ else
     </tr>
   <?php endforeach; ?>
 </table>
-<br/>
-<a href="list_jobs.php">OK</a>
+<a href="list_jobs.php" class="btn">OK</a>
 
 </body>
 </html>

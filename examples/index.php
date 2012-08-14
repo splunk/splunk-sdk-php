@@ -24,16 +24,11 @@ catch (Exception $e)
 ?><!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Search | Splunk PHP SDK Examples</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
   <style>
-    table { border-collapse: collapse; border: 1px solid black; }
-    table, th, td { border: 1px solid black; }
-    th, td { padding: 5px; }
-    
     .box {
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: 90%;
       margin-bottom: 10px;
     }
     .warning-box {

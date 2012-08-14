@@ -1,0 +1,42 @@
+@import "bootstrap.css";
+
+/* Place white border around the page */
+body { margin: 1em; }
+
+h2 + table,
+h2 + form {
+  margin-top: 1em;
+}
+
+/*
+ * .table-basic
+ * 
+ * Creates a basic black & white table.
+ * 
+ * Usage:
+ *   <table class="table table-basic">...</table>
+ */
+
+.table-basic {
+  border-collapse: collapse; border: 1px solid black;
+}
+
+.table-basic,
+.table-basic th,
+.table-basic td {
+  border: 1px solid black;
+}
+
+.table-basic th,
+.table-basic td {
+  padding: 5px;
+}
+
+.table-basic th {
+  text-align: left;
+}
+
+/* Make search fields wide */
+.search-field { width: 50em; }
+
+.pipe { color: #999999; }

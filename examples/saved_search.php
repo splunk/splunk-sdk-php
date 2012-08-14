@@ -102,8 +102,9 @@ else
 ?><!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Saved Search | Splunk PHP SDK Examples</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
   <style>
     input { margin-bottom: .5em; }
   </style>
@@ -122,11 +123,11 @@ else
   <?php if ($action === 'create'): ?>
     Name: <input type="text" name="name" value="" placeholder="Untitled"/><br/>
   <?php endif; ?>
-  Search: <input type="text" name="search"
+  Search: <input type="text" name="search" class="search-field"
     value="<?php echo htmlspecialchars($search) ?>"
     placeholder="index=_internal | top sourcetype"/><br/>
-  <br/>
-  <input type="submit" value="Save"/> | <a href="list_saved_searches.php">Cancel</a>
+  <input type="submit" value="Save" class="btn btn-primary"/>
+  <a href="list_saved_searches.php" class="btn">Cancel</a>
 </form>
 
 </body>
