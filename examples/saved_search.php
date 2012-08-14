@@ -104,13 +104,13 @@ else
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Saved Search | Splunk PHP SDK Examples</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="stylesheet" type="text/css" href="shared/style.css" />
   <style>
     input { margin-bottom: .5em; }
   </style>
 </head>
 <body>
-<?php require 'navbar.php'; ?>
+<?php require 'shared/navbar.php'; ?>
 
 <?php if ($action === 'edit'): ?>
   <h2>Edit Saved Search: <?php echo htmlspecialchars($savedSearch->getName()); ?></h2>

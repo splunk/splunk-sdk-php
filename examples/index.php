@@ -26,10 +26,10 @@ catch (Exception $e)
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Search | Splunk PHP SDK Examples</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="stylesheet" type="text/css" href="shared/style.css" />
 </head>
 <body>
-<?php require 'navbar.php'; ?>
+<?php require 'shared/navbar.php'; ?>
 
 <?php if ($usingDefaultCredentials): ?>
   <div class="alert">
