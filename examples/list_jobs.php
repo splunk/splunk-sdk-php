@@ -25,6 +25,7 @@ function getJobStatus($job)
   <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
+<?php require 'navbar.php'; ?>
 
 <h2>Jobs</h2>
 <?php

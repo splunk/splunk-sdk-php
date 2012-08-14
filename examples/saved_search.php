@@ -110,6 +110,7 @@ else
   </style>
 </head>
 <body>
+<?php require 'navbar.php'; ?>
 
 <?php if ($action === 'edit'): ?>
   <h2>Edit Saved Search: <?php echo htmlspecialchars($savedSearch->getName()); ?></h2>

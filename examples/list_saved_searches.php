@@ -11,6 +11,7 @@ require_once 'settings.php';
   <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
+<?php require 'navbar.php'; ?>
 
 <h2>Saved Searches</h2>
 <?php

@@ -81,6 +81,7 @@ else
   </style>
 </head>
 <body>
+<?php require 'navbar.php'; ?>
 
 <h2>View Job</h2>
 

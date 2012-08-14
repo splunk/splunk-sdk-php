@@ -29,6 +29,7 @@ catch (Exception $e)
   <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
+<?php require 'navbar.php'; ?>
 
 <?php if ($usingDefaultCredentials): ?>
   <div class="alert">

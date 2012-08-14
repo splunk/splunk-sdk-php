@@ -13,6 +13,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
   <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
+<?php require 'navbar.php'; ?>
 
 <h2>Search</h2>
 <form class="form-search" method="get" action="">
