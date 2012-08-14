@@ -29,6 +29,8 @@ class JobsTest extends SplunkTest
             'exec_mode' => 'normal',
         ));
         $this->touch($job);
+        
+        return array($service, $job);
     }
     
     public function testCreateBlocking()
@@ -70,5 +72,48 @@ class JobsTest extends SplunkTest
             $gotResults = TRUE;
         }
         $this->assertTrue($gotResults);
+    }
+    
+    /** @depends testCreateNormal */
+    public function testGet($service_job)
+    {
+        list($service, $job) = $service_job;
+        
+        // Ensure this doesn't blow up
+        $service->getJobs()->get($job->getName());
+    }
+    
+    /** @depends testCreateNormal */
+    public function testGetReference($service_job)
+    {
+        list($service, $job) = $service_job;
+        
+        // Ensure this doesn't blow up
+        $jobRef = $service->getJobs()->getReference($job->getName());
+        $this->touch($jobRef);
+    }
+    
+    /** @depends testCreateNormal */
+    public function testItems($service_job)
+    {
+        list($service, $job) = $service_job;
+        
+        $allJobs = $service->getJobs()->items();
+        
+        $foundJob = FALSE;
+        foreach ($allJobs as $curJob)
+            if ($curJob->getName() === $job->getName())
+                $foundJob = TRUE;
+        $this->assertTrue($foundJob,
+            'Could not find a recently created job in the list of all jobs.');
+    }
+    
+    /** @depends testCreateNormal */
+    public function testDelete($service_job)
+    {
+        list($service, $job) = $service_job;
+        
+        // Ensure this doesn't blow up
+        $service->getJobs()->delete($job->getName());
     }
 }

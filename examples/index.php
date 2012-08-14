@@ -24,57 +24,35 @@ catch (Exception $e)
 ?><!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Search | Splunk PHP SDK Examples</title>
-  <style>
-    table { border-collapse: collapse; border: 1px solid black; }
-    table, th, td { border: 1px solid black; }
-    th, td { padding: 5px; }
-    
-    .box {
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: 90%;
-      margin-bottom: 10px;
-    }
-    .warning-box {
-      background: yellow;
-    }
-    .error-box {
-      background: red; color: white;
-    }
-  </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Splunk PHP SDK Examples</title>
+  <link rel="stylesheet" type="text/css" href="shared/style.css" />
 </head>
 <body>
+<?php require 'shared/navbar.php'; ?>
 
 <?php if ($usingDefaultCredentials): ?>
-  <table class="warning-box box">
-    <tr><td>
-      It doesn't look like you have configured the PHP examples with
-      your server's username and password.<br/>
-      <br/>
-      Please copy the
-      <strong>settings.default.php</strong> file in this directory to
-      <strong>settings.local.php</strong> and edit the settings appropriately.
-    </td></tr>
-  </table>
+  <div class="alert">
+    <h4 class="alert-heading">Examples Unconfigured.</h4>
+    You are using the default name and password. Please copy the
+    <strong>settings.default.php</strong> file in this directory to
+    <strong>settings.local.php</strong> and edit it appropriately.
+  </div>
 <?php endif; ?>
 
 <?php if ($loginFailed): ?>
-  <table class="error-box box">
-    <tr><td>
-      Unable to login to your Splunk server.<br/>
-      <br/>
-      Reason: <code><?php echo htmlspecialchars($loginFailReason); ?></code><br/>
-      <br/>
-      None of the examples will work until login is successful.
-    </td></tr>
-  </table>
+  <div class="alert alert-error">
+    <h4 class="alert-heading">Login Failed.</h4>
+    Reason: <code><?php echo htmlspecialchars($loginFailReason); ?></code>
+  </div>
 <?php endif; ?>
 
-<h2>Actions</h2>
+<h2>Examples</h2>
 <ul>
-  <li><a href="list_saved_searches.php">List Saved Searches</a></li>
+  <!-- (arranged in order from most useful to least useful) -->
   <li><a href="search.php">Search</a></li>
+  <li><a href="list_saved_searches.php">List Saved Searches</a></li>
+  <li><a href="list_jobs.php">List Jobs</a></li>
 </ul>
 
 </body>
