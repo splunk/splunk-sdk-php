@@ -35,6 +35,24 @@ class ReceiverTest extends SplunkTest
         $this->submitEvents(3, 2.0);
     }
     
+    /**
+     * @group slow
+     */
+    public function testAttachAndSendOneEvent()
+    {
+        $this->attachAndSendEvents(1, 2.0);
+    }
+    
+    /**
+     * @group slow
+     */
+    public function testAttachAndSendMultipleEvents()
+    {
+        $this->attachAndSendEvents(3, 2.0);
+    }
+    
+    // === Utility ===
+    
     private function submitEvents($numEvents, $indexDelay)
     {
         $service = $this->loginToRealService();
@@ -47,13 +65,50 @@ class ReceiverTest extends SplunkTest
         
         $data = implode("\n", $expectedEvents);
         
-        // Submit event
+        // Submit events
         $service->getReceiver()->submit($data, array(
             'index' => '_internal',
             'sourcetype' => 'php_unit_test',
         ));
         
-        // Delay so that Splunk actually indexes the event
+        // Delay so that Splunk actually indexes the events
+        usleep($indexDelay * 1000000);
+        
+        // Ensure the events are there
+        $job = $service->getJobs()->create(
+            'search index=_internal sourcetype=php_unit_test | head ' . $numEvents, array(
+                'exec_mode' => 'blocking'
+            ));
+        $actualEvents = array();
+        foreach ($job->getResults() as $result)
+            if (is_array($result))
+                $actualEvents[] = $result['_raw'];
+        $actualEvents = array_reverse($actualEvents);
+        
+        $this->assertEquals($expectedEvents, $actualEvents);
+    }
+    
+    private function attachAndSendEvents($numEvents, $indexDelay)
+    {
+        $service = $this->loginToRealService();
+        
+        $expectedEvents = array();
+        $uniqueString = uniqid();
+        for ($i = 0; $i < $numEvents; $i++)
+             $expectedEvents[] = sprintf(
+                '[%s] DELETEME-%s-%d', date('d/M/Y:H:i:s O'), $uniqueString, $i);
+        
+        $data = implode("\n", $expectedEvents);
+        
+        // Submit events
+        $eventOutputStream = $service->getReceiver()->attach(array(
+            'index' => '_internal',
+            'sourcetype' => 'php_unit_test',
+        ));
+        Splunk_Util::fwriteall($eventOutputStream, $data);
+        fclose($eventOutputStream);
+        
+        // Delay so that Splunk actually indexes the events
         usleep($indexDelay * 1000000);
         
         // Ensure the events are there

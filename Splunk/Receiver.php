@@ -62,4 +62,55 @@ class Splunk_Receiver
             $data,
             $args);
     }
+    
+    /**
+     * Creates a stream for logging events to the specified index.
+     * 
+     * @param array $args   (optional) {
+     *      'host' => (optional) The value to populate in the host field
+     *                for events from this data input.
+     *      'host_regex' => (optional) A regular expression used to
+     *                      extract the host value from each event.
+     *      'index' => (optional) The index to send events from this
+     *                 input to. Highly recommended. Defaults to "default".
+     *      'source' => (optional) The source value to fill in the
+     *                  metadata for this input's events
+     *      'sourcetype' => (optional) The sourcetype to apply to
+     *                      events from this input.
+     * }
+     * @return resource     A stream that you can write event text to.
+     * @throws Splunk_ConnectException
+     * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTinput#receivers.2Fstream
+     */
+    public function attach($args=array())
+    {
+        $scheme = $this->service->getScheme();
+        $host = $this->service->getHost();
+        $port = $this->service->getPort();
+        
+        if ($scheme == 'http')
+            $stream = fsockopen($host, $port);
+        else if ($scheme == 'https')
+            $stream = fsockopen('ssl://' . $host, $port);
+        else
+            throw new Splunk_UnsupportedOperationException(
+                'Unsupported URL scheme.');
+        if ($stream === FALSE)
+            throw new Splunk_ConnectException();
+        
+        $path = '/services/receivers/stream?' . http_build_query($args);
+        $token = $this->service->getToken();
+        
+        $headers = array(
+            "POST {$path} HTTP/1.1\r\n",
+            "Host: {$host}:{$port}\r\n",
+            "Accept-Encoding: identity\r\n",
+            "Authorization: {$token}\r\n",
+            "X-Splunk-Input-Mode: Streaming\r\n",
+            "\r\n",
+        );
+        Splunk_Util::fwriteall($stream, implode('', $headers));
+        
+        return $stream;
+    }
 }

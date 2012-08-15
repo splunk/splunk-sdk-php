@@ -218,6 +218,30 @@ class Splunk_Context
         return $this->token;
     }
     
+    /**
+     * @return string   The hostname of the Splunk server.
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+    
+    /**
+     * @return string   The port of the Splunk server.
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+    
+    /**
+     * @return string   The scheme to use: either "http" or "https".
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+    
     // === Utility ===
     
     /**

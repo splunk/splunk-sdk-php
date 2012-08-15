@@ -35,4 +35,13 @@ class HttpTest extends SplunkTest
         $this->assertEquals(200, $response->status);
         $this->assertContains('<head>', $response->body);
     }
+    
+    /**
+     * @expectedException Splunk_ConnectException
+     */
+    public function testConnectFailure()
+    {
+        $http = new Splunk_Http();
+        $response = $http->get('http://127.0.0.1:9999/');
+    }
 }

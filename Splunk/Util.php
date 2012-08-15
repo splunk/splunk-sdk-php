@@ -34,4 +34,22 @@ class Splunk_Util
         unset($dict[$key]);
         return array($dict, $value);
     }
+    
+    /**
+     * Writes $data to $stream.
+     * 
+     * @throws Exception        If an I/O error occurs.
+     */
+    public static function fwriteall($stream, $data)
+    {
+        while (TRUE)
+        {
+            $numBytesWritten = fwrite($stream, $data);
+            if ($numBytesWritten === FALSE)
+                throw new Exception('I/O error.');
+            if ($numBytesWritten == strlen($data))
+                return;
+            $data = substr($data, $numBytesWritten);
+        }
+    }
 }
