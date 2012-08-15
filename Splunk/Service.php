@@ -41,6 +41,14 @@ class Splunk_Service extends Splunk_Context
     }
     
     /**
+     * @return Splunk_Receiver      An interface to send events to this server.
+     */
+    public function getReceiver()
+    {
+        return new Splunk_Receiver($this);
+    }
+    
+    /**
      * @return Splunk_Collection    The collection of saved searches on this server.
      */
     public function getSavedSearches()
