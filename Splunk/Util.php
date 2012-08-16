@@ -38,7 +38,7 @@ class Splunk_Util
     /**
      * Writes $data to $stream.
      * 
-     * @throws Exception        If an I/O error occurs.
+     * @throws IOException      If an I/O error occurs.
      */
     public static function fwriteall($stream, $data)
     {
@@ -46,7 +46,7 @@ class Splunk_Util
         {
             $numBytesWritten = fwrite($stream, $data);
             if ($numBytesWritten === FALSE)
-                throw new Exception('I/O error.');
+                throw new IOException();
             if ($numBytesWritten == strlen($data))
                 return;
             $data = substr($data, $numBytesWritten);
