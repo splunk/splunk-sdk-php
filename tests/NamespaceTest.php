@@ -74,6 +74,16 @@ class NamespaceTest extends SplunkTest
         $this->assertTrue($namespace->isExact());
     }
     
+    public function testCreateExact()
+    {
+        $namespace = Splunk_Namespace::createExact('theowner', 'theapp', 'user');
+        $this->assertEquals('/servicesNS/theowner/theapp/', $namespace->getPathPrefix());
+        $this->assertTrue($namespace->isExact());
+        $this->assertEquals('theowner', $namespace->getOwner());
+        $this->assertEquals('theapp', $namespace->getApp());
+        $this->assertEquals('user', $namespace->getSharing());
+    }
+    
     // === Argument Count Checks ===
     
     /*

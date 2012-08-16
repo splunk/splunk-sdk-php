@@ -1,0 +1,24 @@
+@import "contrib/bootstrap.css";
+
+/* Place white border around the page */
+body { margin: 1em; }
+
+/* Save space for navigation bar */
+body { padding-top: 40px; }
+
+/* Force navigation bar to use full width */
+.navbar-fixed-top .container {
+  width: auto;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+h2 + table,
+h2 + form {
+  margin-top: 1em;
+}
+
+/* Make search fields wide */
+.search-field { width: 50em; }
+
+.pipe { color: #999999; }

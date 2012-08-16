@@ -154,8 +154,18 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     /**
      * @return string               The name of this entity.
+     *                              This name can be used to lookup this entity
+     *                              from its collection.
      */
     public function getName()
+    {
+        return $this->getTitle();
+    }
+    
+    /**
+     * @return string               The title of this entity in the REST API.
+     */
+    protected function getTitle()
     {
         return (string) $this->validate()->entry->title;
     }
