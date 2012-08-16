@@ -58,10 +58,11 @@ class ReceiverTest extends SplunkTest
         $service = $this->loginToRealService();
         
         $expectedEvents = array();
-        $uniqueString = uniqid();
+        $eventPrefix = sprintf('[%s] DELETEME-%s-',
+            $this->formatDateWithUnknownTimezone('d/M/Y:H:i:s O'),
+            uniqid());
         for ($i = 0; $i < $numEvents; $i++)
-             $expectedEvents[] = sprintf(
-                '[%s] DELETEME-%s-%d', date('d/M/Y:H:i:s O'), $uniqueString, $i);
+             $expectedEvents[] = $eventPrefix . $i;
         
         $data = implode("\n", $expectedEvents);
         
@@ -93,10 +94,11 @@ class ReceiverTest extends SplunkTest
         $service = $this->loginToRealService();
         
         $expectedEvents = array();
-        $uniqueString = uniqid();
+        $eventPrefix = sprintf('[%s] DELETEME-%s-',
+            $this->formatDateWithUnknownTimezone('d/M/Y:H:i:s O'),
+            uniqid());
         for ($i = 0; $i < $numEvents; $i++)
-             $expectedEvents[] = sprintf(
-                '[%s] DELETEME-%s-%d', date('d/M/Y:H:i:s O'), $uniqueString, $i);
+             $expectedEvents[] = $eventPrefix . $i;
         
         $data = implode("\n", $expectedEvents);
         
@@ -123,5 +125,18 @@ class ReceiverTest extends SplunkTest
         $actualEvents = array_reverse($actualEvents);
         
         $this->assertEquals($expectedEvents, $actualEvents);
+    }
+    
+    /**
+     * Formats the current time using the specified date format.
+     * 
+     * Uses an unspecified timezone, usually the system default timezone.
+     */
+    private function formatDateWithUnknownTimezone($format)
+    {
+        // Since PHP 5.1.0, every call to a date/time function will generate a
+        // E_WARNING message if using the system timezone. Since this is the
+        // desired behavior here, suppress this warning.
+        return @date($format);
     }
 }
