@@ -146,6 +146,7 @@ class Splunk_Collection extends Splunk_Endpoint
     public function get($name, $namespace=NULL)
     {
         $this->checkName($name);
+        $this->checkNamespace($namespace);
         
         try
         {
@@ -190,6 +191,7 @@ class Splunk_Collection extends Splunk_Endpoint
     public function getReference($name, $namespace=NULL)
     {
         $this->checkName($name);
+        $this->checkNamespace($namespace);
         
         return new $this->entitySubclass(
             $this->service,
@@ -264,9 +266,23 @@ class Splunk_Collection extends Splunk_Endpoint
     /**
      * Ensures that the specified name is not NULL or empty.
      */
-    private function checkName($name)
+    protected function checkName($name)
     {
         if ($name === NULL || $name === '')
             throw new InvalidArgumentException('Invalid empty name.');
+    }
+    
+    /**
+     * Ensures that the specified namespace is a Splunk_Namespace if it is
+     * not NULL.
+     */
+    protected function checkNamespace($namespace)
+    {
+        // (It's not uncommon to attempt to pass an args dictionary after
+        //  the $name argument, so perform an explicit type check to make sure
+        //  the caller isn't trying to do this.)
+        if ($namespace !== NULL && !($namespace instanceof Splunk_Namespace))
+            throw new InvalidArgumentException(
+                'Namespace must be NULL or a Splunk_Namespace.');
     }
 }

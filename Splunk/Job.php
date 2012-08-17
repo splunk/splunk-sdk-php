@@ -86,6 +86,23 @@ class Splunk_Job extends Splunk_Entity
         ));
     }
     
+    // === Accessors ===
+    
+    // Overrides superclass to return the correct ID of this job,
+    // which can be used to lookup this job from the Jobs collection.
+    public function getName()
+    {
+        return $this['sid'];
+    }
+    
+    /**
+     * @return string               The search string executed by this job.
+     */
+    public function getSearch()
+    {
+        return $this->getTitle();
+    }
+    
     // === Results ===
     
     /**
@@ -279,6 +296,36 @@ class Splunk_Job extends Splunk_Entity
     }
     
     // === Control ===
+    
+    /**
+     * Pauses this search job.
+     * 
+     * @throws Splunk_HttpException
+     */
+    public function pause()
+    {
+        $this->sendControlAction('pause');
+    }
+    
+    /**
+     * Unpauses this search job.
+     * 
+     * @throws Splunk_HttpException
+     */
+    public function unpause()
+    {
+        $this->sendControlAction('unpause');
+    }
+    
+    /**
+     * Stops this search job but keeps the partial results.
+     * 
+     * @throws Splunk_HttpException
+     */
+    public function finalize()
+    {
+        $this->sendControlAction('finalize');
+    }
     
     /**
      * Stops this search job and deletes the results.

@@ -49,6 +49,9 @@ class Splunk_Namespace
      */
     public static function createDefault()
     {
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(0, $numArgs);
+        
         static $defaultNamespace = NULL;
         if ($defaultNamespace === NULL)
             $defaultNamespace = new Splunk_Namespace(NULL, NULL, 'default');
@@ -67,6 +70,9 @@ class Splunk_Namespace
      */
     public static function createUser($owner, $app)
     {
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(2, $numArgs);
+        
         if ($owner === '' || $owner === 'nobody' || $owner === '-')
             throw new InvalidArgumentException('Invalid owner.');
         if ($app === '' || $app === 'system' || $app === '-')
@@ -88,6 +94,9 @@ class Splunk_Namespace
      */
     public static function createApp($app)
     {
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(1, $numArgs);
+        
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         if ($app === NULL)
@@ -105,6 +114,9 @@ class Splunk_Namespace
      */
     public static function createGlobal($app)
     {
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(1, $numArgs);
+        
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         if ($app === NULL)
@@ -121,6 +133,9 @@ class Splunk_Namespace
      */
     public static function createSystem()
     {
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(0, $numArgs);
+        
         static $system = NULL;
         if ($system === NULL)
             $system = new Splunk_Namespace('nobody', 'system', 'system');
@@ -137,11 +152,14 @@ class Splunk_Namespace
      */
     public static function createExact($owner, $app, $sharing)
     {
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(3, $numArgs);
+        
         if (!in_array($sharing, array('user', 'app', 'global', 'system')))
             throw new InvalidArgumentException('Invalid sharing.');
-        if ($owner === '' || $owner === '-')
+        if ($owner === NULL || $owner === '' || $owner === '-')
             throw new InvalidArgumentException('Invalid owner.');
-        if ($app === '' || $app === '-')
+        if ($app === NULL || $app === '' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         
         return new Splunk_Namespace($owner, $app, $sharing);
@@ -176,5 +194,57 @@ class Splunk_Namespace
     public function isExact()
     {
         return ($this->owner !== '-') && ($this->app !== '-');
+    }
+    
+    /**
+     * Returns the user who owns objects in this namespace.
+     * 
+     * This operation is only defined for exact namespaces.
+     */
+    public function getOwner()
+    {
+        $this->ensureExact();
+        return $this->owner;
+    }
+    
+    /**
+     * Returns the app associated with objects in this namespace.
+     * 
+     * This operation is only defined for exact namespaces.
+     */
+    public function getApp()
+    {
+        $this->ensureExact();
+        return $this->app;
+    }
+    
+    /**
+     * Returns the sharing mode of this namespace.
+     * 
+     * This operation is only defined for exact namespaces.
+     */
+    public function getSharing()
+    {
+        $this->ensureExact();
+        return $this->sharing;
+    }
+    
+    // === Utility ===
+    
+    // (Explicitly check the argument count because many creation function 
+    //  names do not make the required number of arguments clear and PHP
+    //  does not check under certain circumstances.)
+    private static function ensureArgumentCountEquals($expected, $actual)
+    {
+        if ($actual !== $expected)
+            throw new InvalidArgumentException(
+                "Expected exactly ${expected} arguments.");
+    }
+    
+    private function ensureExact()
+    {
+        if (!$this->isExact())
+            throw new Splunk_UnsupportedOperationException(
+                'This operation is supported only for exact namespaces.');
     }
 }
