@@ -49,7 +49,8 @@ class Splunk_Namespace
      */
     public static function createDefault()
     {
-        Splunk_Namespace::ensureArgumentCountEquals(0, func_num_args());
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(0, $numArgs);
         
         static $defaultNamespace = NULL;
         if ($defaultNamespace === NULL)
@@ -69,7 +70,9 @@ class Splunk_Namespace
      */
     public static function createUser($owner, $app)
     {
-        Splunk_Namespace::ensureArgumentCountEquals(2, func_num_args());
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(2, $numArgs);
+        
         if ($owner === '' || $owner === 'nobody' || $owner === '-')
             throw new InvalidArgumentException('Invalid owner.');
         if ($app === '' || $app === 'system' || $app === '-')
@@ -91,7 +94,9 @@ class Splunk_Namespace
      */
     public static function createApp($app)
     {
-        Splunk_Namespace::ensureArgumentCountEquals(1, func_num_args());
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(1, $numArgs);
+        
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         if ($app === NULL)
@@ -109,7 +114,9 @@ class Splunk_Namespace
      */
     public static function createGlobal($app)
     {
-        Splunk_Namespace::ensureArgumentCountEquals(1, func_num_args());
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(1, $numArgs);
+        
         if ($app === '' || $app === 'system' || $app === '-')
             throw new InvalidArgumentException('Invalid app.');
         if ($app === NULL)
@@ -126,7 +133,8 @@ class Splunk_Namespace
      */
     public static function createSystem()
     {
-        Splunk_Namespace::ensureArgumentCountEquals(0, func_num_args());
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(0, $numArgs);
         
         static $system = NULL;
         if ($system === NULL)
@@ -144,7 +152,9 @@ class Splunk_Namespace
      */
     public static function createExact($owner, $app, $sharing)
     {
-        Splunk_Namespace::ensureArgumentCountEquals(3, func_num_args());
+        $numArgs = func_num_args(); // must be own line for PHP < 5.3.0
+        Splunk_Namespace::ensureArgumentCountEquals(3, $numArgs);
+        
         if (!in_array($sharing, array('user', 'app', 'global', 'system')))
             throw new InvalidArgumentException('Invalid sharing.');
         if ($owner === NULL || $owner === '' || $owner === '-')
