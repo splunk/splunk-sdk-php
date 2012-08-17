@@ -8,21 +8,19 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
 ?><!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Search | Splunk PHP SDK Examples</title>
-  <style>
-    table { border-collapse: collapse; }
-    table, th, td { border: 1px solid black; }
-    th, td { padding: 5px; }
-  </style>
+  <link rel="stylesheet" type="text/css" href="shared/style.css" />
 </head>
 <body>
+<?php require 'shared/navbar.php'; ?>
 
 <h2>Search</h2>
-<form method="get" action="">
-  <input type="text" name="search" placeholder="search index=_internal | top sourcetype" size="100"
+<form class="form-search" method="get" action="">
+  <input type="text" name="search" class="input-medium search-query search-field"
+    placeholder="search index=_internal | top sourcetype"
     value="<?php echo htmlspecialchars($search); ?>"/>
-  <input type="submit" value="Search"/>
+  <input type="submit" value="Search" class="btn"/>
 </form>
 
 <?php if ($search !== ''): ?>
@@ -65,7 +63,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
   }
   ?>
   <h2>Results</h2>
-  <table>
+  <table class="table table-condensed table-striped">
     <?php
     $anyRows = FALSE;
     $columnNames = NULL;
@@ -75,10 +73,10 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
       {
         $columnNames = $result->getFieldNames();
         
-        echo '<tr>';
+        echo '<thead><tr>';
         foreach ($columnNames as $columnName)
           echo '<th>' . htmlspecialchars($columnName) . '</th>';
-        echo '</tr>';
+        echo '</tr></thead>';
         echo "\n";
       }
       else if ($result instanceof Splunk_ResultsMessage)
