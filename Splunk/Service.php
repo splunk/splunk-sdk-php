@@ -25,12 +25,20 @@ class Splunk_Service extends Splunk_Context
     /**
      * @see Splunk_Context::__construct
      */
-    public function __construct($args)
+    public function __construct($args=array())
     {
         parent::__construct($args);
     }
     
     // === Endpoints ===
+    
+    /**
+     * @return Splunk_Collection    The collection of indexes on this server.
+     */
+    public function getIndexes()
+    {
+        return new Splunk_Collection($this, 'data/indexes/', 'Splunk_Index');
+    }
     
     /**
      * @return Splunk_Jobs          The collection of search jobs on this server.

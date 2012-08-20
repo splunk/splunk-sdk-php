@@ -47,7 +47,7 @@ class Splunk_Context
      *                This is intended for testing only.
      * }
      */
-    public function __construct($args)
+    public function __construct($args=array())
     {
         $args = array_merge(array(
             'username' => 'admin',
