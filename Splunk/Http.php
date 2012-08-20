@@ -63,6 +63,8 @@ class Splunk_Http
     }
     
     /**
+     * Performs an HTTP request and returns the response.
+     * 
      * @param string $method            HTTP request method (ex: 'get').
      * @param string $url               URL to fetch.
      * @param array $requestHeaders     (optional) dictionary of header names and values.
@@ -71,7 +73,7 @@ class Splunk_Http
      * @throws Splunk_ConnectException
      * @throws Splunk_HttpException
      */
-    private function request(
+    public function request(
         $method, $url, $requestHeaders=array(), $requestBody='')
     {
         if ((substr($url, 0, strlen('http:')) !== 'http:') &&
@@ -98,7 +100,9 @@ class Splunk_Http
         
         // NOTE: PHP does not perform certificate validation for HTTPS URLs.
         // NOTE: fopen() magically sets the $http_response_header local variable.
-        $bodyStream = fopen($url, 'rb', /*use_include_path=*/false, $fopenContext);
+        $bodyStream = @fopen($url, 'rb', /*use_include_path=*/false, $fopenContext);
+        if ($bodyStream === FALSE)
+            throw new Splunk_ConnectException();
         
         $headerLines = $http_response_header;
         $statusLine = array_shift($headerLines);
