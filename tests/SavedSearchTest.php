@@ -22,7 +22,7 @@ class SavedSearchTest extends SplunkTest
     // (This search is installed by default on Splunk 4.x.)
     const SAVED_SEARCH_NAME = 'Errors in the last 24 hours';
     
-    public function testGetSavedSearch()
+    public function testGet()
     {
         $service = $this->loginToRealService();
         $savedSearch = $service->getSavedSearches()->getReference(
@@ -30,10 +30,28 @@ class SavedSearchTest extends SplunkTest
         return $savedSearch;
     }
     
-    /** @depends testGetSavedSearch */
-    public function testDispatchSearch($savedSearch)
+    /** @depends testGet */
+    public function testDispatch($savedSearch)
     {
         $job = $savedSearch->dispatch();
         $this->assertEquals('1', $job['isSavedSearch']);
+    }
+    
+    public function testDispatchInNamespace()
+    {
+        $service = $this->loginToRealService();
+        
+        // Setup
+        $savedSearchName = $this->createTempName();
+        $savedSearch = $service->getSavedSearches()->create($savedSearchName, array(
+            'namespace' => Splunk_Namespace::createApp('launcher'),
+            'search' => 'index=_internal | head 1',
+        ));
+        
+        // Test
+        $job = $savedSearch->dispatch();
+        
+        // Teardown
+        $savedSearch->delete();
     }
 }

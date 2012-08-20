@@ -278,30 +278,4 @@ class EntityTest extends SplunkTest
         
         $entity->reload();
     }
-    
-    // === Utility ===
-    
-    /**
-     * @return      A name for a temporary object that is both easily
-     *              identifiable (to facilitate manual cleanup if needed)
-     *              and unlikely to collide with other objects in the system.
-     */
-    private function createTempName()
-    {
-        return "DELETEME-{$this->createGuid()}";
-    }
-    
-    /** @return     A version 4 (random) UUID. */
-    private function createGuid()
-    {
-        return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X',
-            mt_rand(0, 65535),
-            mt_rand(0, 65535),
-            mt_rand(0, 65535),
-            mt_rand(16384, 20479),
-            mt_rand(32768, 49151),
-            mt_rand(0, 65535),
-            mt_rand(0, 65535),
-            mt_rand(0, 65535));
-    }
 }
