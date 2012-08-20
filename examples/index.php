@@ -3,8 +3,10 @@
 require_once '../Splunk.php';
 require_once 'settings.php';
 
-$username = $SplunkExamples_connectArguments['username'];
-$password = $SplunkExamples_connectArguments['password'];
+$username = array_key_exists('username', $SplunkExamples_connectArguments)
+    ? $SplunkExamples_connectArguments['username'] : 'admin';
+$password = array_key_exists('username', $SplunkExamples_connectArguments)
+    ? $SplunkExamples_connectArguments['password'] : 'changeme';
 $usingDefaultCredentials = ($username === 'admin' && $password === 'changeme');
 
 $loginFailed = FALSE;
