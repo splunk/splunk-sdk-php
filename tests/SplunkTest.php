@@ -44,7 +44,7 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
     /**
      * Returns a Splunk_Context connected to a real Splunk server.
      */
-    public function loginToRealContext()
+    protected function loginToRealContext()
     {
         global $SplunkTests_connectArguments;
         $context = new Splunk_Context($SplunkTests_connectArguments);
@@ -55,7 +55,7 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
     /**
      * Returns a Splunk_Service connected to a real Splunk server.
      */
-    public function loginToRealService()
+    protected function loginToRealService()
     {
         global $SplunkTests_connectArguments;
         $service = new Splunk_Service($SplunkTests_connectArguments);
@@ -66,7 +66,7 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
     /**
      * Returns a Splunk_Service connected to a mock Http object.
      */
-    public function loginToMockService($secondPostReturnValue=NULL)
+    protected function loginToMockService($secondPostReturnValue=NULL)
     {
         $http = $this->getMock('Splunk_Http');
         $service = new Splunk_Service(array(
@@ -105,8 +105,32 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
      * Forcefully loads the specified entity from the server,
      * if it hasn't been already.
      */
-    public function touch($entity)
+    protected function touch($entity)
     {
         $entity->getName();    // force load from server
+    }
+    
+    /**
+     * @return      A name for a temporary object that is both easily
+     *              identifiable (to facilitate manual cleanup if needed)
+     *              and unlikely to collide with other objects in the system.
+     */
+    protected function createTempName()
+    {
+        return "DELETEME-{$this->createGuid()}";
+    }
+    
+    /** @return     A version 4 (random) UUID. */
+    private function createGuid()
+    {
+        return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X',
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(16384, 20479),
+            mt_rand(32768, 49151),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535));
     }
 }
