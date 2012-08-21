@@ -204,7 +204,7 @@ class Splunk_Context
         if ((strlen($path) >= 1) && ($path[0] == '/'))
             return $path;
         if ($namespace === NULL)
-            $namespace = Splunk_Namespace::createDefault();
+            $namespace = $this->namespace;
         
         return $namespace->getPathPrefix() . $path;
     }

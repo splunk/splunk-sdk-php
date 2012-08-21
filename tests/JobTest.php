@@ -306,6 +306,8 @@ class JobTest extends SplunkTest
     
     public function testCreateInCustomNamespace()
     {
+        $namespace = Splunk_Namespace::createUser('USER', 'APP');
+        
         $postResponse = (object) array(
             'status' => 200,
             'reason' => 'OK',
@@ -329,10 +331,45 @@ class JobTest extends SplunkTest
             $postResponse,
             $postArgs);
         
-        $namespace = Splunk_Namespace::createUser('USER', 'APP');
         $job = $service->getJobs()->create('A_SEARCH', array(
             'namespace' => $namespace,
         ));
+        // (The created object should be in the correct namespace)
+        $this->assertEquals($namespace, $job->getNamespace());
+    }
+    
+    public function testCreateInServiceNamespace()
+    {
+        $namespace = Splunk_Namespace::createUser('USER', 'APP');
+        
+        $postResponse = (object) array(
+            'status' => 200,
+            'reason' => 'OK',
+            'headers' => array(),
+            'body' => trim("
+<?xml version='1.0' encoding='UTF-8'?>
+<response><sid>1345584253.35</sid></response>
+"));
+        $postArgs = array(
+            // (The URL should correspond to the namespace)
+            'https://localhost:8089/servicesNS/USER/APP/search/jobs/',
+            array(
+                'search' => 'A_SEARCH',
+            ),
+            array(
+                'Authorization' => 'Splunk ' . SplunkTest::MOCK_SESSION_TOKEN,
+            ),
+        );
+        $extraConnectArgs = array(
+            'namespace' => $namespace,
+        );
+        
+        list($service, $http) = $this->loginToMockService(
+            $postResponse,
+            $postArgs,
+            $extraConnectArgs);
+        
+        $job = $service->getJobs()->create('A_SEARCH');
         // (The created object should be in the correct namespace)
         $this->assertEquals($namespace, $job->getNamespace());
     }

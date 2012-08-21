@@ -70,12 +70,13 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
      */
     protected function loginToMockService(
         $secondPostReturnValue=NULL,
-        $secondPostExpectedArgs=NULL)
+        $secondPostExpectedArgs=NULL,
+        $extraConnectArgs=array())
     {
         $http = $this->getMock('Splunk_Http');
-        $service = new Splunk_Service(array(
+        $service = new Splunk_Service(array_merge(array(
             'http' => $http,
-        ));
+        ), $extraConnectArgs));
         
         $httpResponse = (object) array(
             'status' => 200,
