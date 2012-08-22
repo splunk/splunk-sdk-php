@@ -34,7 +34,7 @@ class EntityTest extends SplunkTest
     public function testGetCollectionUsingContext()
     {
         $context = $this->loginToRealContext();
-        $response = $context->get('/servicesNS/nobody/search/saved/searches/');
+        $response = $context->sendGet('/servicesNS/nobody/search/saved/searches/');
         $this->assertContains(
             '<title>' . self::SAVED_SEARCH_NAME . '</title>',
             $response->body);

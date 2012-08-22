@@ -34,4 +34,36 @@ class Splunk_Util
         unset($dict[$key]);
         return array($dict, $value);
     }
+    
+    /**
+     * Gets the value for the specified $key from the specified $dict,
+     * returning the $defaultValue in the key is not found.
+     * 
+     * @param array $dict
+     * @param mixed $key
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    public static function getArgument($dict, $key, $defaultValue)
+    {
+        return array_key_exists($key, $dict) ? $dict[$key] : $defaultValue;
+    }
+    
+    /**
+     * Writes $data to $stream.
+     * 
+     * @throws IOException      If an I/O error occurs.
+     */
+    public static function fwriteall($stream, $data)
+    {
+        while (TRUE)
+        {
+            $numBytesWritten = fwrite($stream, $data);
+            if ($numBytesWritten === FALSE)
+                throw new IOException();
+            if ($numBytesWritten == strlen($data))
+                return;
+            $data = substr($data, $numBytesWritten);
+        }
+    }
 }

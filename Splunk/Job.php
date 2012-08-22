@@ -289,9 +289,7 @@ class Splunk_Job extends Splunk_Entity
         if ($args['count'] == -1)
             $args['count'] = 0;     // infinity value for the REST API
         
-        $response = $this->service->get(
-            $this->path . '/' . $pageType,
-            $args);
+        $response = $this->sendGet("/{$pageType}", $args);
         return $response;
     }
     
@@ -342,7 +340,7 @@ class Splunk_Job extends Splunk_Entity
      */
     private function sendControlAction($actionName)
     {
-        $response = $this->service->post("{$this->path}/control", array(
+        $response = $this->sendPost('/control', array(
             'action' => $actionName,
         ));
     }

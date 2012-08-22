@@ -64,10 +64,12 @@ class Splunk_Jobs extends Splunk_Collection
             throw new InvalidArgumentException(
                 'Cannot create oneshot jobs with this method. Use createOneshot() instead.');
         
-        $response = $this->service->post($this->path, $args);
+        $namespace = Splunk_Util::getArgument($args, 'namespace', NULL);
+        
+        $response = $this->sendPost('', $args);
         $xml = new SimpleXMLElement($response->body);
         $sid = Splunk_XmlUtil::getTextContentAtXpath($xml, '/response/sid');
-        return $this->getReference($sid, Splunk_Namespace::createDefault());
+        return $this->getReference($sid, $namespace);
     }
     
     /**
@@ -99,7 +101,7 @@ class Splunk_Jobs extends Splunk_Collection
             throw new InvalidArgumentException(
                 'Cannot override "exec_mode" with value other than "oneshot".');
         
-        $response = $this->service->post($this->path, $args);
+        $response = $this->sendPost('', $args);
         return $response->body;
     }
 }

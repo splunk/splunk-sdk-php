@@ -24,6 +24,8 @@ require_once 'settings.php';
  */
 abstract class SplunkTest extends PHPUnit_Framework_TestCase
 {
+    const MOCK_SESSION_TOKEN = 'deadbeefdeadbeefdeadbeefdeadbeef';
+    
     private $initialOpenStreamCount = -1;
     
     public function setUp()
@@ -66,12 +68,15 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
     /**
      * Returns a Splunk_Service connected to a mock Http object.
      */
-    protected function loginToMockService($secondPostReturnValue=NULL)
+    protected function loginToMockService(
+        $secondPostReturnValue=NULL,
+        $secondPostExpectedArgs=NULL,
+        $extraConnectArgs=array())
     {
         $http = $this->getMock('Splunk_Http');
-        $service = new Splunk_Service(array(
+        $service = new Splunk_Service(array_merge(array(
             'http' => $http,
-        ));
+        ), $extraConnectArgs));
         
         $httpResponse = (object) array(
             'status' => 200,
@@ -79,7 +84,7 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
             'headers' => array(),
             'body' => '
 <response>
-<sessionKey>068b3021210eb4b67819b1a292302948</sessionKey>
+<sessionKey>' . SplunkTest::MOCK_SESSION_TOKEN . '</sessionKey>
 </response>');
         if ($secondPostReturnValue === NULL)
         {
@@ -89,12 +94,16 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
         }
         else
         {
-            $http->expects($this->exactly(2))
+            $http->expects($this->at(0))
                  ->method('post')
-                 ->will($this->onConsecutiveCalls(
-                    $this->returnValue($httpResponse),
-                    $this->returnValue($secondPostReturnValue)
-                 ));
+                 ->will($this->returnValue($httpResponse))
+                 ->with($this->anything());
+            
+            $m = $http->expects($this->at(1))
+                 ->method('post')
+                 ->will($this->returnValue($secondPostReturnValue));
+            if ($secondPostExpectedArgs !== NULL)
+                call_user_func_array(array($m, 'with'), $secondPostExpectedArgs);
         }
         $service->login();
         
