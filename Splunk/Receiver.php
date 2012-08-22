@@ -99,9 +99,9 @@ class Splunk_Receiver
         $errno = 0;
         $errstr = '';
         if ($scheme == 'http')
-            $stream = @fsockopen($host, $port, &$errno, &$errstr);
+            $stream = @fsockopen($host, $port, /*out*/ $errno, /*out*/ $errstr);
         else if ($scheme == 'https')
-            $stream = @fsockopen('ssl://' . $host, $port, &$errno, &$errstr);
+            $stream = @fsockopen('ssl://' . $host, $port, /*out*/ $errno, /*out*/ $errstr);
         else
             throw new Splunk_UnsupportedOperationException(
                 'Unsupported URL scheme.');
