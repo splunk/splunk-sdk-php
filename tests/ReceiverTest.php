@@ -51,6 +51,29 @@ class ReceiverTest extends SplunkTest
         $this->attachAndSendEvents(3, 2.0);
     }
     
+    public function testAttachFailure()
+    {
+        list($service, $http) = $this->loginToMockService(NULL, NULL, array(
+            'host' => '127.0.0.1',
+            'port' => 9999,
+        ));
+        $this->assertEquals(9999, $service->getPort());
+        
+        try
+        {
+            $service->getReceiver()->attach(array(
+                'index' => '_internal',
+                'sourcetype' => 'php_unit_test',
+            ));
+            $this->fail('Expected Splunk_ConnectException.');
+        }
+        catch (Splunk_ConnectException $e)
+        {
+            $this->assertNotEquals('', $e->getMessage(),
+                'Expected Splunk_ConnectException with a message.');
+        }
+    }
+    
     // === Utility ===
     
     private function submitEvents($numEvents, $indexDelay)
