@@ -20,7 +20,7 @@
  * 
  * @package Splunk
  */
-class Splunk_ConnectException extends Exception
+class Splunk_ConnectException extends Splunk_IOException
 {
     public function __construct($message=NULL, $code=0)
     {

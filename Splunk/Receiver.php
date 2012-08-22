@@ -53,7 +53,7 @@ class Splunk_Receiver
      *      'sourcetype' => (optional) The sourcetype to apply to
      *                      events from this input.
      * }
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTinput#receivers.2Fsimple
      */
     public function submit($data, $args=array())
@@ -87,7 +87,7 @@ class Splunk_Receiver
      *                      events from this input.
      * }
      * @return resource     A stream that you can write event text to.
-     * @throws Splunk_ConnectException
+     * @throws Splunk_IOException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTinput#receivers.2Fstream
      */
     public function attach($args=array())

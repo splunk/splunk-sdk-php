@@ -100,7 +100,7 @@ class Splunk_Context
      *                    this context's default namespace.
      * }
      * @return Splunk_HttpResponse
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @see Splunk_Http::get()
      */
     public function sendGet($path, $args=array())
@@ -118,7 +118,7 @@ class Splunk_Context
      *                    this context's default namespace.
      * }
      * @return Splunk_HttpResponse
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @see Splunk_Http::post()
      */
     public function sendPost($path, $args=array())
@@ -135,7 +135,7 @@ class Splunk_Context
      *                    this context's default namespace.
      * }
      * @return Splunk_HttpResponse
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @see Splunk_Http::delete()
      */
     public function sendDelete($path, $args=array())
@@ -166,7 +166,7 @@ class Splunk_Context
      *                    this context's default namespace.
      * }
      * @return Splunk_HttpResponse
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @see Splunk_Http::request()
      */
     public function sendRequest(

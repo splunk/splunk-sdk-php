@@ -70,8 +70,7 @@ class Splunk_Http
      * @param array $requestHeaders     (optional) dictionary of header names and values.
      * @param string $requestBody       (optional) content to send in the request.
      * @return Splunk_HttpResponse
-     * @throws Splunk_ConnectException
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function request(
         $method, $url, $requestHeaders=array(), $requestBody='')

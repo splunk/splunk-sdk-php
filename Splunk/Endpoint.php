@@ -52,7 +52,7 @@ abstract class Splunk_Endpoint
      *                    the context's default namespace.
      * }
      * @return Splunk_HttpResponse
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @see Splunk_Http::get()
      */
     public function sendGet($relativePath, $args=array())
@@ -70,7 +70,7 @@ abstract class Splunk_Endpoint
      *                    the context's default namespace.
      * }
      * @return Splunk_HttpResponse
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @see Splunk_Http::post()
      */
     public function sendPost($relativePath, $args=array())
@@ -87,7 +87,7 @@ abstract class Splunk_Endpoint
      *                    the context's default namespace.
      * }
      * @return Splunk_HttpResponse
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @see Splunk_Http::delete()
      */
     public function sendDelete($relativePath, $args=array())
