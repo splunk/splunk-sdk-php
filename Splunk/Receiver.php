@@ -59,7 +59,7 @@ class Splunk_Receiver
     public function submit($data, $args=array())
     {
         // (Avoid the normal post() method, since we aren't sending form data.)
-        $this->service->request(
+        $this->service->sendRequest(
             'post', '/services/receivers/simple',
             array('Content-Type' => 'text/plain'),
             $data,

@@ -89,6 +89,8 @@ class Splunk_Context
         $this->token = "Splunk {$sessionKey}";
     }
     
+    // === HTTP ===
+    
     /**
      * Performs an HTTP GET request to the endpoint at the specified path.
      * 
@@ -101,9 +103,9 @@ class Splunk_Context
      * @throws Splunk_HttpException
      * @see Splunk_Http::get()
      */
-    public function get($path, $args=array())
+    public function sendGet($path, $args=array())
     {
-        return $this->simpleRequest('get', $path, $args);
+        return $this->sendSimpleRequest('get', $path, $args);
     }
     
     /**
@@ -119,9 +121,9 @@ class Splunk_Context
      * @throws Splunk_HttpException
      * @see Splunk_Http::post()
      */
-    public function post($path, $args=array())
+    public function sendPost($path, $args=array())
     {
-        return $this->simpleRequest('post', $path, $args);
+        return $this->sendSimpleRequest('post', $path, $args);
     }
     
     /**
@@ -136,9 +138,20 @@ class Splunk_Context
      * @throws Splunk_HttpException
      * @see Splunk_Http::delete()
      */
-    public function delete($path, $args=array())
+    public function sendDelete($path, $args=array())
     {
-        return $this->simpleRequest('delete', $path, $args);
+        return $this->sendSimpleRequest('delete', $path, $args);
+    }
+    
+    private function sendSimpleRequest($method, $path, $args)
+    {
+        list($params, $namespace) = 
+            Splunk_Util::extractArgument($args, 'namespace', NULL);
+        
+        return $this->http->$method(
+            $this->url($path, $namespace),
+            $params,
+            $this->getRequestHeaders());
     }
     
     /**
@@ -156,7 +169,7 @@ class Splunk_Context
      * @throws Splunk_HttpException
      * @see Splunk_Http::request()
      */
-    public function request(
+    public function sendRequest(
         $method, $path, $requestHeaders=array(), $requestBody='', $args=array())
     {
         list($params, $namespace) = 
@@ -176,17 +189,6 @@ class Splunk_Context
             $fullUrl,
             $requestHeaders,
             $requestBody);
-    }
-    
-    private function simpleRequest($method, $path, $args)
-    {
-        list($params, $namespace) = 
-            Splunk_Util::extractArgument($args, 'namespace', NULL);
-        
-        return $this->http->$method(
-            $this->url($path, $namespace),
-            $params,
-            $this->getRequestHeaders());
     }
     
     /** Returns the standard headers to send on each HTTP request. */
