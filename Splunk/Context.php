@@ -103,9 +103,9 @@ class Splunk_Context
      * @throws Splunk_HttpException
      * @see Splunk_Http::get()
      */
-    public function get($path, $args=array())
+    public function sendGet($path, $args=array())
     {
-        return $this->request('get', $path, $args);
+        return $this->sendSimpleRequest('get', $path, $args);
     }
     
     /**
@@ -121,9 +121,9 @@ class Splunk_Context
      * @throws Splunk_HttpException
      * @see Splunk_Http::post()
      */
-    public function post($path, $args=array())
+    public function sendPost($path, $args=array())
     {
-        return $this->request('post', $path, $args);
+        return $this->sendSimpleRequest('post', $path, $args);
     }
     
     /**
@@ -138,12 +138,12 @@ class Splunk_Context
      * @throws Splunk_HttpException
      * @see Splunk_Http::delete()
      */
-    public function delete($path, $args=array())
+    public function sendDelete($path, $args=array())
     {
-        return $this->request('delete', $path, $args);
+        return $this->sendSimpleRequest('delete', $path, $args);
     }
     
-    private function request($method, $path, $args)
+    private function sendSimpleRequest($method, $path, $args)
     {
         list($params, $namespace) = 
             Splunk_Util::extractArgument($args, 'namespace', NULL);

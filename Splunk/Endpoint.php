@@ -57,7 +57,7 @@ abstract class Splunk_Endpoint
      */
     public function sendGet($relativePath, $args=array())
     {
-        return $this->sendSimpleRequest('get', $relativePath, $args);
+        return $this->sendSimpleRequest('sendGet', $relativePath, $args);
     }
     
     /**
@@ -75,7 +75,7 @@ abstract class Splunk_Endpoint
      */
     public function sendPost($relativePath, $args=array())
     {
-        return $this->sendSimpleRequest('post', $relativePath, $args);
+        return $this->sendSimpleRequest('sendPost', $relativePath, $args);
     }
     
     /**
@@ -92,7 +92,7 @@ abstract class Splunk_Endpoint
      */
     public function sendDelete($relativePath, $args=array())
     {
-        return $this->sendSimpleRequest('delete', $relativePath, $args);
+        return $this->sendSimpleRequest('sendDelete', $relativePath, $args);
     }
     
     private function sendSimpleRequest($method, $relativePath, $args=array())
