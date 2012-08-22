@@ -47,7 +47,7 @@ class Splunk_Context
      *                This is intended for testing only.
      * }
      */
-    public function __construct($args)
+    public function __construct($args=array())
     {
         $args = array_merge(array(
             'username' => 'admin',
@@ -92,8 +92,8 @@ class Splunk_Context
     /**
      * Performs an HTTP GET request to the endpoint at the specified path.
      * 
-     * @param string $path  relative or absolute URL path.
-     * @param array $args   (optional) query parameters, merged with {
+     * @param string $path      relative or absolute URL path.
+     * @param array $args       (optional) query parameters, merged with {
      *     'namespace' => (optional) namespace to use, or NULL to use
      *                    this context's default namespace.
      * }
@@ -103,15 +103,15 @@ class Splunk_Context
      */
     public function get($path, $args=array())
     {
-        return $this->request('get', $path, $args);
+        return $this->simpleRequest('get', $path, $args);
     }
     
     /**
      * Performs an HTTP POST request to the endpoint at the specified path.
      * 
-     * @param string $path  relative or absolute URL path.
-     * @param array $args   (optional) form parameters to send in the request body,
-     *                      merged with {
+     * @param string $path      relative or absolute URL path.
+     * @param array $args       (optional) form parameters to send in the request body,
+     *                          merged with {
      *     'namespace' => (optional) namespace to use, or NULL to use
      *                    this context's default namespace.
      * }
@@ -121,15 +121,14 @@ class Splunk_Context
      */
     public function post($path, $args=array())
     {
-        return $this->request('post', $path, $args);
+        return $this->simpleRequest('post', $path, $args);
     }
     
     /**
      * Performs an HTTP DELETE request to the endpoint at the specified path.
      * 
-     * @param string $path  relative or absolute URL path.
-     * @param array $args   (optional) form parameters to send in the request body,
-     *                      merged with {
+     * @param string $path      relative or absolute URL path.
+     * @param array $args       (optional) query parameters, merged with {
      *     'namespace' => (optional) namespace to use, or NULL to use
      *                    this context's default namespace.
      * }
@@ -139,10 +138,47 @@ class Splunk_Context
      */
     public function delete($path, $args=array())
     {
-        return $this->request('delete', $path, $args);
+        return $this->simpleRequest('delete', $path, $args);
     }
     
-    private function request($method, $path, $args)
+    /**
+     * Performs an HTTP request to the endpoint at the specified path.
+     * 
+     * @param string $method        the HTTP method (ex: 'GET' or 'POST').
+     * @param string $path          relative or absolute URL path.
+     * @param array $requestHeaders (optional) dictionary of header names and values.
+     * @param string $requestBody   (optional) content to send in the request.
+     * @param array $args           (optional) query parameters, merged with {
+     *     'namespace' => (optional) namespace to use, or NULL to use
+     *                    this context's default namespace.
+     * }
+     * @return Splunk_HttpResponse
+     * @throws Splunk_HttpException
+     * @see Splunk_Http::request()
+     */
+    public function request(
+        $method, $path, $requestHeaders=array(), $requestBody='', $args=array())
+    {
+        list($params, $namespace) = 
+            Splunk_Util::extractArgument($args, 'namespace', NULL);
+        
+        $url = $this->url($path, $namespace);
+        $fullUrl = (count($params) == 0)
+            ? $url
+            : $url . '?' . http_build_query($params);
+        
+        $requestHeaders = array_merge(
+            $this->getRequestHeaders(),
+            $requestHeaders);
+        
+        return $this->http->request(
+            $method,
+            $fullUrl,
+            $requestHeaders,
+            $requestBody);
+    }
+    
+    private function simpleRequest($method, $path, $args)
     {
         list($params, $namespace) = 
             Splunk_Util::extractArgument($args, 'namespace', NULL);
@@ -180,6 +216,30 @@ class Splunk_Context
     public function getToken()
     {
         return $this->token;
+    }
+    
+    /**
+     * @return string   The hostname of the Splunk server.
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+    
+    /**
+     * @return string   The port of the Splunk server.
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+    
+    /**
+     * @return string   The scheme to use: either "http" or "https".
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
     }
     
     // === Utility ===

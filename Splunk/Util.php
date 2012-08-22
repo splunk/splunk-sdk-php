@@ -48,4 +48,22 @@ class Splunk_Util
     {
         return array_key_exists($key, $dict) ? $dict[$key] : $defaultValue;
     }
+    
+    /**
+     * Writes $data to $stream.
+     * 
+     * @throws IOException      If an I/O error occurs.
+     */
+    public static function fwriteall($stream, $data)
+    {
+        while (TRUE)
+        {
+            $numBytesWritten = fwrite($stream, $data);
+            if ($numBytesWritten === FALSE)
+                throw new IOException();
+            if ($numBytesWritten == strlen($data))
+                return;
+            $data = substr($data, $numBytesWritten);
+        }
+    }
 }
