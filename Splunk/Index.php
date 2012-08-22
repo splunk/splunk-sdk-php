@@ -25,8 +25,10 @@ class Splunk_Index extends Splunk_Entity
     /**
      * Logs one or more events to this index.
      * 
+     * It is highly recommended to specify a sourcetype explicitly.
+     * 
      * It is slightly faster to use {@link Splunk_Receiver::submit()}
-     * to accomplish the same task.
+     * to accomplish the same task. One fewer network request is needed.
      * 
      * @param string $data  Raw event text.
      *                      This may contain data for multiple events.
@@ -55,8 +57,12 @@ class Splunk_Index extends Splunk_Entity
     /**
      * Creates a stream for logging events to the specified index.
      * 
+     * It is highly recommended to specify a sourcetype explicitly.
+     * 
      * It is slightly faster to use {@link Splunk_Receiver::attach()}
-     * to accomplish the same task.
+     * to accomplish the same task. One fewer network request is needed.
+     * 
+     * The returned stream should eventually be closed via fclose().
      * 
      * @param array $args   (optional) {
      *      'host' => (optional) The value to populate in the host field

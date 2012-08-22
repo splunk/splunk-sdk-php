@@ -34,6 +34,9 @@ class Splunk_Receiver
     /**
      * Logs one or more events to the specified index.
      * 
+     * In addition to the index name it is highly recommended to specify
+     * a sourcetype explicitly.
+     * 
      * @param string $data  Raw event text.
      *                      This may contain data for multiple events.
      *                      Under the default configuration, line breaks
@@ -65,6 +68,11 @@ class Splunk_Receiver
     
     /**
      * Creates a stream for logging events to the specified index.
+     * 
+     * In addition to the index name it is highly recommended to specify
+     * a sourcetype explicitly.
+     * 
+     * The returned stream should eventually be closed via fclose().
      * 
      * @param array $args   (optional) {
      *      'host' => (optional) The value to populate in the host field
