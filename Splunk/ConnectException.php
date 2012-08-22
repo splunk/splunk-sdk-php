@@ -20,4 +20,10 @@
  * 
  * @package Splunk
  */
-class Splunk_ConnectException extends Exception {}
+class Splunk_ConnectException extends Exception
+{
+    public function __construct($message=NULL, $code=0)
+    {
+        parent::__construct($message, $code);
+    }
+}

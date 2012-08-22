@@ -96,15 +96,17 @@ class Splunk_Receiver
         $host = $this->service->getHost();
         $port = $this->service->getPort();
         
+        $errno = 0;
+        $errstr = '';
         if ($scheme == 'http')
-            $stream = fsockopen($host, $port);
+            $stream = @fsockopen($host, $port, &$errno, &$errstr);
         else if ($scheme == 'https')
-            $stream = fsockopen('ssl://' . $host, $port);
+            $stream = @fsockopen('ssl://' . $host, $port, &$errno, &$errstr);
         else
             throw new Splunk_UnsupportedOperationException(
                 'Unsupported URL scheme.');
         if ($stream === FALSE)
-            throw new Splunk_ConnectException();
+            throw new Splunk_ConnectException($errstr, $errno);
         
         $path = '/services/receivers/stream?' . http_build_query($args);
         $token = $this->service->getToken();
