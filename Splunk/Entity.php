@@ -47,9 +47,19 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         
         $this->entry = $entry;
         if ($this->entry != NULL)
+        {
+            if ($namespace !== NULL)
+                throw new InvalidArgumentException(
+                    'Cannot specify an entry and a namespace simultaneously. ' .
+                    'The namespace will be inferred from the entry.');
+            
             $this->parseContentsFromEntry();
-        
-        $this->namespace = $namespace;
+            $this->namespace = $this->getNamespace();  // extract from 'eai:acl'
+        }
+        else
+        {
+            $this->namespace = $namespace;
+        }
     }
     
     // === Load ===
@@ -91,9 +101,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      */
     protected function fetch($fetchArgs)
     {
-        return $this->service->get($this->path, array(
-            'namespace' => $this->namespace,
-        ));
+        return $this->sendGet('');
     }
     
     /** Returns the <entry> element inside the root element. */
@@ -170,6 +178,11 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return (string) $this->validate()->entry->title;
     }
     
+    protected function getSearchNamespace()
+    {
+        return $this->namespace;
+    }
+    
     /**
      * @return Splunk_Namespace     The non-wildcarded namespace that this
      *                              entity resides in.
@@ -223,9 +236,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      */
     public function delete()
     {
-        $this->service->delete($this->path, array(
-            'namespace' => $this->getNamespace(),
-        ));
+        $this->sendDelete('');
     }
     
     /**
@@ -247,15 +258,12 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
             throw new InvalidArgumentException(
                 'Cannot override the entity\'s namespace.');
         
-        $params = $args;    // copy by value
-        
         // Update entity on server
-        $args['namespace'] = $this->getNamespace();
-        $this->service->post($this->path, $args);
+        $this->sendPost('', $args);
         
         // Update cached content of entity
         if ($this->loaded)
-            $this->content = array_merge($this->content, $params);
+            $this->content = array_merge($this->content, $args);
         
         return $this;
     }

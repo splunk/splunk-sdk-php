@@ -35,11 +35,7 @@ class Splunk_SavedSearch extends Splunk_Entity
      */
     public function dispatch($args=array())
     {
-        $args = array_merge($args, array(
-            'namespace' => $this->getNamespace(),
-        ));
-        
-        $response = $this->service->post("{$this->path}/dispatch", $args);
+        $response = $this->sendPost('/dispatch', $args);
         $xml = new SimpleXMLElement($response->body);
         $sid = Splunk_XmlUtil::getTextContentAtXpath($xml, '/response/sid');
         

@@ -30,4 +30,77 @@ abstract class Splunk_Endpoint
         $this->service = $service;
         $this->path = $path;
     }
+    
+    // === Accessors ===
+    
+    /**
+     * @return Splunk_Namespace|NULL    The namespace in which this endpoint
+     *                                  resides, or NULL to use the context's
+     *                                  default namespace.
+     *                                  Possibly a non-exact namespace.
+     */
+    protected abstract function getSearchNamespace();
+    
+    // === HTTP ===
+    
+    /**
+     * Performs an HTTP GET request relative to this endpoint.
+     * 
+     * @param string $relativePath  relative URL path.
+     * @param array $args   (optional) query parameters, merged with {
+     *     'namespace' => (optional) namespace to use, or NULL to use
+     *                    the context's default namespace.
+     * }
+     * @return Splunk_HttpResponse
+     * @throws Splunk_HttpException
+     * @see Splunk_Http::get()
+     */
+    public function sendGet($relativePath, $args=array())
+    {
+        return $this->sendSimpleRequest('get', $relativePath, $args);
+    }
+    
+    /**
+     * Performs an HTTP POST request relative to this endpoint.
+     * 
+     * @param string $relativePath  relative URL path.
+     * @param array $args   (optional) form parameters to send in the request body,
+     *                      merged with {
+     *     'namespace' => (optional) namespace to use, or NULL to use
+     *                    the context's default namespace.
+     * }
+     * @return Splunk_HttpResponse
+     * @throws Splunk_HttpException
+     * @see Splunk_Http::post()
+     */
+    public function sendPost($relativePath, $args=array())
+    {
+        return $this->sendSimpleRequest('post', $relativePath, $args);
+    }
+    
+    /**
+     * Performs an HTTP DELETE request relative to this endpoint.
+     * 
+     * @param string $relativePath  relative URL path.
+     * @param array $args   (optional) query parameters, merged with {
+     *     'namespace' => (optional) namespace to use, or NULL to use
+     *                    the context's default namespace.
+     * }
+     * @return Splunk_HttpResponse
+     * @throws Splunk_HttpException
+     * @see Splunk_Http::delete()
+     */
+    public function sendDelete($relativePath, $args=array())
+    {
+        return $this->sendSimpleRequest('delete', $relativePath, $args);
+    }
+    
+    private function sendSimpleRequest($method, $relativePath, $args=array())
+    {
+        $args = array_merge(array(
+            'namespace' => $this->getSearchNamespace(),
+        ), $args);
+        
+        return $this->service->$method("{$this->path}{$relativePath}", $args);
+    }
 }

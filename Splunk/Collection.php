@@ -37,6 +37,14 @@ class Splunk_Collection extends Splunk_Endpoint
         $this->entitySubclass = $entitySubclass;
     }
     
+    // === Accessors ===
+    
+    protected function getSearchNamespace()
+    {
+        // (The namespace cannot presently be overridden on a per-collection basis.)
+        return NULL;
+    }
+    
     // === Operations ===
     
     /**
@@ -96,7 +104,7 @@ class Splunk_Collection extends Splunk_Endpoint
         if ($args['count'] == -1)
             $args['count'] = 0;     // infinity value for the REST API
         
-        $response = $this->service->get($this->path, $args);
+        $response = $this->sendGet('', $args);
         return $this->loadEntitiesFromResponse($response);
     }
     
@@ -150,7 +158,7 @@ class Splunk_Collection extends Splunk_Endpoint
         
         try
         {
-            $response = $this->service->get($this->getEntityPath($name), array(
+            $response = $this->sendGet($this->getEntityRelativePath($name), array(
                 'namespace' => $namespace,
                 'count' => 0,
             ));
@@ -221,7 +229,7 @@ class Splunk_Collection extends Splunk_Endpoint
             'name' => $name,
         ), $args);
         
-        $response = $this->service->post($this->path, $args);
+        $response = $this->sendPost('', $args);
         if ($response->body === '')
         {
             // This endpoint doesn't return the content of the new entity.
@@ -250,17 +258,25 @@ class Splunk_Collection extends Splunk_Endpoint
     {
         $this->checkName($name);
         
-        $this->service->delete($this->getEntityPath($name), $args);
+        $this->sendDelete($this->getEntityRelativePath($name), $args);
     }
     
     // === Utility ===
     
     /**
-     * Returns the path of the child entity with the specified name.
+     * Returns the absolute path of the child entity with the specified name.
      */
     private function getEntityPath($name)
     {
-        return $this->path . urlencode($name);
+        return $this->path . $this->getEntityRelativePath($name);
+    }
+    
+    /**
+     * Returns the relative path of the child entity with the specified name.
+     */
+    private function getEntityRelativePath($name)
+    {
+        return urlencode($name);
     }
     
     /**

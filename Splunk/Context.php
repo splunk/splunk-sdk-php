@@ -89,6 +89,8 @@ class Splunk_Context
         $this->token = "Splunk {$sessionKey}";
     }
     
+    // === HTTP ===
+    
     /**
      * Performs an HTTP GET request to the endpoint at the specified path.
      * 
@@ -128,8 +130,7 @@ class Splunk_Context
      * Performs an HTTP DELETE request to the endpoint at the specified path.
      * 
      * @param string $path  relative or absolute URL path.
-     * @param array $args   (optional) form parameters to send in the request body,
-     *                      merged with {
+     * @param array $args   (optional) query parameters, merged with {
      *     'namespace' => (optional) namespace to use, or NULL to use
      *                    this context's default namespace.
      * }
