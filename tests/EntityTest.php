@@ -278,4 +278,28 @@ class EntityTest extends SplunkTest
         
         $entity->reload();
     }
+    
+    public function testNamespaceIsNotAProperty()
+    {
+        $service = $this->loginToRealService();
+        
+        // Setup
+        $savedSearch = $service->getSavedSearches()->create($this->createTempName(), array(
+            'namespace' => Splunk_Namespace::createUser('admin', 'launcher'),
+            'search' => 'search index=_internal | head 1',
+        ));
+        
+        // Test
+        $this->assertTrue(isset($savedSearch['search']));
+        $this->assertFalse(isset($savedSearch['namespace']));
+        $savedSearch->update(array(
+            'search' => 'search index=_internal | head 2',
+        ));
+        $this->assertFalse(isset($savedSearch['namespace']));
+        $savedSearch->reload();
+        $this->assertEquals('search index=_internal | head 2', $savedSearch['search']);
+        
+        // Teardown
+        $savedSearch->delete();
+    }
 }
