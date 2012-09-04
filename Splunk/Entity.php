@@ -68,7 +68,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      * Loads this resource if not already done. Returns self.
      * 
      * @return Splunk_Entity            This entity.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     protected function validate($fetchArgs=array())
     {
@@ -83,7 +83,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /**
      * Loads this resource.
      * 
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     private function load($fetchArgs)
     {
@@ -97,7 +97,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /**
      * Fetches this entity's Atom feed from the Splunk server.
      * 
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     protected function fetch($fetchArgs)
     {
@@ -135,7 +135,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      * Forcefully reloads this entity from the Splunk server.
      * 
      * @return Splunk_Entity            This entity.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function reload()
     {
@@ -232,7 +232,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /**
      * Deletes this entity.
      * 
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function delete()
     {
@@ -247,7 +247,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      * @param array $args   Dictionary of properties that will be changed,
      *                      along with their new values.
      * @return              This entity.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function update($args)
     {

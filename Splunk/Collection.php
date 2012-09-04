@@ -87,7 +87,7 @@ class Splunk_Collection extends Splunk_Endpoint
      *                    Defaults to "auto".
      * }
      * @return array    the entities in the listing.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     // NOTE: This method isn't called 'list' only because PHP treats 'list' as a
     //       pseudo-keyword and gets confused when it's used as a method name.
@@ -149,7 +149,7 @@ class Splunk_Collection extends Splunk_Endpoint
      * @throws Splunk_AmbiguousEntityNameException
      *                      If multiple entities with the specified name
      *                      exist in the specified namespace.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function get($name, $namespace=NULL)
     {
@@ -219,7 +219,7 @@ class Splunk_Collection extends Splunk_Endpoint
      *                    namespace.
      * }
      * @return Splunk_Entity
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function create($name, $args=array())
     {
@@ -252,7 +252,7 @@ class Splunk_Collection extends Splunk_Endpoint
      *                    to find the entity. Defaults to the service's
      *                    namespace.
      * }
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function delete($name, $args=array())
     {

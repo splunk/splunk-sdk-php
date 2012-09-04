@@ -20,7 +20,7 @@
  * 
  * @package Splunk
  */
-class Splunk_HttpException extends Exception
+class Splunk_HttpException extends Splunk_IOException
 {
     private $response;
     

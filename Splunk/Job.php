@@ -74,7 +74,7 @@ class Splunk_Job extends Splunk_Entity
      * @param float $delayPerRetry  The number of seconds to wait between
      *                              attempts to retry loading this job.
      * @return Splunk_Entity        This entity.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function makeReady(
         $maxTries=Splunk_Job::DEFAULT_FETCH_MAX_TRIES,
@@ -177,7 +177,7 @@ class Splunk_Job extends Splunk_Entity
      *                              If the results are not ready yet.
      *                              Check isDone() to ensure the results are
      *                              ready prior to calling this method.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
      */
     public function getResults($args=array())
@@ -240,7 +240,7 @@ class Splunk_Job extends Splunk_Entity
      *                              If the results are not ready yet.
      *                              Check isDone() to ensure the results are
      *                              ready prior to calling this method.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults
      */
     public function getResultsPage($args=array())
@@ -260,7 +260,7 @@ class Splunk_Job extends Splunk_Entity
      * 
      * @return resource             The results (i.e. transformed events)
      *                              of this job, as a stream.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs.2F.7Bsearch_id.7D.2Fresults_preview
      */
     public function getResultsPreviewPage($args=array())
@@ -298,7 +298,7 @@ class Splunk_Job extends Splunk_Entity
     /**
      * Pauses this search job.
      * 
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function pause()
     {
@@ -308,7 +308,7 @@ class Splunk_Job extends Splunk_Entity
     /**
      * Unpauses this search job.
      * 
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function unpause()
     {
@@ -318,7 +318,7 @@ class Splunk_Job extends Splunk_Entity
     /**
      * Stops this search job but keeps the partial results.
      * 
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function finalize()
     {
@@ -328,7 +328,7 @@ class Splunk_Job extends Splunk_Entity
     /**
      * Stops this search job and deletes the results.
      * 
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function cancel()
     {
@@ -336,7 +336,7 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     private function sendControlAction($actionName)
     {

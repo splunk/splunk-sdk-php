@@ -28,3 +28,6 @@ function Splunk_autoload($className)
 }
 
 spl_autoload_register('Splunk_autoload');
+
+if (version_compare(PHP_VERSION, '5.2.11') < 0)
+    die('The Splunk SDK for PHP requires PHP 5.2.11 or later.');

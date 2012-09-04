@@ -55,7 +55,7 @@ class Splunk_HttpResponse
     private function getBody()
     {
         if ($this->body === NULL)
-            $this->body = stream_get_contents($this->bodyStream);
+            $this->body = Splunk_Util::stream_get_contents($this->bodyStream);
         return $this->body;
     }
 }

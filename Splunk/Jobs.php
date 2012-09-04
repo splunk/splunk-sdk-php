@@ -51,7 +51,7 @@ class Splunk_Jobs extends Splunk_Collection
      *                      "POST search/jobs"
      *                      endpoint in the REST API Documentation.
      * @return Splunk_Job
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @link http://docs.splunk.com/Documentation/Splunk/4.3.3/RESTAPI/RESTsearch#search.2Fjobs
      */
     public function create($search, $args=array())
@@ -87,7 +87,7 @@ class Splunk_Jobs extends Splunk_Collection
      *                      endpoint in the REST API Documentation.
      * @return string           The search results, which can be parsed with
      *                          Splunk_ResultsReader.
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      * @link http://docs.splunk.com/Documentation/Splunk/4.3.3/RESTAPI/RESTsearch#search.2Fjobs
      */
     public function createOneshot($search, $args=array())

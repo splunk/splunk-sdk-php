@@ -107,12 +107,7 @@ class JobTest extends SplunkTest
         $ss = $service->getSavedSearches()->get('Top five sourcetypes');
         $job = $ss->dispatch();
         
-        while (!$job->isDone())
-        {
-            //printf("%03.1f%%\r\n", $job->getProgress() * 100);
-            usleep(0.1 * 1000000);
-            $job->reload();
-        }
+        $this->makeDone($job);
         
         $resultsStream = $job->getResultsPage();
         $results = new Splunk_ResultsReader($resultsStream);
@@ -146,9 +141,9 @@ class JobTest extends SplunkTest
                 $hasAnyRows = TRUE;
         }
         $this->assertTrue($hasFieldOrder,
-            "Field order was not reported in the job results.");
+            'Field order was not reported in the job results.');
         $this->assertTrue($hasAnyRows,
-            "No rows were reported in the job results.");
+            'No rows were reported in the job results.');
     }
     
     /**
@@ -166,6 +161,25 @@ class JobTest extends SplunkTest
             'Job completed too fast. Please rewrite this unit test to avoid timing issues.');
         
         $job->getResultsPage();
+    }
+    
+    public function testResultsPageInNamespace()
+    {
+        $service = $this->loginToRealService();
+        
+        // Setup
+        $job = $service->getJobs()->create('search index=_internal | head 1', array(
+            'namespace' => Splunk_Namespace::createUser('admin', 'launcher'),
+        ));
+        
+        // Test
+        // (Make sure this doesn't report an HTTP 404)
+        $job->makeReady();
+        $this->makeDone($job);
+        $job->getResultsPage();
+        
+        // Teardown
+        $job->delete();
     }
     
     /**
@@ -374,6 +388,20 @@ class JobTest extends SplunkTest
         $this->assertEquals($namespace, $job->getNamespace());
     }
     
+    public function testControlInCustomNamespace()
+    {
+        $service = $this->loginToRealService();
+        
+        // Setup
+        $job = $service->getJobs()->create('search index=_internal | head 1', array(
+            'namespace' => Splunk_Namespace::createUser('admin', 'launcher'),
+        ));
+        
+        // Test & Teardown
+        // (Ensure this doesn't throw HTTP 404)
+        $job->cancel();
+    }
+    
     // === Utility ===
     
     private function pageHasResults($resultsPage)
@@ -382,5 +410,15 @@ class JobTest extends SplunkTest
         foreach (new Splunk_ResultsReader($resultsPage) as $result)
             $pageHasResults = TRUE;
         return $pageHasResults;
+    }
+    
+    private function makeDone($job)
+    {
+        while (!$job->isDone())
+        {
+            //printf("%03.1f%%\r\n", $job->getProgress() * 100);
+            usleep(0.1 * 1000000);
+            $job->reload();
+        }
     }
 }

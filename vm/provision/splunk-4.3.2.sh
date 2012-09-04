@@ -8,5 +8,5 @@ sudo dpkg -i splunk-4.3.2-123586-linux-2.6-intel.deb
 sudo /opt/splunk/bin/splunk --accept-license start
 
 # Change Splunk admin password to "weak"
-# (NOTE: Splunk must already be running for this comment to work.)
+# (NOTE: Splunk must already be running for this command to work.)
 sudo /opt/splunk/bin/splunk edit user admin -password weak -role admin -auth admin:changeme

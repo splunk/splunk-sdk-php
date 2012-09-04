@@ -15,6 +15,11 @@
  * under the License.
  */
 
+/**
+ * Internal utility functions for the PHP SDK.
+ * 
+ * @package Splunk
+ */
 class Splunk_Util
 {
     /**
@@ -52,7 +57,7 @@ class Splunk_Util
     /**
      * Writes $data to $stream.
      * 
-     * @throws IOException      If an I/O error occurs.
+     * @throws Splunk_IOException   If an I/O error occurs.
      */
     public static function fwriteall($stream, $data)
     {
@@ -60,10 +65,41 @@ class Splunk_Util
         {
             $numBytesWritten = fwrite($stream, $data);
             if ($numBytesWritten === FALSE)
-                throw new IOException();
+                throw new Splunk_IOException();
             if ($numBytesWritten == strlen($data))
                 return;
             $data = substr($data, $numBytesWritten);
         }
+    }
+    
+    /**
+     * Reads the entire contents of the specified stream.
+     * Throws a Splunk_IOException upon error.
+     * 
+     * @param resource $stream      A stream.
+     * @return string               The contents of the specified stream.
+     * @throws Splunk_IOException   If an I/O error occurs.
+     */
+    public static function stream_get_contents($stream)
+    {
+        // HACK: Clear the last error
+        @trigger_error('');
+            
+        $oldError = error_get_last();
+        $body = @stream_get_contents($stream);
+        $newError = error_get_last();
+        
+        // HACK: Detecting whether stream_get_contents() has failed is not
+        //       strightforward because it can either return FALSE or ''.
+        //       However '' is also a legal return value in non-error scenarios.
+        if ($newError != $oldError)
+        {
+            $errorInfo = error_get_last();
+            $errmsg = $errorInfo['message'];
+            $errno = $errorInfo['type'];
+            throw new Splunk_IOException($errmsg, $errno);
+        }
+        
+        return $body;
     }
 }

@@ -70,8 +70,7 @@ class Splunk_Http
      * @param array $requestHeaders     (optional) dictionary of header names and values.
      * @param string $requestBody       (optional) content to send in the request.
      * @return Splunk_HttpResponse
-     * @throws Splunk_ConnectException
-     * @throws Splunk_HttpException
+     * @throws Splunk_IOException
      */
     public function request(
         $method, $url, $requestHeaders=array(), $requestBody='')
@@ -103,17 +102,9 @@ class Splunk_Http
         $bodyStream = @fopen($url, 'rb', /*use_include_path=*/FALSE, $fopenContext);
         if ($bodyStream === FALSE)
         {
-            if (version_compare(PHP_VERSION, '5.2.0') >= 0)
-            {
-                $errorInfo = error_get_last();      // requires PHP >= 5.2.0
-                $errmsg = $errorInfo['message'];
-                $errno = $errorInfo['type'];
-            }
-            else
-            {
-                $errmsg = 'fopen failed.';
-                $errno = 0;
-            }
+            $errorInfo = error_get_last();
+            $errmsg = $errorInfo['message'];
+            $errno = $errorInfo['type'];
             throw new Splunk_ConnectException($errmsg, $errno);
         }
         
