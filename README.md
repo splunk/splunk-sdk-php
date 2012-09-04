@@ -34,6 +34,7 @@ Tested PHP versions:
   * **PHP 5.3.10 - OK.** Default PHP for Mac OS X 10.7 (Lion).
   * **PHP 5.3.7 - OK.**
   * **PHP 5.3.6 - Mostly OK&dagger;.**
+  * **PHP 5.3.3 - Mostly OK&dagger;.**
 * PHP 5.2.x
   * **PHP 5.2.17 - Mostly OK&dagger;.** Last version of PHP 5.2.x.
   * **PHP 5.2.11 - Mostly OK&dagger;.** Earliest PHP 5.2.x version known to work.
@@ -44,7 +45,10 @@ Tested PHP versions:
     Earliest PHP supported by PHPUnit 3.6.
 
 &dagger; Suffers from [bug 54137], which prevents authentication to a
-Splunk server on localhost over HTTPS.
+Splunk server on localhost over HTTPS. If you see the error message
+`SSL: Connection reset by peer`, you are probably triggering this bug.
+The workaround is to run your PHP script on a different server than
+the Splunk indexer server.
 
 [bug 45092]: https://bugs.php.net/bug.php?id=45092
 [bug 48182]: https://bugs.php.net/bug.php?id=48182
