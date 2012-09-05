@@ -26,6 +26,10 @@ The SDK requires PHP 5.2.11+ with the SimpleXML extension.
 
 OpenSSL support for PHP is required to access Splunk over `https://` URLs.
 
+If using PHP < 5.3.7, the cURL extension is required as well.
+Under this configuration the SDK will not support streaming large results
+when accessing Splunk over `https://` URLs.
+
 Tested PHP versions:
 
 * PHP 5.4.x
@@ -44,11 +48,8 @@ Tested PHP versions:
   * PHP 5.2.7 - Recalled due to security flaw.
     Earliest PHP supported by PHPUnit 3.6.
 
-&dagger; Suffers from [bug 54137], which prevents authentication to a
-Splunk server on localhost over HTTPS. If you see the error message
-`SSL: Connection reset by peer`, you are probably triggering this bug.
-The workaround is to run your PHP script on a different server than
-the Splunk indexer server.
+&dagger; Suffers from [bug 54137]. The SDK's workaround for this prevents
+streaming of large result sets when accessing Splunk over `https://` URLs.
 
 [bug 45092]: https://bugs.php.net/bug.php?id=45092
 [bug 48182]: https://bugs.php.net/bug.php?id=48182
