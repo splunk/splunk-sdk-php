@@ -3,6 +3,12 @@
 
 require "./boxes.rb"
 
+def _compare_versions(v1, v2)
+  v1 = v1.split(".").map {|x| x.to_i }
+  v2 = v2.split(".").map {|x| x.to_i }
+  v1 <=> v2
+end
+
 Vagrant::Config.run do |config|
   PHP_VERSIONS.each do |php_version|
     box_name = "php-" + php_version
@@ -24,6 +30,10 @@ Vagrant::Config.run do |config|
       config.vm.provision :shell, :path => "provision/libxml-latest.sh"
       # openssl (required by PHP for https:// URL support)
       config.vm.provision :shell, :path => "provision/openssl-latest.sh"
+      # libcurl (required by SDK when PHP < 5.3.7)
+      if _compare_versions(php_version, "5.3.7") < 0
+        config.vm.provision :shell, :path => "provision/libcurl-latest.sh"
+      end
       # PHP
       config.vm.provision :shell, :path => "provision/php-" + php_version + ".sh"
       
