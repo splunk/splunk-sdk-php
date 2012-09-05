@@ -65,7 +65,12 @@ class Splunk_Util
         {
             $numBytesWritten = fwrite($stream, $data);
             if ($numBytesWritten === FALSE)
-                throw new Splunk_IOException();
+            {
+                $errorInfo = error_get_last();
+                $errmsg = $errorInfo['message'];
+                $errno = $errorInfo['type'];
+                throw new Splunk_IOException($errmsg, $errno);
+            }
             if ($numBytesWritten == strlen($data))
                 return;
             $data = substr($data, $numBytesWritten);
