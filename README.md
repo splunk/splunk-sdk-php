@@ -156,6 +156,11 @@ To generate the API documentation, run:
 
     phpdoc -d Splunk -t apidocs
 
+### Changelog
+
+You can look at the changelog for each version 
+[here](https://github.com/splunk/splunk-sdk-php/blob/master/CHANGELOG.md)
+
 
 ## Quickstart
 
