@@ -35,7 +35,7 @@ Tested PHP versions:
   * **PHP 5.3.10 - OK.** Default PHP for Mac OS X 10.7 (Lion).
   * **PHP 5.3.7 - OK.**
   * **PHP 5.3.6 - Mostly OK&dagger;.**
-  * **PHP 5.3.3 - Mostly OK&dagger;.**
+  * **PHP 5.3.3 - Mostly OK&dagger;.** Default PHP for Red Hat Enterprise Linux 6.
 * PHP 5.2.x
   * **PHP 5.2.17 - Mostly OK&dagger;.** Last version of PHP 5.2.x.
   * **PHP 5.2.11 - Mostly OK&dagger;.** Earliest PHP 5.2.x version known to work.

@@ -6,6 +6,10 @@
 # 
 # Requires Vagrant and VirtualBox.
 # 
+# If using the "host" Splunk version, the host OS must be running a
+# Splunk server on port 8089 (the default) with an admin account whose
+# password is "weak".
+# 
 # Examples:
 #   ./vmtest 5.3.10 4.3.2
 #   ./vmtest 5.2.11 host
