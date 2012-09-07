@@ -23,6 +23,7 @@ License 2.0. Details can be found in the file [LICENSE].
 ## Requirements
 
 The SDK requires PHP 5.2.11+ with the SimpleXML extension.
+PHP 5.3.7+ is highly recommended.
 
 OpenSSL support for PHP is required to access Splunk over `https://` URLs.
 
@@ -34,7 +35,7 @@ Tested PHP versions:
   * **PHP 5.3.10 - OK.** Default PHP for Mac OS X 10.7 (Lion).
   * **PHP 5.3.7 - OK.**
   * **PHP 5.3.6 - Mostly OK&dagger;.**
-  * **PHP 5.3.3 - Mostly OK&dagger;.**
+  * **PHP 5.3.3 - Mostly OK&dagger;.** Default PHP for Red Hat Enterprise Linux 6.
 * PHP 5.2.x
   * **PHP 5.2.17 - Mostly OK&dagger;.** Last version of PHP 5.2.x.
   * **PHP 5.2.11 - Mostly OK&dagger;.** Earliest PHP 5.2.x version known to work.
@@ -44,11 +45,12 @@ Tested PHP versions:
   * PHP 5.2.7 - Recalled due to security flaw.
     Earliest PHP supported by PHPUnit 3.6.
 
-&dagger; Suffers from [bug 54137], which prevents authentication to a
-Splunk server on localhost over HTTPS. If you see the error message
+&dagger; Suffers from [bug 54137] which interferes with HTTPS communication, 
+especially to a Splunk server on localhost. If you see the error message
 `SSL: Connection reset by peer`, you are probably triggering this bug.
-The workaround is to run your PHP script on a different server than
-the Splunk indexer server.
+A possible workaround is to run your PHP script on a different server than
+the Splunk indexer server, although this does not always resolve the issue.
+The SDK team is developing a better workaround for the next release.
 
 [bug 45092]: https://bugs.php.net/bug.php?id=45092
 [bug 48182]: https://bugs.php.net/bug.php?id=48182
@@ -153,6 +155,11 @@ Requirements:
 To generate the API documentation, run:
 
     phpdoc -d Splunk -t apidocs
+
+### Changelog
+
+You can look at the changelog for each version 
+[here](https://github.com/splunk/splunk-sdk-php/blob/master/CHANGELOG.md)
 
 
 ## Quickstart
