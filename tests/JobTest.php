@@ -146,21 +146,52 @@ class JobTest extends SplunkTest
             'No rows were reported in the job results.');
     }
     
-    /**
-     * @expectedException Splunk_JobNotDoneException
-     */
     public function testResultsNotDone()
     {
         $service = $this->loginToRealService();
         
-        // (This search is installed by default on Splunk 4.x.)
-        $ss = $service->getSavedSearches()->get('Top five sourcetypes');
-        $job = $ss->dispatch();
+        $job = $service->getJobs()->create('search index=_internal');
         
         $this->assertFalse($job->isDone(),
             'Job completed too fast. Please rewrite this unit test to avoid timing issues.');
         
-        $job->getResultsPage();
+        try
+        {
+            $job->getResultsPage();
+            
+            $job->delete();
+            $this->fail('Expected Splunk_JobNotDoneException.');
+        }
+        catch (Splunk_JobNotDoneException $e)
+        {
+            // Good
+            $job->delete();
+        }
+    }
+    
+    public function testResultsEmpty()
+    {
+        $SEARCHES = array(
+            'search index=_internal x NOT x',
+            'search index=_does_not_exist',
+        );
+        
+        $service = $this->loginToRealService();
+        
+        foreach ($SEARCHES as $search)
+        {
+            $job = $service->getJobs()->create('search index=_internal x NOT x', array(
+                'exec_mode' => 'blocking'
+            ));
+            
+            $results = new Splunk_ResultsReader($job->getResultsPage());
+            $hasResults = FALSE;
+            foreach ($results as $result)
+            {
+                $hasResults = TRUE;
+            }
+            $this->assertFalse($hasResults);
+        }
     }
     
     public function testResultsPageInNamespace()

@@ -22,13 +22,18 @@
  */
 class Splunk_StringStream
 {
+    /** (Prevent construction.) **/
+    private function __construct()
+    {
+    }
+    
     /**
      * @return resource     A stream that reads from the specified byte string.
      */
     public static function create($string)
     {
         $stream = fopen('php://memory', 'rwb');
-        fwrite($stream, $string);
+        Splunk_Util::fwriteall($stream, $string);
         fseek($stream, 0);
         
         /*

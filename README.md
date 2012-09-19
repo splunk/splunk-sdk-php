@@ -27,6 +27,10 @@ PHP 5.3.7+ is highly recommended.
 
 OpenSSL support for PHP is required to access Splunk over `https://` URLs.
 
+If using PHP < 5.3.7, the cURL extension is required as well.
+Under this configuration the SDK will not support streaming large results
+when accessing Splunk over `https://` URLs.
+
 Tested PHP versions:
 
 * PHP 5.4.x
@@ -45,12 +49,8 @@ Tested PHP versions:
   * PHP 5.2.7 - Recalled due to security flaw.
     Earliest PHP supported by PHPUnit 3.6.
 
-&dagger; Suffers from [bug 54137] which interferes with HTTPS communication, 
-especially to a Splunk server on localhost. If you see the error message
-`SSL: Connection reset by peer`, you are probably triggering this bug.
-A possible workaround is to run your PHP script on a different server than
-the Splunk indexer server, although this does not always resolve the issue.
-The SDK team is developing a better workaround for the next release.
+&dagger; Suffers from [bug 54137]. The SDK's workaround for this prevents
+streaming of large result sets when accessing Splunk over `https://` URLs.
 
 [bug 45092]: https://bugs.php.net/bug.php?id=45092
 [bug 48182]: https://bugs.php.net/bug.php?id=48182
@@ -500,11 +500,9 @@ provided below.
 
 ### Support
 
-1. You will be granted support if you or your company are already covered under an existing maintenance/support agreement. Send an email to support@splunk.com and please include the SDK you are referring to in the subject. 
-2. If you are not covered under an existing maintenance/support agreement you can find help through the broader community at:
-<br>Splunk answers - http://splunk-base.splunk.com/answers/ Specific tags (SDK, java, python, javascript) are available to identify your questions
-<br>Splunk dev google group - http://groups.google.com/group/splunkdev
-3. Splunk will NOT provide support for SDKs if the core library (this is the code in the Splunk directory) has been modified. If you modify an SDK and want support, you can find help through the broader community and Splunk answers (see above). We also want to know about why you modified the core library. You can send feedback to: devinfo@splunk.com
+* SDKs in Preview will not be Splunk supported. Once the PHP SDK moves to an Open Beta we will provide more detail on support.
+
+* Issues should be filed here: [https://github.com/splunk/splunk-sdk-php/issues](https://github.com/splunk/splunk-sdk-php/issues)
 
 ### Contact Us
 
