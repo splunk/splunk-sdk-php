@@ -34,12 +34,14 @@
 class Splunk_HttpResponse
 {
     private $state;
-    private $body;  // lazy
+    private $body;          // lazy
+    private $bodyStream;    // lazy
     
     public function __construct($state)
     {
         $this->state = $state;
         $this->body = NULL;
+        $this->bodyStream = NULL;
     }
     
     // === Accessors ===
@@ -48,14 +50,42 @@ class Splunk_HttpResponse
     {
         if ($key === 'body')
             return $this->getBody();
+        else if ($key === 'bodyStream')
+            return $this->getBodyStream();
         else
             return $this->state[$key];
     }
     
     private function getBody()
     {
+        if (array_key_exists('body', $this->state))
+            return $this->state['body'];
+        
         if ($this->body === NULL)
-            $this->body = Splunk_Util::stream_get_contents($this->bodyStream);
+        {
+            if (!array_key_exists('bodyStream', $this->state))
+                throw new Splunk_UnsupportedOperationException(
+                    'Response object does not contain body stream.');
+            
+            $this->body = Splunk_Util::stream_get_contents(
+                $this->state['bodyStream']);
+        }
         return $this->body;
+    }
+    
+    private function getBodyStream()
+    {
+        if (array_key_exists('bodyStream', $this->state))
+            return $this->state['bodyStream'];
+        
+        if ($this->bodyStream === NULL)
+        {
+            if (!array_key_exists('body', $this->state))
+                throw new Splunk_UnsupportedOperationException(
+                    'Response object does not contain body.');
+            
+            $this->bodyStream = Splunk_StringStream::create($this->state['body']);
+        }
+        return $this->bodyStream;
     }
 }
