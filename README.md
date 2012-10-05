@@ -214,7 +214,7 @@ foreach ($results as $result)
     {
         // Process a row
         print "{\r\n";
-        foreach ($result as $field => $valueOrValues)
+        foreach ($result as $key => $valueOrValues)
         {
             if (is_array($valueOrValues))
             {
@@ -353,7 +353,7 @@ foreach ($results as $result)
 	else if (is_array($result))
     {
         // Process a row
-        foreach ($result as $field => $valueOrValues)
+        foreach ($result as $key => $valueOrValues)
         {
             // ...
         }
