@@ -433,6 +433,47 @@ class JobTest extends SplunkTest
         $job->cancel();
     }
     
+    public function testSearchOnService()
+    {
+        $service = $this->loginToRealService();
+        
+        $job = $service->search('search index=_internal | head 1', array(
+            'exec_mode' => 'blocking',
+        ));
+        $this->makeDone($job);
+        
+        // Ensure we got some results
+        $results = $job->getResults();
+        $numResults = 0;
+        foreach ($results as $result)
+        {
+            if (is_array($result))
+            {
+                $numResults++;
+            }
+        }
+        $this->assertEquals(1, $numResults);
+    }
+    
+    public function testOneshotSearchOnService()
+    {
+        $service = $this->loginToRealService();
+        
+        $resultsStream = $service->oneshotSearch('search index=_internal | head 1');
+        
+        // Ensure we got some results
+        $results = new Splunk_ResultsReader($resultsStream);
+        $numResults = 0;
+        foreach ($results as $result)
+        {
+            if (is_array($result))
+            {
+                $numResults++;
+            }
+        }
+        $this->assertEquals(1, $numResults);
+    }
+    
     // === Utility ===
     
     private function pageHasResults($resultsPage)
