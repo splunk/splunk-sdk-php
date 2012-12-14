@@ -28,6 +28,10 @@ ls provision | grep php-
 
 #### Run Tests on a Provisioned VM-Pair
 
+<span style="color: red">
+**WARNING:** Make sure you save your work before running `vmtest` or any `vagrant` commands. The underlying VirtualBox tool is known to cause kernel panics on occasion.
+</span>
+
 For PHP 5.3.10 running against Splunk 4.3.2, you would use the command:
 
 ```
