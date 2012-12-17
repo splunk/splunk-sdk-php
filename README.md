@@ -31,31 +31,6 @@ If using PHP < 5.3.7, the cURL extension is required as well.
 Under this configuration the SDK will not support streaming large results
 when accessing Splunk over `https://` URLs.
 
-Tested PHP versions:
-
-* PHP 5.4.x
-  * **PHP 5.4.5 - OK.** Latest PHP as of 2012-08-01.
-* PHP 5.3.x
-  * **PHP 5.3.10 - OK.** Default PHP for Mac OS X 10.7 (Lion).
-  * **PHP 5.3.7 - OK.**
-  * **PHP 5.3.6 - Mostly OK&dagger;.**
-  * **PHP 5.3.3 - Mostly OK&dagger;.** Default PHP for Red Hat Enterprise Linux 6.
-* PHP 5.2.x
-  * **PHP 5.2.17 - Mostly OK&dagger;.** Last version of PHP 5.2.x.
-  * **PHP 5.2.11 - Mostly OK&dagger;.** Earliest PHP 5.2.x version known to work.
-  * PHP 5.2.10 - Broken due to [bug 48182].
-  * PHP 5.2.9 - Broken due to [bug 45092].
-    Earliest recommended PHP for PHPUnit 3.6.
-  * PHP 5.2.7 - Recalled due to security flaw.
-    Earliest PHP supported by PHPUnit 3.6.
-
-&dagger; Suffers from [bug 54137]. The SDK's workaround for this prevents
-streaming of large result sets when accessing Splunk over `https://` URLs.
-
-[bug 45092]: https://bugs.php.net/bug.php?id=45092
-[bug 48182]: https://bugs.php.net/bug.php?id=48182
-[bug 54137]: https://bugs.php.net/bug.php?id=54137
-
 ## Getting Started
 
 If you haven't already installed Splunk, download it here: 
