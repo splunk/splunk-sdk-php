@@ -1,8 +1,11 @@
 # VM Testing Automation
 
-This is a system for spinning up virtual machines (VMs) with particular versions of PHP and Splunk, wiring them together, and running the unit tests on such VM-pairs.
+This is a system for spinning up virtual machines (VMs) with particular
+versions of PHP and Splunk, wiring them together, and running the unit tests on
+such VM-pairs.
 
-Most VM management operations are delegated to [Vagrant], which in turn depends on [VirtualBox] for actually running VMs.
+Most VM management operations are delegated to [Vagrant], which in turn depends
+on [VirtualBox] for actually running VMs.
 
 ## Requirements
 
@@ -29,7 +32,9 @@ ls provision | grep php-
 #### Run Tests on a Provisioned VM-Pair
 
 <span style="color: red">
-**WARNING:** Make sure you save your work before running `vmtest` or any `vagrant` commands. The underlying VirtualBox tool is known to cause kernel panics on occasion.
+**WARNING:** Make sure you save your work before running `vmtest` or any
+`vagrant` commands. The underlying VirtualBox tool is known to cause kernel
+panics on occasion.
 </span>
 
 For PHP 5.3.10 running against Splunk 4.3.2, you would use the command:
@@ -38,7 +43,8 @@ For PHP 5.3.10 running against Splunk 4.3.2, you would use the command:
 ./vmtest 5.3.10 4.3.2
 ```
 
-For more advanced options, including running against a Splunk version on the host OS, see the documentation comment in the `vmtest` script.
+For more advanced options, including running against a Splunk version on the
+host OS, see the documentation comment in the `vmtest` script.
 
 #### Manually Provision a PHP VM
 
@@ -80,7 +86,8 @@ Download links for PHP releases can be found at:
 * [Current Releases](http://us.php.net/downloads.php)
 * [Historical Releases](http://us.php.net/releases/index.php)
 
-Since PHP is compiled from source, it is a lot more likely that things will go wrong or outright break. In this case you may need to:
+Since PHP is compiled from source, it is a lot more likely that things will
+go wrong or outright break. In this case you may need to:
 
 * debug the `Vagrantfile` which controls how PHP's dependencies are built, and/or
 * debug the partially provisioned machine by connecting to it via SSH:
@@ -90,6 +97,7 @@ Since PHP is compiled from source, it is a lot more likely that things will go w
 
 ## Design
 
-VirtualBox was chosen as the virtualization solution because it is free, which makes it widely available to contributors everywhere.
+VirtualBox was chosen as the virtualization solution because it is free, which
+makes it widely available to contributors everywhere.
 
 Vagrant is a nice abstraction for manipulating VirtualBox VMs.
