@@ -23,6 +23,9 @@ Vagrant::Config.run do |config|
       # Share "splunk-sdk-php" to the path "/vagrant_data" in the guest VM
       config.vm.share_folder "v-data", "/vagrant_data", ".."
       
+      # Update apt-get's package list (required by everything)
+      config.vm.provision :shell, :path => "provision/aptget-update.sh"
+      
       # make (required by everything)
       config.vm.provision :shell, :path => "provision/make-latest.sh"
       
