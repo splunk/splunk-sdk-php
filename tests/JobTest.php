@@ -262,7 +262,7 @@ class JobTest extends SplunkTest
         while ($rtjob['resultPreviewCount'] == 0)
         {
             usleep(0.2 * 1000000);
-            $rtjob->reload();
+            $rtjob->refresh();
         }
         
         // ...but not all
@@ -296,21 +296,21 @@ class JobTest extends SplunkTest
         /* Tests & Teardown */
         
         $rtjob->pause();
-        $rtjob->reload();
+        $rtjob->refresh();
         $this->assertEquals(1, $rtjob['isPaused']);
         
         $rtjob->unpause();
-        $rtjob->reload();
+        $rtjob->refresh();
         $this->assertEquals(0, $rtjob['isPaused']);
         
         $rtjob->finalize();
-        $rtjob->reload();
+        $rtjob->refresh();
         $this->assertEquals(1, $rtjob['isFinalized']);
         
         $rtjob->cancel();
         try
         {
-            $rtjob->reload();
+            $rtjob->refresh();
             $this->fail('Expected a cancelled job to be deleted.');
         }
         catch (Splunk_HttpException $e)
@@ -339,9 +339,9 @@ class JobTest extends SplunkTest
         // Ensure that we have a fully loaded Job
         $this->touch($job);
         
-        // Sanity check: Make sure reload is possible.
-        // If reload breaks here then GET probably won't work.
-        $job->reload();
+        // Sanity check: Make sure refresh is possible.
+        // If refresh breaks here then GET probably won't work.
+        $job->refresh();
         
         $job2 = $service->getJobs()->get($job->getName(), $job->getNamespace());
         $this->assertEquals($job->getName(), $job2->getName(),
@@ -489,7 +489,7 @@ class JobTest extends SplunkTest
         {
             //printf("%03.1f%%\r\n", $job->getProgress() * 100);
             usleep(0.1 * 1000000);
-            $job->reload();
+            $job->refresh();
         }
     }
 }

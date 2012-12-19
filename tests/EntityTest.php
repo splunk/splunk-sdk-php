@@ -267,7 +267,7 @@ class EntityTest extends SplunkTest
         ));
     }
     
-    public function testReloadEntityInCustomNamespace()
+    public function testRefreshEntityInCustomNamespace()
     {
         $service = $this->loginToRealService();
         
@@ -276,7 +276,7 @@ class EntityTest extends SplunkTest
             'getstarted',
             Splunk_Namespace::createApp('gettingstarted'));
         
-        $entity->reload();
+        $entity->refresh();
     }
     
     public function testNamespaceIsNotAProperty()
@@ -296,7 +296,7 @@ class EntityTest extends SplunkTest
             'search' => 'search index=_internal | head 2',
         ));
         $this->assertFalse(isset($savedSearch['namespace']));
-        $savedSearch->reload();
+        $savedSearch->refresh();
         $this->assertEquals('search index=_internal | head 2', $savedSearch['search']);
         
         // Teardown

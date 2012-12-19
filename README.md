@@ -382,7 +382,7 @@ while (!$job->isDone())
 {
 	printf("Progress: %03.1f%%\r\n", $job->getProgress() * 100);
 	usleep(0.5 * 1000000);
-	$job->reload();
+	$job->refresh();
 }
 $results = $job->getResults();
 
