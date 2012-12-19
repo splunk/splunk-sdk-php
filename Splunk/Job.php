@@ -108,8 +108,8 @@ class Splunk_Job extends Splunk_Entity
     /**
      * @return float                Percentage of this job's results that were
      *                              computed (0.0-1.0) at the time this job was
-     *                              last loaded or reloaded.
-     * @see Splunk_Entity::reload()
+     *                              last loaded or refreshed.
+     * @see Splunk_Entity::refresh()
      */ 
     public function getProgress()
     {
@@ -119,8 +119,8 @@ class Splunk_Job extends Splunk_Entity
     /**
      * @return boolean              Whether this job's results were available
      *                              at the time this job was last loaded or
-     *                              reloaded.
-     * @see Splunk_Entity::reload()
+     *                              refreshed.
+     * @see Splunk_Entity::refresh()
      */
     public function isDone()
     {

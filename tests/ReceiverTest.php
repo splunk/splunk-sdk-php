@@ -135,7 +135,7 @@ class ReceiverTest extends SplunkTest
         $timeoutTime = microtime(TRUE) + 10.0;
         while (TRUE)
         {
-            $index->reload();
+            $index->refresh();
             $eventCount = $index['totalEventCount'];
             if ($eventCount == $numEvents)
                 break;
