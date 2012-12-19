@@ -81,6 +81,8 @@ To run the examples, you will need to install a web server locally that supports
         * Open `C:\xampp\php\php.ini`.
         * Find the line `;extension=php_openssl.dll` and remove the
           leading semicolon (`;`).
+        * Use the XAMPP Control Panel to restart Apache, if it was already
+          running.
 * On Linux, install Apache and PHP from your package manager.
 
 [MAMP]: http://www.mamp.info/en/index.html
@@ -109,7 +111,8 @@ Login Failed.
 Reason: fopen(https://localhost:8089/services/auth/login): failed to open stream: Invalid argument
 ```
 
-this means that you need to enable support for OpenSSL in your PHP configuration (`php.ini`).
+this means that you need to enable support for OpenSSL in your PHP
+configuration (`php.ini`).
 
 ### Unit Tests
 
