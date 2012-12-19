@@ -1,5 +1,12 @@
 # Splunk PHP SDK Changelog
 
+## 0.8.0 (beta)
+
+* The `Entity::reload` method has been renamed to `refresh`.
+* Added convenience methods to `Service`:
+    * `search`
+    * `oneshotSearch`
+
 ## 0.1.1 (preview)
 
 * Improve HTTPS reliability in PHP 5.2.11 - 5.3.6.

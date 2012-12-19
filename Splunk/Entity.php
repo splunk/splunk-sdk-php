@@ -132,12 +132,12 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     }
     
     /**
-     * Forcefully reloads this entity from the Splunk server.
+     * Refreshes this entity's properties from the Splunk server.
      * 
      * @return Splunk_Entity            This entity.
      * @throws Splunk_IOException
      */
-    public function reload()
+    public function refresh()
     {
         if ($this->loaded)
         {
