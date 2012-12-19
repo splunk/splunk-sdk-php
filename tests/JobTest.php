@@ -158,15 +158,14 @@ class JobTest extends SplunkTest
         try
         {
             $job->getResultsPage();
-            
-            $job->delete();
             $this->fail('Expected Splunk_JobNotDoneException.');
         }
         catch (Splunk_JobNotDoneException $e)
         {
             // Good
-            $job->delete();
         }
+        
+        $job->delete();
     }
     
     public function testResultsEmpty()
