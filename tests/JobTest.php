@@ -473,6 +473,37 @@ class JobTest extends SplunkTest
         $this->assertEquals(1, $numResults);
     }
     
+    public function testResultsDocstringSample()
+    {
+        $service = $this->loginToRealService();
+        
+        $job = $service->getJobs()->create('search index=_internal | head 1');
+        while (!$job->refresh()->isDone()) { usleep(0.5 * 1000000); }
+        
+        foreach ($job->getResults() as $result)
+        {
+            // (See documentation for Splunk_ResultsReader to see how to
+            //  interpret $result.)
+            //...
+        }
+    }
+    
+    public function testResultsPageDocstringSample()
+    {
+        $service = $this->loginToRealService();
+        
+        $job = $service->getJobs()->create('search index=_internal | head 1');
+        while (!$job->refresh()->isDone()) { usleep(0.5 * 1000000); }
+        
+        $results = new Splunk_ResultsReader($job->getResultsPage());
+        foreach ($results as $result)
+        {
+            // (See documentation for Splunk_ResultsReader to see how to
+            //  interpret $result.)
+            //...
+        }
+    }
+    
     // === Utility ===
     
     private function pageHasResults($resultsPage)

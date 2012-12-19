@@ -196,6 +196,51 @@ class ResultsReaderTest extends SplunkTest
         $this->assertParsedResultsEquals($expectedResults, $xmlText);
     }
     
+    public function testSampleInClassDocstring()
+    {
+        $service = $this->loginToRealService();
+        $resultsStream = $service->oneshotSearch('search index=_internal | head 1');
+        
+        $resultsReader = new Splunk_ResultsReader($resultsStream);
+        foreach ($resultsReader as $result)
+        {
+            if ($result instanceof Splunk_ResultsFieldOrder)
+            {
+                // Process the field order
+                $dummy = "FIELDS: " . implode(',', $result->getFieldNames()) . "\r\n";
+            }
+            else if ($result instanceof Splunk_ResultsMessage)
+            {
+                // Process a message
+                $dummy = "[{$result->getType()}] {$result->getText()}\r\n";
+            }
+            else if (is_array($result))
+            {
+                // Process a row
+                $dummy = "{\r\n";
+                foreach ($result as $key => $valueOrValues)
+                {
+                    if (is_array($valueOrValues))
+                    {
+                        $values = $valueOrValues;
+                        $valuesString = implode(',', $values);
+                        $dummy = "  {$key} => [{$valuesString}]\r\n";
+                    }
+                    else
+                    {
+                        $value = $valueOrValues;
+                        $dummy = "  {$key} => {$value}\r\n";
+                    }
+                }
+                $dummy = "}\r\n";
+            }
+            else
+            {
+                // Ignore unknown result type
+            }
+        }
+    }
+    
     // === Utility ===
     
     private function assertParsedResultsEquals($expectedResults, $xmlText)

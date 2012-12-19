@@ -135,6 +135,8 @@ class Splunk_Job extends Splunk_Entity
      * Example:
      * 
      *  $job = ...;
+     *  while (!$job->refresh()->isDone()) { usleep(0.5 * 1000000); }
+     *  
      *  foreach ($job->getResults() as $result)
      *  {
      *      // (See documentation for Splunk_ResultsReader to see how to
@@ -201,6 +203,8 @@ class Splunk_Job extends Splunk_Entity
      * using Splunk_ResultsReader. For example:
      * 
      *  $job = ...;
+     *  while (!$job->refresh()->isDone()) { usleep(0.5 * 1000000); }
+     *  
      *  $results = new Splunk_ResultsReader($job->getResultsPage());
      *  foreach ($results as $result)
      *  {
