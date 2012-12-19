@@ -77,6 +77,10 @@ To run the examples, you will need to install a web server locally that supports
 
 * On Mac OS X, [MAMP] is recommended.
 * On Windows, [XAMPP] is recommended.
+    * For XAMPP, you will additionally need to configure PHP to support OpenSSL:
+        * Open `C:\xampp\php\php.ini`.
+        * Find the line `;extension=php_openssl.dll` and remove the
+          leading semicolon (`;`).
 * On Linux, install Apache and PHP from your package manager.
 
 [MAMP]: http://www.mamp.info/en/index.html
@@ -97,6 +101,15 @@ Then you should be able to access the SDK examples via a URL similar to:
 
 (You may need to alter the port of the URL to another value such as `8080` or
  `80`, depending on your web server.)
+
+If you see an error similar to,
+
+```
+Login Failed.
+Reason: fopen(https://localhost:8089/services/auth/login): failed to open stream: Invalid argument
+```
+
+this means that you need to enable support for OpenSSL in your PHP configuration (`php.ini`).
 
 ### Unit Tests
 
