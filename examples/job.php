@@ -72,7 +72,7 @@ else
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Job | Splunk PHP SDK Examples</title>
+  <title>Job | Splunk SDK for PHP Examples</title>
   <link rel="stylesheet" type="text/css" href="shared/style.css" />
   <style>
     #job-meta {

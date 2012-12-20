@@ -39,7 +39,7 @@ If you haven't already installed Splunk, download it here:
 For more about installing and running Splunk and system requirements, see
 [Installing & Running Splunk](http://dev.splunk.com/view/SP-CAAADRV). 
 
-Get a copy of the Splunk PHP SDK from [GitHub](https://github.com/) by cloning
+Get a copy of the Splunk SDK for PHP from [GitHub](https://github.com/) by cloning
 into the repository with git:
 
 > git clone https://github.com/splunk/splunk-sdk-php.git
