@@ -216,6 +216,8 @@ class Splunk_ResultsReader implements Iterator
                 return new Splunk_ResultsFieldOrder($fieldsNames);
             }
         }
+        
+        throw new Exception('Syntax error in <meta> element.');
     }
     
     private function readResult()
