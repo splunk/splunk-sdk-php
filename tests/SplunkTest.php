@@ -20,7 +20,7 @@ require_once 'Splunk.php';
 require_once 'settings.php';
 
 /**
- * Base class of all unit tests for the Splunk PHP SDK.
+ * Base class of all unit tests for the Splunk SDK for PHP.
  */
 abstract class SplunkTest extends PHPUnit_Framework_TestCase
 {

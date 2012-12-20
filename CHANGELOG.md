@@ -1,4 +1,4 @@
-# Splunk PHP SDK Changelog
+# Splunk SDK for PHP Changelog
 
 ## 0.1.1 (preview)
 
