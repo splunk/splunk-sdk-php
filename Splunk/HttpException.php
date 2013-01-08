@@ -26,6 +26,7 @@ class Splunk_HttpException extends Splunk_IOException
     
     // === Init ===
     
+    /** @internal */
     public function __construct($response)
     {
         $detail = Splunk_HttpException::parseFirstMessageFrom($response);

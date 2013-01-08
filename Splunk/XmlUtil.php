@@ -19,6 +19,7 @@
  * Utilities for manipulating SimpleXMLElement objects.
  * 
  * @package Splunk
+ * @internal
  */
 class Splunk_XmlUtil
 {

@@ -26,6 +26,7 @@ class Splunk_ResultsFieldOrder
 {
     private $fieldNames;
     
+    /** @internal */
     public function __construct($fieldNames)
     {
         $this->fieldNames = $fieldNames;

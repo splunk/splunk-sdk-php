@@ -24,6 +24,7 @@ class Splunk_Receiver
 {
     private $service;
     
+    /** @internal */
     public function __construct($service)
     {
         $this->service = $service;
@@ -41,17 +42,17 @@ class Splunk_Receiver
      *                      This may contain data for multiple events.
      *                      Under the default configuration, line breaks
      *                      ("\n") can be inserted to separate multiple events.
-     * @param array $args   (optional) {
-     *      'host' => (optional) The value to populate in the host field
-     *                for events from this data input.
-     *      'host_regex' => (optional) A regular expression used to
-     *                      extract the host value from each event.
-     *      'index' => (optional) The index to send events from this
-     *                 input to. Highly recommended. Defaults to "default".
-     *      'source' => (optional) The source value to fill in the
-     *                  metadata for this input's events
-     *      'sourcetype' => (optional) The sourcetype to apply to
-     *                      events from this input.
+     * @param array $args   (optional) {<br/>
+     *      **host**: (optional) The value to populate in the host field
+     *                for events from this data input.<br/>
+     *      **host_regex**: (optional) A regular expression used to
+     *                      extract the host value from each event.<br/>
+     *      **index**: (optional) The index to send events from this
+     *                 input to. Highly recommended. Defaults to "default".<br/>
+     *      **source**: (optional) The source value to fill in the
+     *                  metadata for this input's events.<br/>
+     *      **sourcetype**: (optional) The sourcetype to apply to
+     *                      events from this input.<br/>
      * }
      * @throws Splunk_IOException
      * @link http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTinput#receivers.2Fsimple
@@ -74,17 +75,17 @@ class Splunk_Receiver
      * 
      * The returned stream should eventually be closed via fclose().
      * 
-     * @param array $args   (optional) {
-     *      'host' => (optional) The value to populate in the host field
-     *                for events from this data input.
-     *      'host_regex' => (optional) A regular expression used to
-     *                      extract the host value from each event.
-     *      'index' => (optional) The index to send events from this
-     *                 input to. Highly recommended. Defaults to "default".
-     *      'source' => (optional) The source value to fill in the
-     *                  metadata for this input's events
-     *      'sourcetype' => (optional) The sourcetype to apply to
-     *                      events from this input.
+     * @param array $args   (optional) {<br/>
+     *      **host**: (optional) The value to populate in the host field
+     *                for events from this data input.<br/>
+     *      **host_regex**: (optional) A regular expression used to
+     *                      extract the host value from each event.<br/>
+     *      **index**: (optional) The index to send events from this
+     *                 input to. Highly recommended. Defaults to "default".<br/>
+     *      **source**: (optional) The source value to fill in the
+     *                  metadata for this input's events.<br/>
+     *      **sourcetype**: (optional) The sourcetype to apply to
+     *                      events from this input.<br/>
      * }
      * @return resource     A stream that you can write event text to.
      * @throws Splunk_IOException

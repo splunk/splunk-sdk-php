@@ -22,6 +22,7 @@
  */
 class Splunk_ConnectException extends Splunk_IOException
 {
+    /** @internal */
     public function __construct($message=NULL, $code=0)
     {
         parent::__construct($message, $code);

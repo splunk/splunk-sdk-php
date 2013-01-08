@@ -28,6 +28,8 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     private $content;
     
     /**
+     * @internal
+     * 
      * @param Splunk_Service $service
      * @param string $path
      * @param SimpleXMLElement|NULL $entry
@@ -207,21 +209,31 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     // === ArrayAccess Methods ===
     
+    /**
+     * @param string $key       The name of an entity property.
+     * @return string           The value of the specified entity property.
+     */
     public function offsetGet($key)
     {
         return $this->validate()->content[$key];
     }
     
+    /** @internal */
     public function offsetSet($key, $value)
     {
         throw new Splunk_UnsupportedOperationException();
     }
     
+    /** @internal */
     public function offsetUnset($key)
     {
         throw new Splunk_UnsupportedOperationException();
     }
     
+    /**
+     * @param string $key       The name of an entity property.
+     * @return string           Whether the specified entity property exists.
+     */
     public function offsetExists($key)
     {
         return isset($this->validate()->content[$key]);

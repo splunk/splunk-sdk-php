@@ -15,15 +15,15 @@
  * under the License.
  */
 
+// NOTE: Ideally the static constructors for this class wouldn't have any
+//       prefix (like 'create') or suffix. Unfortunately both 'default' and
+//       'global' are considered keywords in PHP, preventing their use
+//       as static constructor names.
 /**
  * Represents a namespace. Every Splunk object belongs to a namespace.
  * 
  * @package Splunk
  */
-// NOTE: Ideally the static constructors for this class wouldn't have any
-//       prefix (like 'create') or suffix. Unfortunately both 'default' and
-//       'global' are considered keywords in PHP, preventing their use
-//       as static constructor names.
 class Splunk_Namespace
 {
     private $owner;

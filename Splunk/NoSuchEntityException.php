@@ -22,6 +22,7 @@
  */
 class Splunk_NoSuchEntityException extends RuntimeException
 {
+    /** @internal */
     public function __construct($name)
     {
         parent::__construct("No entity exists with name '{$name}'.");

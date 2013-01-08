@@ -19,6 +19,7 @@
  * Internal utility functions for the PHP SDK.
  * 
  * @package Splunk
+ * @internal
  */
 class Splunk_Util
 {

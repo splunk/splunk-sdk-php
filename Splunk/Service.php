@@ -23,7 +23,7 @@
 class Splunk_Service extends Splunk_Context
 {
     /**
-     * @see Splunk_Context::__construct
+     * @see Splunk_Context::__construct()
      */
     public function __construct($args=array())
     {
@@ -71,17 +71,17 @@ class Splunk_Service extends Splunk_Context
      * 
      * @param string $search    The search query for the job to perform.
      * @param array $args   (optional) Job-specific creation arguments,
-     *                      merged with {
-     *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
+     *                      merged with {<br/>
+     *     **namespace**: (optional) {Splunk_Namespace} The namespace in which
      *                    to create the entity. Defaults to the service's
-     *                    namespace.
-     * }
+     *                    namespace.<br/>
+     * }<br/>
      *                      For details, see the
-     *                      "POST search/jobs"
+     *                      <a href="http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs">
+     *                      "POST search/jobs"</a>
      *                      endpoint in the REST API Documentation.
      * @return Splunk_Job
      * @throws Splunk_IOException
-     * @link http://docs.splunk.com/Documentation/Splunk/4.3.3/RESTAPI/RESTsearch#search.2Fjobs
      */
     public function search($search, $args=array())
     {
@@ -93,18 +93,18 @@ class Splunk_Service extends Splunk_Context
      * 
      * @param string $search    The search query for the job to perform.
      * @param array $args   (optional) Job-specific creation arguments,
-     *                      merged with {
-     *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
+     *                      merged with {<br/>
+     *     **namespace**: (optional) {Splunk_Namespace} The namespace in which
      *                    to create the entity. Defaults to the service's
-     *                    namespace.
-     * }
+     *                    namespace.<br/>
+     * }<br/>
      *                      For details, see the
-     *                      "POST search/jobs"
+     *                      <a href="http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs">
+     *                      "POST search/jobs"</a>
      *                      endpoint in the REST API Documentation.
      * @return string           The search results, which can be parsed with
      *                          Splunk_ResultsReader.
      * @throws Splunk_IOException
-     * @link http://docs.splunk.com/Documentation/Splunk/4.3.3/RESTAPI/RESTsearch#search.2Fjobs
      */
     public function oneshotSearch($search, $args=array())
     {

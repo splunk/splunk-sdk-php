@@ -90,6 +90,9 @@ class Splunk_Job extends Splunk_Entity
     
     // Overrides superclass to return the correct ID of this job,
     // which can be used to lookup this job from the Jobs collection.
+    /**
+     * @see Splunk_Entity::getName()
+     */
     public function getName()
     {
         return $this['sid'];
@@ -134,6 +137,7 @@ class Splunk_Job extends Splunk_Entity
      * 
      * Example:
      * 
+     * <pre>
      *  $job = ...;
      *  while (!$job->refresh()->isDone()) { usleep(0.5 * 1000000); }
      *  
@@ -143,35 +147,36 @@ class Splunk_Job extends Splunk_Entity
      *      //  interpret $result.)
      *      ...
      *  }
+     * </pre>
      * 
      * This method cannot be used to access results from realtime jobs,
-     * which are never done. Use getResultsPreviewPage() instead.
+     * which are never done. Use {@link getResultsPreviewPage()} instead.
      * 
-     * @param array $args (optional) {
-     *     'count' => (optional) The maximum number of results to return,
+     * @param array $args (optional) {<br/>
+     *     **count**: (optional) The maximum number of results to return,
      *                or -1 to return as many as possible.
-     *                Defaults to returning as many as possible.
-     *     'offset' => (optional) The offset of the first result to return.
-     *                 Defaults to 0.
-     *     'pagesize' => (optional) The number of results to fetch from the
+     *                Defaults to returning as many as possible.<br/>
+     *     **offset**: (optional) The offset of the first result to return.
+     *                 Defaults to 0.<br/>
+     *     **pagesize**: (optional) The number of results to fetch from the
      *                   server on each request when paginating internally,
      *                   or -1 to return as many results as possible.
-     *                   Defaults to returning as many results as possible.
+     *                   Defaults to returning as many results as possible.<br/>
      *     
-     *     'field_list' => (optional) Comma-separated list of fields to return
-     *                     in the result set. Defaults to all fields.
-     *     'output_mode' => (optional) The output format of the result. Valid values:
-     *                      - "csv"
-     *                      - "raw"
-     *                      - "xml": The format parsed by Splunk_ResultsReader.
-     *                      - "json"
-     *                      Defaults to "xml".
+     *     **field_list**: (optional) Comma-separated list of fields to return
+     *                     in the result set. Defaults to all fields.<br/>
+     *     **output_mode**: (optional) The output format of the result. Valid values:<br/>
+     *                      - "csv"<br/>
+     *                      - "raw"<br/>
+     *                      - "xml": The format parsed by Splunk_ResultsReader.<br/>
+     *                      - "json"<br/>
+     *                      Defaults to "xml".<br/>
      *                      You should not change this unless you are parsing
-     *                      results yourself.
-     *     'search' => (optional) The post processing search to apply to
+     *                      results yourself.<br/>
+     *     **search**: (optional) The post processing search to apply to
      *                 results. Can be any valid search language string.
      *                 For example "search sourcetype=splunkd" will match any
-     *                 result whose "sourcetype" field is "splunkd".
+     *                 result whose "sourcetype" field is "splunkd".<br/>
      * }
      * @return Iterator             The results (i.e. transformed events)
      *                              of this job, via an iterator.
@@ -190,7 +195,7 @@ class Splunk_Job extends Splunk_Entity
     /**
      * Returns a single page of results from this job.
      * 
-     * Most potential callers should use getResults() instead.
+     * Most potential callers should use {@link getResults()} instead.
      * Only use this method if you wish to parse job results yourself
      * or want to control pagination manually.
      * 
@@ -200,8 +205,9 @@ class Splunk_Job extends Splunk_Entity
      * 
      * The format of the results depends on the 'output_mode' argument
      * (which defaults to "xml"). XML-formatted results can be parsed
-     * using Splunk_ResultsReader. For example:
+     * using {@link Splunk_ResultsReader}. For example:
      * 
+     * <pre>
      *  $job = ...;
      *  while (!$job->refresh()->isDone()) { usleep(0.5 * 1000000); }
      *  
@@ -212,31 +218,32 @@ class Splunk_Job extends Splunk_Entity
      *      //  interpret $result.)
      *      ...
      *  }
+     * </pre>
      * 
      * This method cannot be used to access results from realtime jobs,
-     * which are never done. Use getResultsPreviewPage() instead.
+     * which are never done. Use {@link getResultsPreviewPage()} instead.
      * 
-     * @param array $args (optional) {
-     *     'count' => (optional) The maximum number of results to return,
+     * @param array $args (optional) {<br/>
+     *     **count**: (optional) The maximum number of results to return,
      *                or -1 to return as many as possible.
-     *                Defaults to returning as many as possible.
-     *     'offset' => (optional) The offset of the first result to return.
-     *                 Defaults to 0.
+     *                Defaults to returning as many as possible.<br/>
+     *     **offset**: (optional) The offset of the first result to return.
+     *                 Defaults to 0.<br/>
      *     
-     *     'field_list' => (optional) Comma-separated list of fields to return
-     *                     in the result set. Defaults to all fields.
-     *     'output_mode' => (optional) The output format of the result. Valid values:
-     *                      - "csv"
-     *                      - "raw"
-     *                      - "xml": The format parsed by Splunk_ResultsReader.
-     *                      - "json"
-     *                      Defaults to "xml".
+     *     **field_list**: (optional) Comma-separated list of fields to return
+     *                     in the result set. Defaults to all fields.<br/>
+     *     **output_mode**: (optional) The output format of the result. Valid values:<br/>
+     *                      - "csv"<br/>
+     *                      - "raw"<br/>
+     *                      - "xml": The format parsed by Splunk_ResultsReader.<br/>
+     *                      - "json"<br/>
+     *                      Defaults to "xml".<br/>
      *                      You should not change this unless you are parsing
-     *                      results yourself.
-     *     'search' => (optional) The post processing search to apply to
+     *                      results yourself.<br/>
+     *     **search**: (optional) The post processing search to apply to
      *                 results. Can be any valid search language string.
      *                 For example "search sourcetype=splunkd" will match any
-     *                 result whose "sourcetype" field is "splunkd".
+     *                 result whose "sourcetype" field is "splunkd".<br/>
      * }
      * @return resource             The results (i.e. transformed events)
      *                              of this job, as a stream.
@@ -259,9 +266,28 @@ class Splunk_Job extends Splunk_Entity
      * Returns a single page of results from this job,
      * which may or may not be done running.
      * 
-     * Arguments and return values are exactly the same as
-     * Splunk_Job::getResultsPage().
-     * 
+     * @param array $args (optional) {<br/>
+     *     **count**: (optional) The maximum number of results to return,
+     *                or -1 to return as many as possible.
+     *                Defaults to returning as many as possible.<br/>
+     *     **offset**: (optional) The offset of the first result to return.
+     *                 Defaults to 0.<br/>
+     *     
+     *     **field_list**: (optional) Comma-separated list of fields to return
+     *                     in the result set. Defaults to all fields.<br/>
+     *     **output_mode**: (optional) The output format of the result. Valid values:<br/>
+     *                      - "csv"<br/>
+     *                      - "raw"<br/>
+     *                      - "xml": The format parsed by Splunk_ResultsReader.<br/>
+     *                      - "json"<br/>
+     *                      Defaults to "xml".<br/>
+     *                      You should not change this unless you are parsing
+     *                      results yourself.<br/>
+     *     **search**: (optional) The post processing search to apply to
+     *                 results. Can be any valid search language string.
+     *                 For example "search sourcetype=splunkd" will match any
+     *                 result whose "sourcetype" field is "splunkd".<br/>
+     * }
      * @return resource             The results (i.e. transformed events)
      *                              of this job, as a stream.
      * @throws Splunk_IOException

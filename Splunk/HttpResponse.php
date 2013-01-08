@@ -22,14 +22,18 @@
  * property should be used used in preference to the 'body' property,
  * since it will only keep the current part of the body loaded in memory.
  * 
- * Has the following read-only properties:
- * - status {integer}   HTTP status code (ex: 200).
- * - reason {string}    HTTP reason string (ex: 'OK').
- * - headers {array}    Dictionary of headers. (ex: array('Content-Length' => '0')).
- * - body {string}      Content of the response, as a single byte string.
- * - bodyStream {resource}
- *                      Content of the response, as a stream (of the type
- *                      returned by fopen()).
+ * @package Splunk
+ * @internal
+ * 
+ * @property-read integer $status   HTTP status code (ex: 200).
+ * @property-read string $reason    HTTP reason string (ex: 'OK').
+ * @property-read array $headers    Dictionary of headers.
+ *                                  (ex: array('Content-Length' => '0')).
+ * @property-read string $body      Content of the response,
+ *                                  as a single byte string.
+ * @property-read resource $bodyStream
+ *                                  Content of the response, as a stream
+ *                                  (of the type returned by fopen()).
  */
 class Splunk_HttpResponse
 {
@@ -37,6 +41,7 @@ class Splunk_HttpResponse
     private $body;          // lazy
     private $bodyStream;    // lazy
     
+    /* @internal */
     public function __construct($state)
     {
         $this->state = $state;
@@ -46,6 +51,7 @@ class Splunk_HttpResponse
     
     // === Accessors ===
     
+    /** @internal */
     public function __get($key)
     {
         if ($key === 'body')

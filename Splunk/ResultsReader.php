@@ -26,44 +26,46 @@
  * If the result is an associative array, it maps each
  * field name to either a single value or an array of values.
  * 
- * $resultsReader = new Splunk_ResultsReader(...);
- * foreach ($resultsReader as $result)
- * {
- *     if ($result instanceof Splunk_ResultsFieldOrder)
- *     {
- *         // Process the field order
- *         print "FIELDS: " . implode(',', $result->getFieldNames()) . "\r\n";
- *     }
- *     else if ($result instanceof Splunk_ResultsMessage)
- *     {
- *         // Process a message
- *         print "[{$result->getType()}] {$result->getText()}\r\n";
- *     }
- *     else if (is_array($result))
- *     {
- *         // Process a row
- *         print "{\r\n";
- *         foreach ($result as $key => $valueOrValues)
- *         {
- *             if (is_array($valueOrValues))
- *             {
- *                 $values = $valueOrValues;
- *                 $valuesString = implode(',', $values);
- *                 print "  {$key} => [{$valuesString}]\r\n";
- *             }
- *             else
- *             {
- *                 $value = $valueOrValues;
- *                 print "  {$key} => {$value}\r\n";
- *             }
- *         }
- *         print "}\r\n";
- *     }
- *     else
- *     {
- *         // Ignore unknown result type
- *     }
- * }
+ * <pre>
+ *  $resultsReader = new Splunk_ResultsReader(...);
+ *  foreach ($resultsReader as $result)
+ *  {
+ *      if ($result instanceof Splunk_ResultsFieldOrder)
+ *      {
+ *          // Process the field order
+ *          print "FIELDS: " . implode(',', $result->getFieldNames()) . "\r\n";
+ *      }
+ *      else if ($result instanceof Splunk_ResultsMessage)
+ *      {
+ *          // Process a message
+ *          print "[{$result->getType()}] {$result->getText()}\r\n";
+ *      }
+ *      else if (is_array($result))
+ *      {
+ *          // Process a row
+ *          print "{\r\n";
+ *          foreach ($result as $key => $valueOrValues)
+ *          {
+ *              if (is_array($valueOrValues))
+ *              {
+ *                  $values = $valueOrValues;
+ *                  $valuesString = implode(',', $values);
+ *                  print "  {$key} => [{$valuesString}]\r\n";
+ *              }
+ *              else
+ *              {
+ *                  $value = $valueOrValues;
+ *                  print "  {$key} => {$value}\r\n";
+ *              }
+ *          }
+ *          print "}\r\n";
+ *      }
+ *      else
+ *      {
+ *          // Ignore unknown result type
+ *      }
+ *  }
+ * </pre>
  * 
  * @package Splunk
  */
@@ -75,6 +77,11 @@ class Splunk_ResultsReader implements Iterator
     private $currentElement;
     private $atStart;
     
+    /**
+     * @param string|resource $streamOrXmlString
+     *          A string or stream containing results obtained from the
+     *          {@link Splunk_Job::getResultsPage()} method.
+     */
     public function __construct($streamOrXmlString)
     {
         if (is_string($streamOrXmlString))
@@ -112,6 +119,7 @@ class Splunk_ResultsReader implements Iterator
     
     // === Iterator Methods ===
     
+    /** @internal */
     public function rewind()
     {
         if ($this->atStart)
@@ -121,22 +129,33 @@ class Splunk_ResultsReader implements Iterator
             'Cannot rewind after reading past the first element.');
     }
     
+    /**
+     * @return boolean     Whether there are any more elements.
+     */
     public function valid()
     {
         return ($this->currentElement !== NULL);
     }
     
+    /**
+     * Advances this iterator to the next element.
+     */
     public function next()
     {
         $this->currentElement = $this->readNextElement();
         $this->atStart = FALSE;
     }
     
+    /**
+     * @return Splunk_ResultsFieldOrder|Splunk_ResultsMessage|array|mixed
+     *      The current element of this iterator.
+     */
     public function current()
     {
         return $this->currentElement;
     }
     
+    /** @internal */
     public function key()
     {
         return NULL;

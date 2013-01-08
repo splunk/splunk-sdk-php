@@ -22,6 +22,7 @@
  * URIs for its inputs, such as XMLReader.
  * 
  * @package Splunk
+ * @internal
  */
 class Splunk_StreamStream
 {

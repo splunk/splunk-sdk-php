@@ -32,19 +32,19 @@ class Splunk_Context
     private $http;
     
     /**
-     * @param array $args {
-     *      'username' => (optional) The username to login with. Defaults to "admin".
-     *      'password' => (optional) The password to login with. Defaults to "changeme".
-     *      'token' => (optional) The authentication token to use. If provided,
+     * @param array $args {<br/>
+     *      **username**: (optional) The username to login with. Defaults to "admin".<br/>
+     *      **password**: (optional) The password to login with. Defaults to "changeme".<br/>
+     *      **token**: (optional) The authentication token to use. If provided,
      *                 the username and password are ignored and there is no
-     *                 need to call login(). In the format "Splunk SESSION_KEY".
-     *      'host' => (optional) The hostname of the Splunk server. Defaults to "localhost".
-     *      'port' => (optional) The port of the Splunk server. Defaults to 8089.
-     *      'scheme' => (optional) The scheme to use: either "http" or "https". Defaults to "https".
-     *      'namespace' => (optional) Namespace that all object lookups will occur in by default.
-     *                     Defaults to `Splunk_Namespace::createDefault()`.
-     *      'http' => (optional) An Http object that will be used for performing HTTP requests.
-     *                This is intended for testing only.
+     *                 need to call login(). In the format "Splunk SESSION_KEY".<br/>
+     *      **host**: (optional) The hostname of the Splunk server. Defaults to "localhost".<br/>
+     *      **port**: (optional) The port of the Splunk server. Defaults to 8089.<br/>
+     *      **scheme**: (optional) The scheme to use: either "http" or "https". Defaults to "https".<br/>
+     *      **namespace**: (optional) Namespace that all object lookups will occur in by default.
+     *                     Defaults to `Splunk_Namespace::createDefault()`.<br/>
+     *      **http**: (optional) An Http object that will be used for performing HTTP requests.
+     *                This is intended for testing only.<br/>
      * }
      */
     public function __construct($args=array())
@@ -92,12 +92,12 @@ class Splunk_Context
     // === HTTP ===
     
     /**
-     * Performs an HTTP GET request to the endpoint at the specified path.
+     * Sends an HTTP GET request to the endpoint at the specified path.
      * 
      * @param string $path      relative or absolute URL path.
-     * @param array $args       (optional) query parameters, merged with {
-     *     'namespace' => (optional) namespace to use, or NULL to use
-     *                    this context's default namespace.
+     * @param array $args       (optional) query parameters, merged with {<br/>
+     *     **namespace**: (optional) namespace to use, or NULL to use
+     *                    this context's default namespace.<br/>
      * }
      * @return Splunk_HttpResponse
      * @throws Splunk_IOException
@@ -109,13 +109,13 @@ class Splunk_Context
     }
     
     /**
-     * Performs an HTTP POST request to the endpoint at the specified path.
+     * Sends an HTTP POST request to the endpoint at the specified path.
      * 
      * @param string $path      relative or absolute URL path.
      * @param array $args       (optional) form parameters to send in the request body,
-     *                          merged with {
-     *     'namespace' => (optional) namespace to use, or NULL to use
-     *                    this context's default namespace.
+     *                          merged with {<br/>
+     *     **namespace**: (optional) namespace to use, or NULL to use
+     *                    this context's default namespace.<br/>
      * }
      * @return Splunk_HttpResponse
      * @throws Splunk_IOException
@@ -127,12 +127,12 @@ class Splunk_Context
     }
     
     /**
-     * Performs an HTTP DELETE request to the endpoint at the specified path.
+     * Sends an HTTP DELETE request to the endpoint at the specified path.
      * 
      * @param string $path      relative or absolute URL path.
-     * @param array $args       (optional) query parameters, merged with {
-     *     'namespace' => (optional) namespace to use, or NULL to use
-     *                    this context's default namespace.
+     * @param array $args       (optional) query parameters, merged with {<br/>
+     *     **namespace**: (optional) namespace to use, or NULL to use
+     *                    this context's default namespace.<br/>
      * }
      * @return Splunk_HttpResponse
      * @throws Splunk_IOException
@@ -155,15 +155,15 @@ class Splunk_Context
     }
     
     /**
-     * Performs an HTTP request to the endpoint at the specified path.
+     * Sends an HTTP request to the endpoint at the specified path.
      * 
      * @param string $method        the HTTP method (ex: 'GET' or 'POST').
      * @param string $path          relative or absolute URL path.
      * @param array $requestHeaders (optional) dictionary of header names and values.
      * @param string $requestBody   (optional) content to send in the request.
-     * @param array $args           (optional) query parameters, merged with {
-     *     'namespace' => (optional) namespace to use, or NULL to use
-     *                    this context's default namespace.
+     * @param array $args           (optional) query parameters, merged with {<br/>
+     *     **namespace**: (optional) namespace to use, or NULL to use
+     *                    this context's default namespace.<br/>
      * }
      * @return Splunk_HttpResponse
      * @throws Splunk_IOException

@@ -19,6 +19,7 @@
  * HTTP abstraction layer.
  * 
  * @package Splunk
+ * @internal
  */
 class Splunk_Http
 {
@@ -63,7 +64,7 @@ class Splunk_Http
     }
     
     /**
-     * Performs an HTTP request and returns the response.
+     * Sends an HTTP request and returns the response.
      * 
      * @param string $method            HTTP request method (ex: 'get').
      * @param string $url               URL to fetch.

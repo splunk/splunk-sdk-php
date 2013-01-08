@@ -23,6 +23,7 @@
  */
 class Splunk_AmbiguousEntityNameException extends RuntimeException
 {
+    /** @internal */
     public function __construct($name)
     {
         parent::__construct(

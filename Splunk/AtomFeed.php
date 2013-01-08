@@ -19,6 +19,7 @@
  * Contains utilities for parsing Atom feeds received from the Splunk REST API.
  * 
  * @package Splunk
+ * @internal
  */
 class Splunk_AtomFeed
 {
@@ -29,7 +30,7 @@ class Splunk_AtomFeed
      * Parses and returns the value inside the specified XML element.
      * 
      * @param SimpleXMLElement $containerXml
-     * @returns mixed
+     * @return mixed
      */
     public static function parseValueInside($containerXml)
     {

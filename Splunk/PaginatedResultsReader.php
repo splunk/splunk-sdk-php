@@ -16,9 +16,8 @@
  */
 
 /**
- * (This class is private.)
- * 
  * @package Splunk
+ * @internal
  */
 class Splunk_PaginatedResultsReader implements Iterator
 {

@@ -26,6 +26,7 @@ class Splunk_ResultsMessage
     private $type;
     private $text;
     
+    /** @internal */
     public function __construct($type, $text)
     {
         $this->type = $type;

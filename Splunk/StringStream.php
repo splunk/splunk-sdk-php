@@ -19,6 +19,7 @@
  * Creates a stream that reads from a string.
  * 
  * @package Splunk
+ * @internal
  */
 class Splunk_StringStream
 {

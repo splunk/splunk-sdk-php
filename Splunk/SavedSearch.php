@@ -29,9 +29,11 @@ class Splunk_SavedSearch extends Splunk_Entity
      * 
      * @param array $args   (optional) Additional arguments.
      *                      For details, see the
-     *                      "POST saved/searches/{name}/dispatch"
+     *                      <a href="http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#saved.2Fsearches.2F.7Bname.7D.2Fdispatch">
+     *                      "POST saved/searches/{name}/dispatch"</a>
      *                      endpoint in the REST API Documentation.
-     * @link http://docs.splunk.com/Documentation/Splunk/4.3.3/RESTAPI/RESTsearch#saved.2Fsearches.2F.7Bname.7D.2Fdispatch
+     * @return Splunk_Job
+     *                      The created search job.
      */
     public function dispatch($args=array())
     {
