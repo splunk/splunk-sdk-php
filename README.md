@@ -142,6 +142,9 @@ To generate a code coverage report, run:
 Requirements:
 
 * [phpDocumentor 2](http://www.phpdoc.org/)
+* [GraphViz](http://www.graphviz.org/) (optional)
+    * The **dot** command-line tool is used to render the class hierarchy
+      diagram in the documentation.
 
 To generate the API documentation, run:
 
