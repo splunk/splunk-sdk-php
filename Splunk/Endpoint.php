@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2013 Splunk, Inc.
+ * Copyright 2012 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -35,9 +35,6 @@ abstract class Splunk_Endpoint
     // === Accessors ===
     
     /**
-     * Returns the namespace in which this endpoint resides, or NULL to use 
-     *      the context's default namespace.
-     *
      * @return Splunk_Namespace|NULL    The namespace in which this endpoint
      *                                  resides, or NULL to use the context's
      *                                  default namespace.
@@ -99,7 +96,6 @@ abstract class Splunk_Endpoint
         return $this->sendSimpleRequest('sendDelete', $relativePath, $args);
     }
     
-    /** Sends a simple request relative to this endpoint. */
     private function sendSimpleRequest($method, $relativePath, $args=array())
     {
         $args = array_merge(array(
