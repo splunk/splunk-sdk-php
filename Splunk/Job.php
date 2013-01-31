@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2013 Splunk, Inc.
+ * Copyright 2012 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -60,11 +60,7 @@ class Splunk_Job extends Splunk_Entity
     
     // === Ready ===
     
-    /** 
-     * Returns a value that indicates whether this job has been loaded.
-     *
-     * @return bool                Whether this job has been loaded. 
-     */
+    /** @return bool                Whether this job has been loaded. */
     public function isReady()
     {
         return $this->isLoaded();
@@ -103,8 +99,6 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
-     * Returns the search string executed by this job.
-     *
      * @return string               The search string executed by this job.
      */
     public function getSearch()
@@ -115,9 +109,6 @@ class Splunk_Job extends Splunk_Entity
     // === Results ===
     
     /**
-     * Returns a value that indicates the percentage of this job's results that were computed 
-     *      at the time this job was last loaded or refreshed.
-     *
      * @return float                Percentage of this job's results that were
      *                              computed (0.0-1.0) at the time this job was
      *                              last loaded or refreshed.
@@ -129,9 +120,6 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
-     * Returns a value that indicates whether this job's results were available at the time
-     *      this job was last loaded or refreshed.
-     *
      * @return boolean              Whether this job's results were available
      *                              at the time this job was last loaded or
      *                              refreshed.
@@ -318,7 +306,6 @@ class Splunk_Job extends Splunk_Entity
         return $response->bodyStream;
     }
     
-    /** Fetches a page of the specified type. */
     private function fetchPage($pageType, $args)
     {
         $args = array_merge(array(
@@ -379,8 +366,6 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
-     * Posts the specified control action.
-     *
      * @throws Splunk_IOException
      */
     private function sendControlAction($actionName)
