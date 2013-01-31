@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -39,6 +39,7 @@ class Splunk_HttpException extends Splunk_IOException
         parent::__construct($message);
     }
     
+    /** Parses an HTTP response. */
     private static function parseFirstMessageFrom($response)
     {
         if ($response->body == '')
@@ -52,6 +53,8 @@ class Splunk_HttpException extends Splunk_IOException
     // === Accessors ===
     
     /**
+     * Gets an HTTP response.
+     *
      * @return Splunk_HttpResponse
      */
     public function getResponse()

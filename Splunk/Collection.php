@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -41,6 +41,9 @@ class Splunk_Collection extends Splunk_Endpoint
     
     // === Accessors ===
     
+    /** 
+     * Not implemented.
+     */
     protected function getSearchNamespace()
     {
         // (The namespace cannot presently be overridden on a per-collection basis.)
@@ -111,6 +114,8 @@ class Splunk_Collection extends Splunk_Endpoint
     }
     
     /**
+     * Returns an array of entities from the given response.
+     *
      * @param $response
      * @return array                        array of Splunk_Entry.
      */
@@ -127,6 +132,8 @@ class Splunk_Collection extends Splunk_Endpoint
     }
     
     /**
+     * Returns an entity from the given entry element.
+     *
      * @param SimpleXMLElement $entry       an <entry> element.
      * @return Splunk_Entry
      */
