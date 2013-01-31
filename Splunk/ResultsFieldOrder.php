@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -33,7 +33,9 @@ class Splunk_ResultsFieldOrder
     }
     
     /**
-     * @return array    A ordered list of the field names that will be occur
+     * Gets an ordered list of field names that will be returned in the results stream.
+     *
+     * @return array    A ordered list of the field names that will be returned
      *                  in the results stream.
      */
     public function getFieldNames()
