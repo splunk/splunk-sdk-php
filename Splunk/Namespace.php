@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2013 Splunk, Inc.
+ * Copyright 2012 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -32,7 +32,6 @@ class Splunk_Namespace
     
     // === Init ===
     
-    /** Constructs a new namespace with the specified parameters. */
     private function __construct($owner, $app, $sharing)
     {
         $this->owner = $owner;
@@ -232,7 +231,6 @@ class Splunk_Namespace
     
     // === Utility ===
     
-    /** Throws an exception if the number of arguments is not what was expected. */
     // (Explicitly check the argument count because many creation function 
     //  names do not make the required number of arguments clear and PHP
     //  does not check under certain circumstances.)
@@ -243,7 +241,6 @@ class Splunk_Namespace
                 "Expected exactly ${expected} arguments.");
     }
     
-	/** Throws an exception if this namespace is not an exact (non-wildcarded) namespace. */
     private function ensureExact()
     {
         if (!$this->isExact())

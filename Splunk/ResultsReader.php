@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2013 Splunk, Inc.
+ * Copyright 2012 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -78,8 +78,6 @@ class Splunk_ResultsReader implements Iterator
     private $atStart;
     
     /**
-     * Constructs a new search results string or stream.
-     *
      * @param string|resource $streamOrXmlString
      *          A string or stream containing results obtained from the
      *          {@link Splunk_Job::getResultsPage()} method.
@@ -96,7 +94,7 @@ class Splunk_ResultsReader implements Iterator
             $stream = $streamOrXmlString;
         }
         
-        // Search jobs lacking results return a blank document (with HTTP 200).
+        // Search jobs lacking results return a blank document (with HTTP 200)
         if (feof($stream))
         {
             $this->emptyXml = TRUE;
@@ -132,8 +130,6 @@ class Splunk_ResultsReader implements Iterator
     }
     
     /**
-     * Returns a value that indicates whether there are any more elements in the stream.
-     *
      * @return boolean     Whether there are any more elements.
      */
     public function valid()
@@ -151,8 +147,6 @@ class Splunk_ResultsReader implements Iterator
     }
     
     /**
-     * Returns the current element of this iterator.
-     * 
      * @return Splunk_ResultsFieldOrder|Splunk_ResultsMessage|array|mixed
      *      The current element of this iterator.
      */
@@ -169,7 +163,6 @@ class Splunk_ResultsReader implements Iterator
     
     // === Read Next Element ===
     
-    /** Returns the next element in the stream. */
     private function readNextElement()
     {
         $xr = $this->xmlReader;
@@ -211,7 +204,6 @@ class Splunk_ResultsReader implements Iterator
         return NULL;
     }
     
-	/** Reads metadata from the stream. */
     private function readMeta()
     {
         $xr = $this->xmlReader;
@@ -247,7 +239,6 @@ class Splunk_ResultsReader implements Iterator
         throw new Exception('Syntax error in <meta> element.');
     }
     
-	/** Returns search results from the stream. */
     private function readResult()
     {
         $xr = $this->xmlReader;

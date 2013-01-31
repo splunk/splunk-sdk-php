@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2013 Splunk, Inc.
+ * Copyright 2012 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -16,7 +16,7 @@
  */
 
 /**
- * Enables clients to issue HTTP requests to a Splunk server.
+ * Allows clients to issue HTTP requests to a Splunk server.
  * 
  * @package Splunk
  */
@@ -32,8 +32,6 @@ class Splunk_Context
     private $http;
     
     /**
-     * Constructs a new context with the specified parameters.
-     *
      * @param array $args {<br/>
      *      **username**: (optional) The username to login with. Defaults to "admin".<br/>
      *      **password**: (optional) The password to login with. Defaults to "changeme".<br/>
@@ -145,9 +143,6 @@ class Splunk_Context
         return $this->sendSimpleRequest('delete', $path, $args);
     }
     
-	/**
-     * Sends a simple HTTP request to the endpoint at the specified path.
-     */
     private function sendSimpleRequest($method, $path, $args)
     {
         list($params, $namespace) = 
@@ -207,8 +202,6 @@ class Splunk_Context
     // === Accessors ===
     
     /**
-     * Gets the default namespace for collection and entity operations.
-     *
      * @return Splunk_Namespace     The default namespace that will be used
      *                              to perform collection and entity operations
      *                              when none is explicitly specified.
@@ -219,8 +212,6 @@ class Splunk_Context
     }
     
     /**
-     * Gets the token used to authenticate HTTP requests after logging in.
-     *
      * @return string   The token used to authenticate HTTP requests
      *                  after logging in.
      */
@@ -230,8 +221,6 @@ class Splunk_Context
     }
     
     /**
-     * Gets the hostname of the Splunk server.
-     *
      * @return string   The hostname of the Splunk server.
      */
     public function getHost()
@@ -240,8 +229,6 @@ class Splunk_Context
     }
     
     /**
-     * Gets the port of the Splunk server.
-     *
      * @return string   The port of the Splunk server.
      */
     public function getPort()
@@ -250,8 +237,6 @@ class Splunk_Context
     }
     
     /**
-     * Gets the scheme to use.
-     *
      * @return string   The scheme to use: either "http" or "https".
      */
     public function getScheme()
@@ -262,11 +247,9 @@ class Splunk_Context
     // === Utility ===
     
     /**
-     * Returns the absolute URL.
-     *
-     * @param string $path                  Relative or absolute URL path.
+     * @param string $path                  relative or absolute URL path.
      * @param Splunk_Namespace|NULL $namespace
-     * @return string                       Absolute URL.
+     * @return string                       absolute URL.
      */
     private function url($path, $namespace=NULL)
     {
@@ -274,11 +257,9 @@ class Splunk_Context
     }
     
     /**
-     * Returns the absolute URL path.
-     *
-     * @param string $path                  Relative or absolute URL path.
+     * @param string $path                  relative or absolute URL path.
      * @param Splunk_Namespace|NULL $namespace
-     * @return string                       Absolute URL path.
+     * @return string                       absolute URL path.
      */
     private function abspath($path, $namespace=NULL)
     {
