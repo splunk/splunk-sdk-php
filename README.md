@@ -1,6 +1,9 @@
 # The Splunk Software Development Kit for PHP (Beta)
 
-The Splunk Software Development Kit (SDK) for PHP makes it easy for PHP applications to communicate with and control a Splunk server. Using the APIs exposed by the SDK, applications can start searches, display results, and perform administrative tasks.
+The Splunk Software Development Kit (SDK) for PHP makes it easy for PHP 
+applications to communicate with and control a Splunk server. Using the APIs 
+exposed by the SDK, applications can start searches, display results, and 
+perform administrative tasks.
 
 ### About Splunk
 
@@ -9,7 +12,9 @@ map-reduce architecture to efficiently index, search and process large
 time-varying data sets.
 
 The Splunk product is popular with system administrators for aggregation and
-monitoring of IT machine data, security, compliance, and a wide variety of other scenarios that share a requirement to efficiently index, search, analyze, and generate real-time notifications from large volumes of time series data.
+monitoring of IT machine data, security, compliance, and a wide variety of 
+other scenarios that share a requirement to efficiently index, search, analyze, 
+and generate real-time notifications from large volumes of time series data.
 
 ## License
 
@@ -37,9 +42,10 @@ If you haven't already installed Splunk, download it here:
 For more about installing and running Splunk plus system requirements, see
 [Installing & Running Splunk](http://dev.splunk.com/view/SP-CAAADRV). 
 
-Get a copy of the Splunk SDK for PHP from [GitHub](https://github.com/) by cloning the repository with git:
+Get a copy of the Splunk SDK for PHP from [GitHub](https://github.com/) by 
+cloning the repository with git:
 
-	git clone https://github.com/splunk/splunk-sdk-php.git
+    git clone https://github.com/splunk/splunk-sdk-php.git
 
 
 ## Layout of the SDK
@@ -80,15 +86,17 @@ Get a copy of the Splunk SDK for PHP from [GitHub](https://github.com/) by cloni
 
 ### Examples
 
-To run the examples, you will need to install a web server locally that supports PHP.
+To run the examples, you will need to install a web server locally that 
+supports PHP.
 
 * On Mac OS X, [MAMP] is recommended.
-* On Windows, [XAMPP] is recommended. You will additionally need to configure PHP to support OpenSSL:
-	* Open `C:\xampp\php\php.ini`.
-	* Find the line `;extension=php_openssl.dll` and remove the
-          leading semicolon (`;`).
+* On Windows, [XAMPP] is recommended. You will additionally need to configure 
+    PHP to support OpenSSL:
+    * Open `C:\xampp\php\php.ini`.
+    * Find the line `;extension=php_openssl.dll` and remove the leading 
+        semicolon (`;`).
 	* Use the XAMPP Control Panel to restart Apache, if it was already
-          running.
+        running.
 * On Linux, install Apache and PHP from your package manager.
 
 [MAMP]: http://www.mamp.info/en/index.html
@@ -100,7 +108,10 @@ Then, move the entire `splunk-sdk-php` directory (containing `examples` and
 * For MAMP, the document root is located at: `/Applications/MAMP/htdocs/`
 * For XAMPP, the document root is located at: `C:\xampp\htdocs\`
 
-Finally, duplicate `settings.default.php` in the `examples` directory, rename the duplicate to `settings.local.php`, and then edit the file. Uncomment the `'port'`, `'username'`, and `'password'` fields and update the file with your Splunk server's credentials.
+Finally, duplicate `settings.default.php` in the `examples` directory, rename 
+the duplicate to `settings.local.php`, and then edit the file. Uncomment the 
+`'port'`, `'username'`, and `'password'` fields and update the file with your 
+Splunk server's credentials.
 
 You should then be able to access the SDK examples via a URL similar to:
 
@@ -125,7 +136,10 @@ Requirements:
 
 * [PHPUnit](http://www.phpunit.de/) 3.6 or later
 * [Xdebug](http://xdebug.org/) 2.0.5 or later (for code coverage)
-* Duplicate `settings.default.php` in the `tests` directory, rename the duplicate to `settings.local.php`, and then edit the file. Uncomment the `'port'`, `'username'`, and `'password'` fields and update the file with the credentials of a Splunk server reserved for testing.
+* Duplicate `settings.default.php` in the `tests` directory, rename the 
+    duplicate to `settings.local.php`, and then edit the file. Uncomment the 
+    `'port'`, `'username'`, and `'password'` fields and update the file with 
+    the credentials of a Splunk server reserved for testing.
 
 To execute all unit tests, run:
 
@@ -145,7 +159,9 @@ To generate a code coverage report, run:
 Requirements:
 
 * [phpDocumentor 2](http://www.phpdoc.org/)
-* [GraphViz](http://www.graphviz.org/) (optional; the **dot** command-line tool is used to render the class hierarchy diagram in the documentation)
+* [GraphViz](http://www.graphviz.org/) (optional)
+    * the **dot** command-line tool is used to render the class hierarchy diagram 
+        in the documentation
 
 To generate the API documentation, run:
 
@@ -159,9 +175,11 @@ You can look at the changelog for each version
 
 ## Quickstart
 
-The PHP SDK provides an object-oriented interface for interacting with a Splunk server.
+The PHP SDK provides an object-oriented interface for interacting with a 
+Splunk server.
 
-To use the SDK, first import `Splunk.php`. This will give you access to all `Splunk_*` classes.
+To use the SDK, first import `Splunk.php`. This will give you access to all 
+`Splunk_*` classes.
 
 ```
 require_once 'Splunk.php';
@@ -257,14 +275,15 @@ $topSourcetypesSearch = $service->getSavedSearches()->get('Top five sourcetypes'
 
 ### Namespaces
 
-An entity has a *namespace*, which corresponds to the entity's access permissions.
+An entity has a *namespace*, which corresponds to the entity's access 
+permissions.
 
 All functions that retrieve an individual entity or a list of entities can be
-provided a namespace argument. (If you omit this argument, the `Splunk_Service`'s
-default namespace will be used.)
+provided a namespace argument. (If you omit this argument, the 
+`Splunk_Service`'s default namespace will be used.)
 
-So, for example, to retrieve the list of saved searches owned by user `admin` in the
-`search` app:
+So, for example, to retrieve the list of saved searches owned by user `admin` 
+in the `search` app:
 
 ```
 $savedSearches = $service->getSavedSearches()->items(array(
@@ -281,8 +300,8 @@ $topSourcetypesSearch = $service->getSavedSearches()->get(
 ```
 
 If you typically access many objects in the same namespace, it is possible to
-pass a default namespace to the `Splunk_Service` constructor. This allows you to
-avoid passing an explicit namespace on every call to `get()` or `items()`.
+pass a default namespace to the `Splunk_Service` constructor. This allows you 
+to avoid passing an explicit namespace on every call to `get()` or `items()`.
 
 ```
 $service = new Splunk_Service(array(
@@ -298,13 +317,13 @@ $indexes = $service->getIndexes()->items(array(	// in the system namespace
 ```
 The types of namespaces are described here:
 
-Type | Name | Description
----- | ---- | -----------
-Default | `Splunk_Namespace::createDefault()` | Contains entities owned by the authenticated user in that user's default app. For example, if you logged in to `Splunk_Service` as the user `admin` and the default application for that user was `search`, the default namespace would include all entities belonging to `admin` in app `search`. This namespace is used if no explicit namespace is provided.
-User | `Splunk_Namespace::createUser($owner, $app)` | Contains entities owned by a particular user in a particular app.
-App | `Splunk_Namespace::createApp($app)` | Contains entities in a particular app that have no owner.
-Global | `Splunk_Namespace::createGlobal($app)` | Contains entities in a particular app that have no owner and that are accessible to all apps.
-System | `Splunk_Namespace::createSystem()` | Contains entities in the `system` app.
+| Type     | Name                                         | Description        |
+| -------- | -------------------------------------------- | ------------------ |
+| Default  | `Splunk_Namespace::createDefault()`          | Contains entities owned by the authenticated user in that user's default app. For example, if you logged in to `Splunk_Service` as the user `admin` and the default application for that user was `search`, the default namespace would include all entities belonging to `admin` in app `search`. This namespace is used if no explicit namespace is provided. |
+| User     | `Splunk_Namespace::createUser($owner, $app)` | Contains entities owned by a particular user in a particular app. |
+| App      | `Splunk_Namespace::createApp($app)`          | Contains entities in a particular app that have no owner. |
+| Global   | `Splunk_Namespace::createGlobal($app)`       | Contains entities in a particular app that have no owner and that are accessible to all apps. |
+| System   | `Splunk_Namespace::createSyste ()`           | Contains entities in the `system` app. |
 
 
 ## Common Tasks
@@ -356,8 +375,8 @@ A oneshot search blocks until it completes and returns all results immediately.
 
 #### Blocking Search Jobs
 
-For searches that return a large number of results whose progress you don't need
-to monitor, it is easiest to create a *blocking* search job:
+For searches that return a large number of results whose progress you don't 
+need to monitor, it is easiest to create a *blocking* search job:
 
 ```
 // NOTE: The expression must begin with 'search '
@@ -434,15 +453,15 @@ must be used instead of the `getResults()` method.
 You can find anything having to do with developing on Splunk at the Splunk
 developer portal:
 
-* [http://dev.splunk.com](http://dev.splunk.com)
+* <http://dev.splunk.com>
 
 Reference documentation for the Splunk REST API:
 
-* [http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI](http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI)
+* <http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI>
 
 Overview of Splunk and links to additional product information:
 
-* [http://docs.splunk.com/Documentation/Splunk/latest/User/SplunkOverview](http://docs.splunk.com/Documentation/Splunk/latest/User/SplunkOverview)
+* <http://docs.splunk.com/Documentation/Splunk/latest/User/SplunkOverview>
 
 ## Community
 
@@ -457,12 +476,14 @@ Stay connected with other developers building on Splunk.
 
 <tr>
 <td><em>Issues</em>
-<td><a href="https://github.com/splunk/splunk-sdk-php/issues/">https://github.com/splunk/splunk-sdk-php/issues/</a></td>
+<td><a href="https://github.com/splunk/splunk-sdk-php/issues/">
+https://github.com/splunk/splunk-sdk-php/issues</a></td>
 </tr>
 
 <tr>
 <td><em>Answers</em>
-<td><a href="http://splunk-base.splunk.com/tags/php/">http://splunk-base.splunk.com/tags/php/</a></td>
+<td><a href="http://splunk-base.splunk.com/tags/php/">
+http://splunk-base.splunk.com/tags/php/</a></td>
 </tr>
 
 <tr>
@@ -493,16 +514,12 @@ provided below.
 
 2. If you are not covered under an existing maintenance/support agreement, you 
    can find help through the broader community at:
+   * [Splunk Answers](http://splunk-base.splunk.com/answers/) (use the **sdk** and 
+   **php** tags to identify your questions)
+   * [Splunkdev Google Group](http://groups.google.com/group/splunkdev)
 
-   <ul>
-   <li><a href='http://splunk-base.splunk.com/answers/'>Splunk Answers</a> (use
-    the <b>sdk</b> and <b>php</b> tags to 
-    identify your questions)</li>
-   <li><a href='http://groups.google.com/group/splunkdev'>Splunkdev Google 
-    Group</a></li>
-   </ul>
 3. Splunk will NOT provide support for SDKs if the core library (the 
-   code in the <b>splunk</b> directory) has been modified. If you modify an SDK
+   code in the **splunk** directory) has been modified. If you modify an SDK
    and want support, you can find help through the broader community and Splunk 
    answers (see above). We would also like to know why you modified the core 
    library&mdash;please send feedback to _devinfo@splunk.com_.
