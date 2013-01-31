@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -34,6 +34,8 @@ class Splunk_ResultsMessage
     }
     
     /**
+     * Gets the type of this message.
+     *
      * @return string           The type of this message (ex: 'DEBUG').
      */
     public function getType()
@@ -42,6 +44,8 @@ class Splunk_ResultsMessage
     }
     
     /**
+     * Gets the text of this message.
+     *
      * @return string           The text of this message.
      */
     public function getText()
