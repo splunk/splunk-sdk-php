@@ -33,15 +33,16 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      * @param Splunk_Service $service
      * @param string $path
      * @param SimpleXMLElement|NULL $entry
-     *                                  (optional) The <entry> for this entity,
-     *                                  as received from the REST API.
+     *                                  (optional) The <entry> for this 
+     *                                  entity, as received from the REST API.
      *                                  If omitted, will be loaded on demand.
      * @param Splunk_Namespace|NULL $namespace
      *                                  (optional) The namespace from which to
      *                                  load this entity, or NULL to use the
      *                                  $service object's default namespace.
-     *                                  Does not apply if this entity is already
-     *                                  loaded (i.e. if $entry is not NULL).
+     *                                  Does not apply if this entity is 
+     *                                  already loaded (i.e. if $entry is not 
+     *                                  NULL).
      */
     public function __construct($service, $path, $entry=NULL, $namespace=NULL)
     {
@@ -122,7 +123,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return $xml->entry;
     }
     
-	/** Parses the entry's contents. */
+    /** Parses the entry's contents. */
     private function parseContentsFromEntry()
     {
         $this->content = Splunk_AtomFeed::parseValueInside($this->entry->content);
@@ -188,9 +189,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return (string) $this->validate()->entry->title;
     }
     
-	/**
-     * Gets the namespace in which this entity resides.
-     */
+    /** Gets the namespace in which this entity resides. */
     protected function getSearchNamespace()
     {
         return $this->namespace;

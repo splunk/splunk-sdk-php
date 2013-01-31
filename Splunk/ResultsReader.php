@@ -211,7 +211,7 @@ class Splunk_ResultsReader implements Iterator
         return NULL;
     }
     
-	/** Reads metadata from the stream. */
+    /** Reads metadata from the stream. */
     private function readMeta()
     {
         $xr = $this->xmlReader;
@@ -247,7 +247,7 @@ class Splunk_ResultsReader implements Iterator
         throw new Exception('Syntax error in <meta> element.');
     }
     
-	/** Returns search results from the stream. */
+    /** Returns search results from the stream. */
     private function readResult()
     {
         $xr = $this->xmlReader;

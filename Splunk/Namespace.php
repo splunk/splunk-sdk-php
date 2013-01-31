@@ -168,9 +168,8 @@ class Splunk_Namespace
     
     // === Accessors ===
     
-    /**
-     * Returns the path prefix to use when referencing objects in this namespace.
-     */
+    /** Returns the path prefix to use when referencing objects in this 
+            namespace. */
     public function getPathPrefix()
     {
         switch ($this->sharing)
@@ -232,10 +231,11 @@ class Splunk_Namespace
     
     // === Utility ===
     
-    /** Throws an exception if the number of arguments is not what was expected. */
     // (Explicitly check the argument count because many creation function 
     //  names do not make the required number of arguments clear and PHP
     //  does not check under certain circumstances.)
+    /** Throws an exception if the number of arguments is not what was 
+            expected. */
     private static function ensureArgumentCountEquals($expected, $actual)
     {
         if ($actual !== $expected)
@@ -243,7 +243,8 @@ class Splunk_Namespace
                 "Expected exactly ${expected} arguments.");
     }
     
-	/** Throws an exception if this namespace is not an exact (non-wildcarded) namespace. */
+    /** Throws an exception if this namespace is not an exact (non-wildcarded) 
+	        namespace. */
     private function ensureExact()
     {
         if (!$this->isExact())

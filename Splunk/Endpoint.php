@@ -68,8 +68,8 @@ abstract class Splunk_Endpoint
      * Sends an HTTP POST request relative to this endpoint.
      * 
      * @param string $relativePath  relative URL path.
-     * @param array $args   (optional) form parameters to send in the request body,
-     *                      merged with {<br/>
+     * @param array $args   (optional) form parameters to send in the request 
+     *                      body, merged with {<br/>
      *     **namespace**: (optional) namespace to use, or NULL to use
      *                    the context's default namespace.<br/>
      * }

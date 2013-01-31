@@ -115,8 +115,9 @@ class Splunk_Job extends Splunk_Entity
     // === Results ===
     
     /**
-     * Returns a value that indicates the percentage of this job's results that were computed 
-     *      at the time this job was last loaded or refreshed.
+     * Returns a value that indicates the percentage of this job's results 
+     *      that were computed at the time this job was last loaded or 
+     *      refreshed.
      *
      * @return float                Percentage of this job's results that were
      *                              computed (0.0-1.0) at the time this job was
@@ -129,8 +130,8 @@ class Splunk_Job extends Splunk_Entity
     }
     
     /**
-     * Returns a value that indicates whether this job's results were available at the time
-     *      this job was last loaded or refreshed.
+     * Returns a value that indicates whether this job's results were available 
+     *      at the time this job was last loaded or refreshed.
      *
      * @return boolean              Whether this job's results were available
      *                              at the time this job was last loaded or
@@ -177,10 +178,12 @@ class Splunk_Job extends Splunk_Entity
      *     
      *     **field_list**: (optional) Comma-separated list of fields to return
      *                     in the result set. Defaults to all fields.<br/>
-     *     **output_mode**: (optional) The output format of the result. Valid values:<br/>
+     *     **output_mode**: (optional) The output format of the result. Valid 
+     *                      values:<br/>
      *                      - "csv"<br/>
      *                      - "raw"<br/>
-     *                      - "xml": The format parsed by Splunk_ResultsReader.<br/>
+     *                      - "xml": The format parsed by Splunk_ResultsReader.
+     *                      <br/>
      *                      - "json"<br/>
      *                      Defaults to "xml".<br/>
      *                      You should not change this unless you are parsing
@@ -244,10 +247,12 @@ class Splunk_Job extends Splunk_Entity
      *     
      *     **field_list**: (optional) Comma-separated list of fields to return
      *                     in the result set. Defaults to all fields.<br/>
-     *     **output_mode**: (optional) The output format of the result. Valid values:<br/>
+     *     **output_mode**: (optional) The output format of the result. Valid 
+     *                      values:<br/>
      *                      - "csv"<br/>
      *                      - "raw"<br/>
-     *                      - "xml": The format parsed by Splunk_ResultsReader.<br/>
+     *                      - "xml": The format parsed by Splunk_ResultsReader.
+     *                      <br/>
      *                      - "json"<br/>
      *                      Defaults to "xml".<br/>
      *                      You should not change this unless you are parsing
@@ -287,10 +292,12 @@ class Splunk_Job extends Splunk_Entity
      *     
      *     **field_list**: (optional) Comma-separated list of fields to return
      *                     in the result set. Defaults to all fields.<br/>
-     *     **output_mode**: (optional) The output format of the result. Valid values:<br/>
+     *     **output_mode**: (optional) The output format of the result. Valid 
+     *                      values:<br/>
      *                      - "csv"<br/>
      *                      - "raw"<br/>
-     *                      - "xml": The format parsed by Splunk_ResultsReader.<br/>
+     *                      - "xml": The format parsed by Splunk_ResultsReader.
+     *                      <br/>
      *                      - "json"<br/>
      *                      Defaults to "xml".<br/>
      *                      You should not change this unless you are parsing
