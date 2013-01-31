@@ -78,67 +78,81 @@ class ReceiverTest extends SplunkTest
     
     private function submitEvents($numEvents, $indexDelay)
     {
-        $service = $this->loginToRealService();
-        
-        $expectedEvents = array();
-        $eventPrefix = sprintf('[%s] DELETEME-%s-',
-            $this->formatDateWithUnknownTimezone('d/M/Y:H:i:s O'),
-            uniqid());
-        for ($i = 0; $i < $numEvents; $i++)
-             $expectedEvents[] = $eventPrefix . $i;
-        
-        $data = implode("\n", $expectedEvents);
+        list($service, $indexName, $index, $expectedEvents, $data) = 
+            $this->makeEvents($numEvents);
         
         // Submit events
         $service->getReceiver()->submit($data, array(
-            'index' => '_internal',
+            'index' => $indexName,
             'sourcetype' => 'php_unit_test',
         ));
         
-        // Delay so that Splunk actually indexes the events
-        usleep($indexDelay * 1000000);
-        
-        // Ensure the events are there
-        $job = $service->getJobs()->create(
-            'search index=_internal sourcetype=php_unit_test | head ' . $numEvents, array(
-                'exec_mode' => 'blocking'
-            ));
-        $actualEvents = array();
-        foreach ($job->getResults() as $result)
-            if (is_array($result))
-                $actualEvents[] = $result['_raw'];
-        $actualEvents = array_reverse($actualEvents);
-        
-        $this->assertEquals($expectedEvents, $actualEvents);
+        $this->checkEvents(
+            $service, $indexName, $index, $expectedEvents, $numEvents, $indexDelay);
     }
     
     private function attachAndSendEvents($numEvents, $indexDelay)
     {
-        $service = $this->loginToRealService();
-        
-        $expectedEvents = array();
-        $eventPrefix = sprintf('[%s] DELETEME-%s-',
-            $this->formatDateWithUnknownTimezone('d/M/Y:H:i:s O'),
-            uniqid());
-        for ($i = 0; $i < $numEvents; $i++)
-             $expectedEvents[] = $eventPrefix . $i;
-        
-        $data = implode("\n", $expectedEvents);
+        list($service, $indexName, $index, $expectedEvents, $data) = 
+            $this->makeEvents($numEvents);
         
         // Submit events
         $eventOutputStream = $service->getReceiver()->attach(array(
-            'index' => '_internal',
+            'index' => $indexName,
             'sourcetype' => 'php_unit_test',
         ));
         Splunk_Util::fwriteall($eventOutputStream, $data);
         fclose($eventOutputStream);
         
+        $this->checkEvents(
+            $service, $indexName, $index, $expectedEvents, $numEvents, $indexDelay);
+    }
+    
+    private function makeEvents($numEvents)
+    {
+        $service = $this->loginToRealService();
+        
+        $indexName = 'deleteme-' . uniqid();
+        $index = $service->getIndexes()->create($indexName);
+        $this->assertEquals(0, $index['totalEventCount']);
+        
+        $expectedEvents = array();
+        $eventPrefix = sprintf('[%s] DELETEME-%s-',
+            $this->formatDateWithUnknownTimezone('d/M/Y:H:i:s O'),
+            uniqid());
+        for ($i = 0; $i < $numEvents; $i++)
+             $expectedEvents[] = $eventPrefix . $i;
+        
+        $data = implode("\n", $expectedEvents);
+        
+        return array($service, $indexName, $index, $expectedEvents, $data);
+    }
+    
+    private function checkEvents(
+        $service, $indexName, $index, $expectedEvents, $numEvents, $indexDelay)
+    {
+        // Wait until the events have been counted
+        $timeoutTime = microtime(TRUE) + 10.0;
+        while (TRUE)
+        {
+            $index->refresh();
+            $eventCount = $index['totalEventCount'];
+            if ($eventCount == $numEvents)
+                break;
+            if (microtime(TRUE) > $timeoutTime)
+                $this->fail(
+                    'Timed out waiting for events to be indexed. ' .
+                    "Expected $numEvents. Got $eventCount.");
+            
+            usleep(0.2 * 1000000);
+        }
+        
         // Delay so that Splunk actually indexes the events
         usleep($indexDelay * 1000000);
         
         // Ensure the events are there
         $job = $service->getJobs()->create(
-            'search index=_internal sourcetype=php_unit_test | head ' . $numEvents, array(
+            'search index=' . $indexName . ' sourcetype=php_unit_test', array(
                 'exec_mode' => 'blocking'
             ));
         $actualEvents = array();
@@ -148,6 +162,8 @@ class ReceiverTest extends SplunkTest
         $actualEvents = array_reverse($actualEvents);
         
         $this->assertEquals($expectedEvents, $actualEvents);
+        
+        // TODO: Delete the temporary index if this version of Splunk supports it
     }
     
     /**

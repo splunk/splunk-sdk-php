@@ -103,7 +103,7 @@ else
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Saved Search | Splunk PHP SDK Examples</title>
+  <title>Saved Search | Splunk SDK for PHP Examples</title>
   <link rel="stylesheet" type="text/css" href="shared/style.css" />
   <style>
     input { margin-bottom: .5em; }

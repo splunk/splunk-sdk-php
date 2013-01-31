@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -19,6 +19,7 @@
  * Contains utilities for parsing Atom feeds received from the Splunk REST API.
  * 
  * @package Splunk
+ * @internal
  */
 class Splunk_AtomFeed
 {
@@ -29,7 +30,7 @@ class Splunk_AtomFeed
      * Parses and returns the value inside the specified XML element.
      * 
      * @param SimpleXMLElement $containerXml
-     * @returns mixed
+     * @return mixed
      */
     public static function parseValueInside($containerXml)
     {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -23,7 +23,9 @@
 class Splunk_Service extends Splunk_Context
 {
     /**
-     * @see Splunk_Context::__construct
+     * Constructs a new service with the specified parameters.
+     *
+     * @see Splunk_Context::__construct()
      */
     public function __construct($args=array())
     {
@@ -33,6 +35,8 @@ class Splunk_Service extends Splunk_Context
     // === Endpoints ===
     
     /**
+     * Gets the collection of indexes on this server.
+     *
      * @return Splunk_Collection    The collection of indexes on this server.
      */
     public function getIndexes()
@@ -41,6 +45,8 @@ class Splunk_Service extends Splunk_Context
     }
     
     /**
+     * Gets the collection of search jobs on this server.
+     *
      * @return Splunk_Jobs          The collection of search jobs on this server.
      */
     public function getJobs()
@@ -49,6 +55,8 @@ class Splunk_Service extends Splunk_Context
     }
     
     /**
+     * Gets an interface to send events to this server.
+     *
      * @return Splunk_Receiver      An interface to send events to this server.
      */
     public function getReceiver()
@@ -57,10 +65,59 @@ class Splunk_Service extends Splunk_Context
     }
     
     /**
+     * Gets the collection of saved searches on this server.
+     *
      * @return Splunk_Collection    The collection of saved searches on this server.
      */
     public function getSavedSearches()
     {
         return new Splunk_Collection($this, 'saved/searches/', 'Splunk_SavedSearch');
+    }
+    
+    // === Convenience ===
+    
+    /**
+     * Creates a new search job.
+     * 
+     * @param string $search    The search query for the job to perform.
+     * @param array $args   (optional) Job-specific creation arguments,
+     *                      merged with {<br/>
+     *     **namespace**: (optional) {Splunk_Namespace} The namespace in which
+     *                    to create the entity. Defaults to the service's
+     *                    namespace.<br/>
+     * }<br/>
+     *                      For details, see the
+     *                      <a href="http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs">
+     *                      "POST search/jobs"</a>
+     *                      endpoint in the REST API Documentation.
+     * @return Splunk_Job
+     * @throws Splunk_IOException
+     */
+    public function search($search, $args=array())
+    {
+        return $this->getJobs()->create($search, $args);
+    }
+    
+    /**
+     * Executes the specified search query and returns results immediately.
+     * 
+     * @param string $search    The search query for the job to perform.
+     * @param array $args   (optional) Job-specific creation arguments,
+     *                      merged with {<br/>
+     *     **namespace**: (optional) {Splunk_Namespace} The namespace in which
+     *                    to create the entity. Defaults to the service's
+     *                    namespace.<br/>
+     * }<br/>
+     *                      For details, see the
+     *                      <a href="http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI/RESTsearch#search.2Fjobs">
+     *                      "POST search/jobs"</a>
+     *                      endpoint in the REST API Documentation.
+     * @return string           The search results, which can be parsed with
+     *                          Splunk_ResultsReader.
+     * @throws Splunk_IOException
+     */
+    public function oneshotSearch($search, $args=array())
+    {
+        return $this->getJobs()->createOneshot($search, $args);
     }
 }

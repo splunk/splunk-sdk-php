@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -28,18 +28,21 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     private $content;
     
     /**
+     * @internal
+     * 
      * @param Splunk_Service $service
      * @param string $path
      * @param SimpleXMLElement|NULL $entry
-     *                                  (optional) The <entry> for this entity,
-     *                                  as received from the REST API.
+     *                                  (optional) The <entry> for this 
+     *                                  entity, as received from the REST API.
      *                                  If omitted, will be loaded on demand.
      * @param Splunk_Namespace|NULL $namespace
      *                                  (optional) The namespace from which to
      *                                  load this entity, or NULL to use the
      *                                  $service object's default namespace.
-     *                                  Does not apply if this entity is already
-     *                                  loaded (i.e. if $entry is not NULL).
+     *                                  Does not apply if this entity is 
+     *                                  already loaded (i.e. if $entry is not 
+     *                                  NULL).
      */
     public function __construct($service, $path, $entry=NULL, $namespace=NULL)
     {
@@ -120,24 +123,26 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return $xml->entry;
     }
     
+    /** Parses the entry's contents. */
     private function parseContentsFromEntry()
     {
         $this->content = Splunk_AtomFeed::parseValueInside($this->entry->content);
         $this->loaded = TRUE;
     }
     
+    /** Returns a value that indicates whether the entity has been loaded. */
     protected function isLoaded()
     {
         return $this->loaded;
     }
     
     /**
-     * Forcefully reloads this entity from the Splunk server.
+     * Refreshes this entity's properties from the Splunk server.
      * 
      * @return Splunk_Entity            This entity.
      * @throws Splunk_IOException
      */
-    public function reload()
+    public function refresh()
     {
         if ($this->loaded)
         {
@@ -153,6 +158,8 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     // === Accessors ===
     
     /**
+     * Gets an array that contains the properties of this entity.
+     *
      * @return array                The properties of this entity.
      */
     public function getContent()
@@ -161,6 +168,8 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     }
     
     /**
+     * Gets the name of this entity.
+     *
      * @return string               The name of this entity.
      *                              This name can be used to lookup this entity
      *                              from its collection.
@@ -171,6 +180,8 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     }
     
     /**
+     * Gets the title of this entity in the REST API.
+     *
      * @return string               The title of this entity in the REST API.
      */
     protected function getTitle()
@@ -178,18 +189,21 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return (string) $this->validate()->entry->title;
     }
     
+    /** Gets the namespace in which this entity resides. */
     protected function getSearchNamespace()
     {
         return $this->namespace;
     }
     
     /**
-     * @return Splunk_Namespace     The non-wildcarded namespace that this
-     *                              entity resides in.
+     * Gets the non-wildcarded namespace in which this entity resides.
+     *
+     * @return Splunk_Namespace     The non-wildcarded namespace in which this
+     *                              entity resides.
      */
     public function getNamespace()
     {
-        // If this is an entity reference with an exact namespace, return it
+        // If this is an entity reference with an exact namespace, return it.
         if (!$this->loaded)
         {
             $effectiveNamespace = $this->namespace;
@@ -199,7 +213,7 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
                 return $effectiveNamespace;
         }
         
-        // Extract the namespace from this entity's content
+        // Extract the namespace from this entity's content.
         $acl = $this['eai:acl'];
         return Splunk_Namespace::createExact(
             $acl['owner'], $acl['app'], $acl['sharing']);
@@ -207,21 +221,35 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     
     // === ArrayAccess Methods ===
     
+    /**
+     * Gets the value of the specified entity property.
+     *
+     * @param string $key       The name of an entity property.
+     * @return string           The value of the specified entity property.
+     */
     public function offsetGet($key)
     {
         return $this->validate()->content[$key];
     }
     
+    /** @internal */
     public function offsetSet($key, $value)
     {
         throw new Splunk_UnsupportedOperationException();
     }
     
+    /** @internal */
     public function offsetUnset($key)
     {
         throw new Splunk_UnsupportedOperationException();
     }
     
+    /**
+     * Gets a value that indicates whether the specified entity property exists.
+     *
+     * @param string $key       The name of an entity property.
+     * @return string           Whether the specified entity property exists.
+     */
     public function offsetExists($key)
     {
         return isset($this->validate()->content[$key]);
@@ -244,9 +272,9 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      * 
      * Note that the "name" property cannot be updated.
      * 
-     * @param array $args   Dictionary of properties that will be changed,
-     *                      along with their new values.
-     * @return              This entity.
+     * @param array $args         Dictionary of properties that will be changed,
+     *                            along with their new values.
+     * @return Splunk_Entity      This entity.
      * @throws Splunk_IOException
      */
     public function update($args)

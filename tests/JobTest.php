@@ -158,15 +158,14 @@ class JobTest extends SplunkTest
         try
         {
             $job->getResultsPage();
-            
-            $job->delete();
             $this->fail('Expected Splunk_JobNotDoneException.');
         }
         catch (Splunk_JobNotDoneException $e)
         {
             // Good
-            $job->delete();
         }
+        
+        $job->delete();
     }
     
     public function testResultsEmpty()
@@ -263,7 +262,7 @@ class JobTest extends SplunkTest
         while ($rtjob['resultPreviewCount'] == 0)
         {
             usleep(0.2 * 1000000);
-            $rtjob->reload();
+            $rtjob->refresh();
         }
         
         // ...but not all
@@ -297,21 +296,21 @@ class JobTest extends SplunkTest
         /* Tests & Teardown */
         
         $rtjob->pause();
-        $rtjob->reload();
+        $rtjob->refresh();
         $this->assertEquals(1, $rtjob['isPaused']);
         
         $rtjob->unpause();
-        $rtjob->reload();
+        $rtjob->refresh();
         $this->assertEquals(0, $rtjob['isPaused']);
         
         $rtjob->finalize();
-        $rtjob->reload();
+        $rtjob->refresh();
         $this->assertEquals(1, $rtjob['isFinalized']);
         
         $rtjob->cancel();
         try
         {
-            $rtjob->reload();
+            $rtjob->refresh();
             $this->fail('Expected a cancelled job to be deleted.');
         }
         catch (Splunk_HttpException $e)
@@ -340,9 +339,9 @@ class JobTest extends SplunkTest
         // Ensure that we have a fully loaded Job
         $this->touch($job);
         
-        // Sanity check: Make sure reload is possible.
-        // If reload breaks here then GET probably won't work.
-        $job->reload();
+        // Sanity check: Make sure refresh is possible.
+        // If refresh breaks here then GET probably won't work.
+        $job->refresh();
         
         $job2 = $service->getJobs()->get($job->getName(), $job->getNamespace());
         $this->assertEquals($job->getName(), $job2->getName(),
@@ -433,6 +432,78 @@ class JobTest extends SplunkTest
         $job->cancel();
     }
     
+    public function testSearchOnService()
+    {
+        $service = $this->loginToRealService();
+        
+        $job = $service->search('search index=_internal | head 1', array(
+            'exec_mode' => 'blocking',
+        ));
+        $this->makeDone($job);
+        
+        // Ensure we got some results
+        $results = $job->getResults();
+        $numResults = 0;
+        foreach ($results as $result)
+        {
+            if (is_array($result))
+            {
+                $numResults++;
+            }
+        }
+        $this->assertEquals(1, $numResults);
+    }
+    
+    public function testOneshotSearchOnService()
+    {
+        $service = $this->loginToRealService();
+        
+        $resultsStream = $service->oneshotSearch('search index=_internal | head 1');
+        
+        // Ensure we got some results
+        $results = new Splunk_ResultsReader($resultsStream);
+        $numResults = 0;
+        foreach ($results as $result)
+        {
+            if (is_array($result))
+            {
+                $numResults++;
+            }
+        }
+        $this->assertEquals(1, $numResults);
+    }
+    
+    public function testResultsDocstringSample()
+    {
+        $service = $this->loginToRealService();
+        
+        $job = $service->getJobs()->create('search index=_internal | head 1');
+        while (!$job->refresh()->isDone()) { usleep(0.5 * 1000000); }
+        
+        foreach ($job->getResults() as $result)
+        {
+            // (See documentation for Splunk_ResultsReader to see how to
+            //  interpret $result.)
+            //...
+        }
+    }
+    
+    public function testResultsPageDocstringSample()
+    {
+        $service = $this->loginToRealService();
+        
+        $job = $service->getJobs()->create('search index=_internal | head 1');
+        while (!$job->refresh()->isDone()) { usleep(0.5 * 1000000); }
+        
+        $results = new Splunk_ResultsReader($job->getResultsPage());
+        foreach ($results as $result)
+        {
+            // (See documentation for Splunk_ResultsReader to see how to
+            //  interpret $result.)
+            //...
+        }
+    }
+    
     // === Utility ===
     
     private function pageHasResults($resultsPage)
@@ -449,7 +520,7 @@ class JobTest extends SplunkTest
         {
             //printf("%03.1f%%\r\n", $job->getProgress() * 100);
             usleep(0.1 * 1000000);
-            $job->reload();
+            $job->refresh();
         }
     }
 }

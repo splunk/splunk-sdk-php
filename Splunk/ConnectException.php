@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -22,6 +22,7 @@
  */
 class Splunk_ConnectException extends Splunk_IOException
 {
+    /** @internal */
     public function __construct($message=NULL, $code=0)
     {
         parent::__construct($message, $code);

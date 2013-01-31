@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -19,6 +19,7 @@
  * HTTP abstraction layer.
  * 
  * @package Splunk
+ * @internal
  */
 class Splunk_Http
 {
@@ -63,7 +64,7 @@ class Splunk_Http
     }
     
     /**
-     * Performs an HTTP request and returns the response.
+     * Sends an HTTP request and returns the response.
      * 
      * @param string $method            HTTP request method (ex: 'get').
      * @param string $url               URL to fetch.

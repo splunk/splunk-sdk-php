@@ -27,7 +27,7 @@ catch (Exception $e)
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Splunk PHP SDK Examples</title>
+  <title>Splunk SDK for PHP Examples</title>
   <link rel="stylesheet" type="text/css" href="shared/style.css" />
 </head>
 <body>

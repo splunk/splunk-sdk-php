@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -15,15 +15,15 @@
  * under the License.
  */
 
+// NOTE: Ideally the static constructors for this class wouldn't have any
+//       prefix (like 'create') or suffix. Unfortunately both 'default' and
+//       'global' are considered keywords in PHP, preventing their use
+//       as static constructor names.
 /**
  * Represents a namespace. Every Splunk object belongs to a namespace.
  * 
  * @package Splunk
  */
-// NOTE: Ideally the static constructors for this class wouldn't have any
-//       prefix (like 'create') or suffix. Unfortunately both 'default' and
-//       'global' are considered keywords in PHP, preventing their use
-//       as static constructor names.
 class Splunk_Namespace
 {
     private $owner;
@@ -32,6 +32,7 @@ class Splunk_Namespace
     
     // === Init ===
     
+    /** Constructs a new namespace with the specified parameters. */
     private function __construct($owner, $app, $sharing)
     {
         $this->owner = $owner;
@@ -167,9 +168,8 @@ class Splunk_Namespace
     
     // === Accessors ===
     
-    /**
-     * Returns the path prefix to use when referencing objects in this namespace.
-     */
+    /** Returns the path prefix to use when referencing objects in this 
+            namespace. */
     public function getPathPrefix()
     {
         switch ($this->sharing)
@@ -234,6 +234,8 @@ class Splunk_Namespace
     // (Explicitly check the argument count because many creation function 
     //  names do not make the required number of arguments clear and PHP
     //  does not check under certain circumstances.)
+    /** Throws an exception if the number of arguments is not what was 
+            expected. */
     private static function ensureArgumentCountEquals($expected, $actual)
     {
         if ($actual !== $expected)
@@ -241,6 +243,8 @@ class Splunk_Namespace
                 "Expected exactly ${expected} arguments.");
     }
     
+    /** Throws an exception if this namespace is not an exact (non-wildcarded) 
+	        namespace. */
     private function ensureExact()
     {
         if (!$this->isExact())
