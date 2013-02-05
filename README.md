@@ -203,7 +203,7 @@ such as saved searches and search jobs.
 For example, the following code runs a quick search and prints out the results.
 
 ```
-// NOTE: The expression must begin with 'search '
+// NOTE: The expression must begin with 'search ' or '| '
 $searchExpression = 'search index=_internal | head 100 | top sourcetype';
 
 // Create oneshot search and get results
@@ -336,7 +336,7 @@ For searches that run quickly with a small number of results, it is easiest to
 create a *oneshot* search:
 
 ```
-// NOTE: The expression must begin with 'search '
+// NOTE: The expression must begin with 'search ' or '| '
 $searchExpression = 'search index=_internal | head 100 | top sourcetype';
 
 // Create oneshot search and get results
@@ -379,7 +379,7 @@ For searches that return a large number of results whose progress you don't
 need to monitor, it is easiest to create a *blocking* search job:
 
 ```
-// NOTE: The expression must begin with 'search '
+// NOTE: The expression must begin with 'search ' or '| '
 $searchExpression = 'search index=_internal | head 1000';
 
 // Create blocking search job and get results
@@ -402,7 +402,7 @@ should create an *asynchronous* (normal) search job.
 Asynchronous jobs allow you to monitor their progress while they are running.
 
 ```
-// NOTE: The expression must begin with 'search '
+// NOTE: The expression must begin with 'search ' or '| '
 $searchExpression = 'search index=_internal | head 10000';
 
 // Create normal search job
