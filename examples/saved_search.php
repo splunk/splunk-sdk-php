@@ -64,7 +64,7 @@ else if ($method === 'GET')
      * search expression stored in the saved search.
      * 
      * In a real application it would be easier (and more accurate) to
-     * call $savedSearch->dispatch() to automatically create an aynchronous
+     * call $savedSearch->dispatch() to automatically create an asynchronous
      * search job with the correct settings.
      */
     header('Location: search.php?search=' . urlencode('search ' . $search));
