@@ -64,7 +64,7 @@ else if ($method === 'GET')
      * search expression stored in the saved search.
      * 
      * In a real application it would be easier (and more accurate) to
-     * call $savedSearch->dispatch() to automatically create an aynchronous
+     * call $savedSearch->dispatch() to automatically create an asynchronous
      * search job with the correct settings.
      */
     header('Location: search.php?search=' . urlencode('search ' . $search));
@@ -103,7 +103,7 @@ else
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Saved Search | Splunk PHP SDK Examples</title>
+  <title>Saved Search | Splunk SDK for PHP Examples</title>
   <link rel="stylesheet" type="text/css" href="shared/style.css" />
   <style>
     input { margin-bottom: .5em; }

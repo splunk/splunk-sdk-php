@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -25,6 +25,7 @@ abstract class Splunk_Endpoint
     protected $service;
     protected $path;
     
+    /** @internal */
     public function __construct($service, $path)
     {
         $this->service = $service;
@@ -34,6 +35,9 @@ abstract class Splunk_Endpoint
     // === Accessors ===
     
     /**
+     * Returns the namespace in which this endpoint resides, or NULL to use 
+     *      the context's default namespace.
+     *
      * @return Splunk_Namespace|NULL    The namespace in which this endpoint
      *                                  resides, or NULL to use the context's
      *                                  default namespace.
@@ -44,12 +48,12 @@ abstract class Splunk_Endpoint
     // === HTTP ===
     
     /**
-     * Performs an HTTP GET request relative to this endpoint.
+     * Sends an HTTP GET request relative to this endpoint.
      * 
      * @param string $relativePath  relative URL path.
-     * @param array $args   (optional) query parameters, merged with {
-     *     'namespace' => (optional) namespace to use, or NULL to use
-     *                    the context's default namespace.
+     * @param array $args   (optional) query parameters, merged with {<br/>
+     *     **namespace**: (optional) namespace to use, or NULL to use
+     *                    the context's default namespace.<br/>
      * }
      * @return Splunk_HttpResponse
      * @throws Splunk_IOException
@@ -61,13 +65,13 @@ abstract class Splunk_Endpoint
     }
     
     /**
-     * Performs an HTTP POST request relative to this endpoint.
+     * Sends an HTTP POST request relative to this endpoint.
      * 
      * @param string $relativePath  relative URL path.
-     * @param array $args   (optional) form parameters to send in the request body,
-     *                      merged with {
-     *     'namespace' => (optional) namespace to use, or NULL to use
-     *                    the context's default namespace.
+     * @param array $args   (optional) form parameters to send in the request 
+     *                      body, merged with {<br/>
+     *     **namespace**: (optional) namespace to use, or NULL to use
+     *                    the context's default namespace.<br/>
      * }
      * @return Splunk_HttpResponse
      * @throws Splunk_IOException
@@ -79,12 +83,12 @@ abstract class Splunk_Endpoint
     }
     
     /**
-     * Performs an HTTP DELETE request relative to this endpoint.
+     * Sends an HTTP DELETE request relative to this endpoint.
      * 
      * @param string $relativePath  relative URL path.
-     * @param array $args   (optional) query parameters, merged with {
-     *     'namespace' => (optional) namespace to use, or NULL to use
-     *                    the context's default namespace.
+     * @param array $args   (optional) query parameters, merged with {<br/>
+     *     **namespace**: (optional) namespace to use, or NULL to use
+     *                    the context's default namespace.<br/>
      * }
      * @return Splunk_HttpResponse
      * @throws Splunk_IOException
@@ -95,6 +99,7 @@ abstract class Splunk_Endpoint
         return $this->sendSimpleRequest('sendDelete', $relativePath, $args);
     }
     
+    /** Sends a simple request relative to this endpoint. */
     private function sendSimpleRequest($method, $relativePath, $args=array())
     {
         $args = array_merge(array(

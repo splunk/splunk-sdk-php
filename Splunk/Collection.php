@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Splunk, Inc.
+ * Copyright 2013 Splunk, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -25,6 +25,8 @@ class Splunk_Collection extends Splunk_Endpoint
     private $entitySubclass;
     
     /**
+     * @internal
+     * 
      * @param Splunk_Service $service
      * @param string $path
      * @param string $entitySubclass    (optional) name of the entity subclass
@@ -39,6 +41,9 @@ class Splunk_Collection extends Splunk_Endpoint
     
     // === Accessors ===
     
+    /** 
+     * Not implemented.
+     */
     protected function getSearchNamespace()
     {
         // (The namespace cannot presently be overridden on a per-collection basis.)
@@ -47,6 +52,8 @@ class Splunk_Collection extends Splunk_Endpoint
     
     // === Operations ===
     
+    // NOTE: This method isn't called 'list' only because PHP treats 'list' as a
+    //       pseudo-keyword and gets confused when it's used as a method name.
     /**
      * Lists this collection's entities, returning a list of loaded entities.
      * 
@@ -54,43 +61,41 @@ class Splunk_Collection extends Splunk_Endpoint
      * collections, it is advisable to fetch items using multiple calls with
      * the paging options (i.e. 'offset' and 'count').
      * 
-     * @param array $args (optional) {
-     *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
-     *                    to list entities. Defaults to the service's namespace.
+     * @param array $args (optional) {<br/>
+     *     **namespace**: (optional) {Splunk_Namespace} The namespace in which
+     *                    to list entities. Defaults to the service's namespace.<br/>
      *     
-     *     'count' => (optional) The maximum number of items to return,
+     *     **count**: (optional) The maximum number of items to return,
      *                or -1 to return as many as possible.
-     *                Defaults to returning as many as possible.
-     *     'offset' => (optional) The offset of the first item to return.
-     *                 Defaults to 0.
+     *                Defaults to returning as many as possible.<br/>
+     *     **offset**: (optional) The offset of the first item to return.
+     *                 Defaults to 0.<br/>
      *     
-     *     'search' => (optional) The search expression to filter responses
+     *     **search**: (optional) The search expression to filter responses
      *                 with. For example, "foo" matches any object that has
      *                 "foo" in a substring of a field. Similarly the
      *                 expression "field_name=field_value" matches only objects
      *                 that have a "field_name" field with the value
-     *                 "field_value".
-     *     'sort_dir' => (optional) The direction to sort returned items.
-     *                   Valid values:
-     *                   - "asc": Sort in ascending order.
-     *                   - "desc": Sort in descending order.
-     *                   Defaults to "asc".
-     *     'sort_key' => (optional) The field to use for sorting.
-     *                   Defaults to "name".
-     *     'sort_mode' => (optional) The sorting algorithm to use. Valid values:
+     *                 "field_value".<br/>
+     *     **sort_dir**: (optional) The direction to sort returned items.<br/>
+     *                   Valid values:<br/>
+     *                   - "asc": Sort in ascending order.<br/>
+     *                   - "desc": Sort in descending order.<br/>
+     *                   Defaults to "asc".<br/>
+     *     **sort_key**: (optional) The field to use for sorting.
+     *                   Defaults to "name".<br/>
+     *     **sort_mode**: (optional) The sorting algorithm to use. Valid values:<br/>
      *                    - "auto": If all values of the field are numbers,
      *                              sort numerically. Otherwise, sort
-     *                              alphabetically.
-     *                    - "alpha": Sort alphabetically.
-     *                    - "alpha_case": Sort alphabetically, case-sensitive.
-     *                    - "num": Sort numerically.
-     *                    Defaults to "auto".
+     *                              alphabetically.<br/>
+     *                    - "alpha": Sort alphabetically.<br/>
+     *                    - "alpha_case": Sort alphabetically, case-sensitive.<br/>
+     *                    - "num": Sort numerically.<br/>
+     *                    Defaults to "auto".<br/>
      * }
      * @return array    the entities in the listing.
      * @throws Splunk_IOException
      */
-    // NOTE: This method isn't called 'list' only because PHP treats 'list' as a
-    //       pseudo-keyword and gets confused when it's used as a method name.
     public function items($args=array())
     {
         $args = array_merge(array(
@@ -109,6 +114,8 @@ class Splunk_Collection extends Splunk_Endpoint
     }
     
     /**
+     * Returns an array of entities from the given response.
+     *
      * @param $response
      * @return array                        array of Splunk_Entry.
      */
@@ -125,6 +132,8 @@ class Splunk_Collection extends Splunk_Endpoint
     }
     
     /**
+     * Returns an entity from the given entry element.
+     *
      * @param SimpleXMLElement $entry       an <entry> element.
      * @return Splunk_Entry
      */
@@ -213,10 +222,10 @@ class Splunk_Collection extends Splunk_Endpoint
      * 
      * @param string $name  The name of the entity to create.
      * @param array $args (optional) Entity-specific creation arguments,
-     *                    merged with {
-     *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
+     *                    merged with {<br/>
+     *     **namespace**: (optional) {Splunk_Namespace} The namespace in which
      *                    to create the entity. Defaults to the service's
-     *                    namespace.
+     *                    namespace.<br/>
      * }
      * @return Splunk_Entity
      * @throws Splunk_IOException
@@ -247,10 +256,10 @@ class Splunk_Collection extends Splunk_Endpoint
      * 
      * @param string $name  The name of the entity to delete.
      * @param array $args (optional) Entity-specific deletion arguments,
-     *                    merged with {
-     *     'namespace' => (optional) {Splunk_Namespace} The namespace in which
+     *                    merged with {<br/>
+     *     **namespace**: (optional) {Splunk_Namespace} The namespace in which
      *                    to find the entity. Defaults to the service's
-     *                    namespace.
+     *                    namespace.<br/>
      * }
      * @throws Splunk_IOException
      */

@@ -9,7 +9,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Search | Splunk PHP SDK Examples</title>
+  <title>Search | Splunk SDK for PHP Examples</title>
   <link rel="stylesheet" type="text/css" href="shared/style.css" />
 </head>
 <body>
@@ -45,7 +45,7 @@ $search = array_key_exists('search', $_GET) ? $_GET['search'] : '';
       flush();
       
       usleep(0.5 * 1000000);
-      $job->reload();
+      $job->refresh();
     }
     echo '<li>Done</li>';
     echo '</ul>';

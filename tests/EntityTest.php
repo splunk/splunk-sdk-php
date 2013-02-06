@@ -267,7 +267,7 @@ class EntityTest extends SplunkTest
         ));
     }
     
-    public function testReloadEntityInCustomNamespace()
+    public function testRefreshEntityInCustomNamespace()
     {
         $service = $this->loginToRealService();
         
@@ -276,7 +276,7 @@ class EntityTest extends SplunkTest
             'getstarted',
             Splunk_Namespace::createApp('gettingstarted'));
         
-        $entity->reload();
+        $entity->refresh();
     }
     
     public function testNamespaceIsNotAProperty()
@@ -296,10 +296,41 @@ class EntityTest extends SplunkTest
             'search' => 'search index=_internal | head 2',
         ));
         $this->assertFalse(isset($savedSearch['namespace']));
-        $savedSearch->reload();
+        $savedSearch->refresh();
         $this->assertEquals('search index=_internal | head 2', $savedSearch['search']);
         
         // Teardown
         $savedSearch->delete();
+    }
+    
+    public function testGetContent()
+    {
+        $service = $this->loginToRealService();
+        
+        $job = $service->search('search index=_internal | head 1', array(
+            'exec_mode' => 'blocking',
+        ));
+        
+        $this->assertTrue($job->isDone());
+        $this->assertTrue('1' === $job['isDone']);
+        $content = $job->getContent();
+        $this->assertTrue('1' === $content['isDone']);
+    }
+    
+    public function testGetNamespaceOfWildcardedReference()
+    {
+        $service = $this->loginToRealService();
+        
+        $requestNamespace = Splunk_Namespace::createUser(NULL, NULL);
+        $this->assertFalse($requestNamespace->isExact());
+        
+        $index = $service->getIndexes()->getReference(
+            "_internal",
+            $requestNamespace);
+        
+        $actualNamespace = $index->getNamespace();
+        $this->assertTrue($actualNamespace !== NULL);
+        $this->assertTrue($actualNamespace !== $requestNamespace);
+        $this->assertTrue($actualNamespace->isExact());
     }
 }
