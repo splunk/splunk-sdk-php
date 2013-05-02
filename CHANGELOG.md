@@ -1,5 +1,9 @@
 # Splunk SDK for PHP Changelog
 
+## 1.0.0
+
+* No bugs found during beta period.
+
 ## 0.8.0 (beta)
 
 * The `Entity::reload` method has been renamed to `refresh`.
