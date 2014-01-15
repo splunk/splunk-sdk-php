@@ -132,7 +132,7 @@ class ReceiverTest extends SplunkTest
         $service, $indexName, $index, $expectedEvents, $numEvents, $indexDelay)
     {
         // Wait until the events have been counted
-        $timeoutTime = microtime(TRUE) + 10.0;
+        $timeoutTime = microtime(TRUE) + 30.0;
         while (TRUE)
         {
             $index->refresh();
