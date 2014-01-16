@@ -1,5 +1,9 @@
 # Splunk SDK for PHP Changelog
 
+## 1.0.1 (release)
+
+* The `Job` class has been updated for use with Splunk 6.
+
 ## 0.8.0 (beta)
 
 * The `Entity::reload` method has been renamed to `refresh`.
