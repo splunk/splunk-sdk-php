@@ -43,7 +43,7 @@ class Splunk_Job extends Splunk_Entity
         for ($numTries = 0; $numTries < $fetchArgs['maxTries']; $numTries++)
         {
             $response = parent::fetch($fetchArgs);
-            if ($response->status != 204)
+            if ($this->isFullResponse($response))
                 return $response;
             usleep($fetchArgs['delayPerRetry'] * 1000000);
         }
@@ -341,6 +341,20 @@ class Splunk_Job extends Splunk_Entity
         
         $response = $this->sendGet("/{$pageType}", $args);
         return $response;
+    }
+
+    /** Determines whether a response contains full or partial results */
+    private function isFullResponse($response)
+    {
+        if ($response->status == 204)
+            $result = FALSE;
+        else
+        {        
+            $responseBody = new SimpleXMLElement($response->body);
+            $dispatchState = implode($responseBody->content->xpath('s:dict/s:key[@name="dispatchState"]/text()'));
+            $result = !($dispatchState === 'QUEUED' || $dispatchState === 'PARSING');
+        }
+        return $result;
     }
     
     // === Control ===
