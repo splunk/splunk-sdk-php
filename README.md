@@ -1,4 +1,4 @@
-# The Splunk Software Development Kit for PHP (Beta)
+# The Splunk Software Development Kit for PHP (Release)
 
 The Splunk Software Development Kit (SDK) for PHP makes it easy for PHP 
 applications to communicate with and control a Splunk server. Using the APIs 
