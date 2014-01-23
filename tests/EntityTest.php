@@ -273,9 +273,9 @@ class EntityTest extends SplunkTest
         
         $views = new Splunk_Collection($service, 'data/ui/views/');
         $entity = $views->get(
-            'getstarted',
-            Splunk_Namespace::createApp('gettingstarted'));
-        
+            'charting',
+            Splunk_Namespace::createApp('search'));
+
         $entity->refresh();
     }
     

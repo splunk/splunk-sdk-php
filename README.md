@@ -450,9 +450,10 @@ never actually completes.
 To get results from a realtime search, the `getResultsPreviewPage()` method
 must be used instead of the `getResults()` method.
 
-## Documentation and resources
+## Resources
 
-If you need to know more:
+You can find anything having to do with developing on Splunk at the Splunk
+developer portal:
 
 * For all things developer with Splunk, your main resource is the [Splunk
   Developer Portal](http://dev.splunk.com).
