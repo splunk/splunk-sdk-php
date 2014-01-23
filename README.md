@@ -1,4 +1,6 @@
-# The Splunk Software Development Kit for PHP (Release)
+# The Splunk Software Development Kit for PHP
+
+#### Version 1.0
 
 The Splunk Software Development Kit (SDK) for PHP makes it easy for PHP 
 applications to communicate with and control a Splunk server. Using the APIs 
@@ -453,15 +455,22 @@ must be used instead of the `getResults()` method.
 You can find anything having to do with developing on Splunk at the Splunk
 developer portal:
 
-* <http://dev.splunk.com>
+* For all things developer with Splunk, your main resource is the [Splunk
+  Developer Portal](http://dev.splunk.com).
 
-Reference documentation for the Splunk REST API:
+* For conceptual and how-to documentation, see the [Overview of the Splunk SDK
+  for PHP](http://dev.splunk.com/view/php-sdk/SP-CAAAEJM).
 
-* <http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI>
+* For API reference documentation, see the [Splunk SDK for PHP 
+  Reference](http://docs.splunk.com/Documentation/PHPSDK)
 
-Overview of Splunk and links to additional product information:
+* For more about the Splunk REST API, see the [REST API 
+  Reference](http://docs.splunk.com/Documentation/Splunk/latest/RESTAPI).
 
-* <http://docs.splunk.com/Documentation/Splunk/latest/User/SplunkOverview>
+* For more about about Splunk in general, see [Splunk>Docs](http://docs.splunk.com/Documentation/Splunk).
+
+* For more about this SDK's repository, see our 
+  [GitHub Wiki](https://github.com/splunk/splunk-sdk-php/wiki/).
 
 ## Community
 
@@ -509,8 +518,9 @@ provided below.
 ### Support
 
 1. You will be granted support if you or your company are already covered 
-   under an existing maintenance/support agreement. Send an email to 
-   _support@splunk.com_ and include "Splunk SDK for PHP" in the subject line. 
+   under an existing maintenance/support agreement. Visit 
+   <http://www.splunk.com/support> and click **Submit a Case** under **Contact
+   a Support Engineer**.
 
 2. If you are not covered under an existing maintenance/support agreement, you 
    can find help through the broader community at:
