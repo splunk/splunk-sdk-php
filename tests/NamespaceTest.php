@@ -35,6 +35,10 @@ class NamespaceTest extends SplunkTest
         $namespace = Splunk_Namespace::createUser('theowner', NULL);
         $this->assertEquals('/servicesNS/theowner/-/', $namespace->getPathPrefix());
         $this->assertFalse($namespace->isExact());
+
+        $namespace = Splunk_Namespace::createUser('theowner@foo.com', NULL);
+        $this->assertEquals('/servicesNS/theowner%40foo.com/-/', $namespace->getPathPrefix());
+        $this->assertFalse($namespace->isExact());
         
         $namespace = Splunk_Namespace::createUser(NULL, 'theapp');
         $this->assertEquals('/servicesNS/-/theapp/', $namespace->getPathPrefix());
