@@ -48,6 +48,13 @@ class Splunk_Job extends Splunk_Entity
             usleep($fetchArgs['delayPerRetry'] * 1000000);
         }
         
+        // If actually HTTP 200, convert to a simulated HTTP 204 response
+        if ($response->status != 204)
+        {
+            $response->status = 204;
+            $response->reason = "Timed out waiting for job to parse.";
+        }
+        
         // Give up
         throw new Splunk_HttpException($response);
     }
@@ -347,7 +354,9 @@ class Splunk_Job extends Splunk_Entity
     private function isFullResponse($response)
     {
         if ($response->status == 204)
+        {
             $result = FALSE;
+        }
         else
         {        
             $responseBody = new SimpleXMLElement($response->body);
