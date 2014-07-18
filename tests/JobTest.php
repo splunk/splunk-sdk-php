@@ -46,6 +46,159 @@ class JobTest extends SplunkTest
         }
     }
     
+    public function testGetTimeoutSimulated()
+    {
+        $bodyForJobInParsingState =
+'<?xml version="1.0" encoding="UTF-8"?>
+<!--This is to override browser formatting; see server.conf[httpServer] to disable. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .-->
+<?xml-stylesheet type="text/xml" href="/static/atom.xsl"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:s="http://dev.splunk.com/ns/rest" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
+  <title>search index=_internal latest=-5m | stats count | appendcols [search index=_internal latest=-5m | stats count]</title>
+  <id>https://localhost:8089/services/search/jobs/1404154730.29</id>
+  <updated>2014-06-30T11:58:51.000-07:00</updated>
+  <link href="/services/search/jobs/1404154730.29" rel="alternate"/>
+  <published>2014-06-30T11:58:50.000-07:00</published>
+  <link href="/services/search/jobs/1404154730.29/search.log" rel="search.log"/>
+  <link href="/services/search/jobs/1404154730.29/events" rel="events"/>
+  <link href="/services/search/jobs/1404154730.29/results" rel="results"/>
+  <link href="/services/search/jobs/1404154730.29/results_preview" rel="results_preview"/>
+  <link href="/services/search/jobs/1404154730.29/timeline" rel="timeline"/>
+  <link href="/services/search/jobs/1404154730.29/summary" rel="summary"/>
+  <link href="/services/search/jobs/1404154730.29/control" rel="control"/>
+  <author>
+    <name>admin</name>
+  </author>
+  <content type="text/xml">
+    <s:dict>
+      <s:key name="bundleVersion">36800464769513394</s:key>
+      <s:key name="cursorTime">2038-01-18T19:14:07.000-08:00</s:key>
+      <s:key name="defaultSaveTTL">604800</s:key>
+      <s:key name="defaultTTL">600</s:key>
+      <s:key name="delegate"></s:key>
+      <s:key name="diskUsage">0</s:key>
+      <s:key name="dispatchState">PARSING</s:key>
+      <s:key name="doneProgress">0</s:key>
+      <s:key name="dropCount">0</s:key>
+      <s:key name="earliestTime">1969-12-31T16:00:00.000-08:00</s:key>
+      <s:key name="eventAvailableCount">0</s:key>
+      <s:key name="eventCount">0</s:key>
+      <s:key name="eventFieldCount">0</s:key>
+      <s:key name="eventIsStreaming">1</s:key>
+      <s:key name="eventIsTruncated">1</s:key>
+      <s:key name="eventSearch"></s:key>
+      <s:key name="eventSorting">desc</s:key>
+      <s:key name="isBatchModeSearch">0</s:key>
+      <s:key name="isDone">0</s:key>
+      <s:key name="isFailed">0</s:key>
+      <s:key name="isFinalized">0</s:key>
+      <s:key name="isPaused">0</s:key>
+      <s:key name="isPreviewEnabled">0</s:key>
+      <s:key name="isRealTimeSearch">0</s:key>
+      <s:key name="isRemoteTimeline">1</s:key>
+      <s:key name="isSaved">0</s:key>
+      <s:key name="isSavedSearch">0</s:key>
+      <s:key name="isZombie">0</s:key>
+      <s:key name="keywords"></s:key>
+      <s:key name="label"></s:key>
+      <s:key name="numPreviews">0</s:key>
+      <s:key name="pid">2359</s:key>
+      <s:key name="priority">5</s:key>
+      <s:key name="remoteSearch"></s:key>
+      <s:key name="reportSearch"></s:key>
+      <s:key name="resultCount">0</s:key>
+      <s:key name="resultIsStreaming">1</s:key>
+      <s:key name="resultPreviewCount">0</s:key>
+      <s:key name="runDuration">0.001000</s:key>
+      <s:key name="scanCount">0</s:key>
+      <s:key name="sid">1404154730.29</s:key>
+      <s:key name="statusBuckets">0</s:key>
+      <s:key name="ttl">600</s:key>
+      <s:key name="performance">
+        <s:dict>
+          <s:key name="dispatch.writeStatus">
+            <s:dict>
+              <s:key name="duration_secs">0.001000</s:key>
+              <s:key name="invocations">1</s:key>
+            </s:dict>
+          </s:key>
+          <s:key name="startup.handoff">
+            <s:dict>
+              <s:key name="duration_secs">0.045000</s:key>
+              <s:key name="invocations">1</s:key>
+            </s:dict>
+          </s:key>
+        </s:dict>
+      </s:key>
+      <s:key name="messages">
+        <s:dict/>
+      </s:key>
+      <s:key name="request">
+        <s:dict>
+          <s:key name="search">search index=_internal latest=-5m | stats count | appendcols [search index=_internal latest=-5m | stats count]</s:key>
+        </s:dict>
+      </s:key>
+      <s:key name="runtime">
+        <s:dict>
+          <s:key name="auto_cancel">0</s:key>
+          <s:key name="auto_pause">0</s:key>
+        </s:dict>
+      </s:key>
+      <s:key name="eai:acl">
+        <s:dict>
+          <s:key name="perms">
+            <s:dict>
+              <s:key name="read">
+                <s:list>
+                  <s:item>admin</s:item>
+                </s:list>
+              </s:key>
+              <s:key name="write">
+                <s:list>
+                  <s:item>admin</s:item>
+                </s:list>
+              </s:key>
+            </s:dict>
+          </s:key>
+          <s:key name="owner">admin</s:key>
+          <s:key name="modifiable">1</s:key>
+          <s:key name="sharing">global</s:key>
+          <s:key name="app">search</s:key>
+          <s:key name="can_write">1</s:key>
+          <s:key name="ttl">600</s:key>
+        </s:dict>
+      </s:key>
+      <s:key name="searchProviders">
+        <s:list/>
+      </s:key>
+    </s:dict>
+  </content>
+</entry>';
+        
+        list($service, $http) = $this->loginToMockService();
+        
+        // Get job
+        $httpResponse = (object) array(
+            'status' => 200,
+            'reason' => 'OK',
+            'headers' => array(),
+            'body' => $bodyForJobInParsingState);
+        $http->expects($this->atLeastOnce())
+             ->method('get')
+             ->will($this->returnValue($httpResponse));
+        $job = $service->getJobs()->getReference('A_JOB');
+        
+        // Try to touch job when server refuses to return it
+        try
+        {
+            $this->touch($job);
+            $this->assertTrue(FALSE, 'Expected Splunk_HttpException to be thrown.');
+        }
+        catch (Splunk_HttpException $e)
+        {
+            $this->assertEquals(204, $e->getResponse()->status);
+        }
+    }
+    
     public function testMakeReady()
     {
         $maxTries = 7;
