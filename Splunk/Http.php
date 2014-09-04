@@ -157,6 +157,8 @@ class Splunk_Http
             CURLOPT_HEADER => TRUE,
             // disable SSL certificate validation
             CURLOPT_SSL_VERIFYPEER => FALSE,
+            // disable SSL certificate host checking
+            CURLOPT_SSL_VERIFYHOST => FALSE
         );
         
         foreach ($requestHeaders as $k => $v)
@@ -198,11 +200,16 @@ class Splunk_Http
         
         $headers = array();
         $headerLines = explode("\r\n", trim($headerText));
+        // The HTTP status is expected to be the first element in the array
         $statusLine = array_shift($headerLines);
         foreach ($headerLines as $line)
         {
-            list($key, $value) = explode(':', $line, 2);
-            $headers[$key] = trim($value);
+            // Skip any elements not containing a colon
+            if (strpos($line, ":") !== false)
+            {
+                list($key, $value) = explode(':', $line, 2);
+                $headers[$key] = trim($value);
+            }
         }
         
         $statusLineComponents = explode(' ', $statusLine, 3);
