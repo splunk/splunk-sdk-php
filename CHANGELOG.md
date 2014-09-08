@@ -1,14 +1,12 @@
 # Splunk SDK for PHP Changelog
 
-<<<<<<< HEAD
-## 1.0.0
-
-* No bugs found during beta period.
-=======
 ## 1.0.1 (release)
 
 * The `Job` class has been updated for use with Splunk 6.
->>>>>>> release/1.0.1
+
+## 1.0.0
+
+* No bugs found during beta period.
 
 ## 0.8.0 (beta)
 
