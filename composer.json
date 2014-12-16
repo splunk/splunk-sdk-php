@@ -8,6 +8,9 @@
       "email": "sales@splunk.com"
     }
   ],
+  "require": {
+    "php": ">=5.2.11"
+  },
   "autoload": {
     "files": ["Splunk.php"]
   }
