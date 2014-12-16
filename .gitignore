@@ -9,3 +9,5 @@ coverage/
 
 # Local settings
 *.local.php
+
+/vendor/
