@@ -96,19 +96,26 @@ class Splunk_Receiver
         $scheme = $this->service->getScheme();
         $host = $this->service->getHost();
         $port = $this->service->getPort();
-        
+
         $errno = 0;
         $errstr = '';
+        $socketContext = stream_context_create(array(
+            'ssl' => array(
+                'verify_peer' => false, //don't verify ssl: Since php 5.6 this defaults to true!
+                'verify_peer_name' => false //allows certificate CN missmtach
+            )
+        ));
+
         if ($scheme == 'http')
-            $stream = @fsockopen($host, $port, /*out*/ $errno, /*out*/ $errstr);
+            $stream = @stream_socket_client($host . ":" . $port, /*out*/ $errno, /*out*/ $errstr, 30, STREAM_CLIENT_CONNECT, $socketContext);
         else if ($scheme == 'https')
-            $stream = @fsockopen('ssl://' . $host, $port, /*out*/ $errno, /*out*/ $errstr);
+            $stream = @stream_socket_client('ssl://' . $host . ":" . $port, /*out*/ $errno, /*out*/ $errstr, 30, STREAM_CLIENT_CONNECT, $socketContext);
         else
             throw new Splunk_UnsupportedOperationException(
                 'Unsupported URL scheme.');
         if ($stream === FALSE)
-            throw new Splunk_ConnectException($errstr, $errno);
-        
+            throw new Splunk_ConnectException("error: ".$errstr.$host.":".$port, $errno);
+
         $path = '/services/receivers/stream?' . http_build_query($args);
         $token = $this->service->getToken();
         
