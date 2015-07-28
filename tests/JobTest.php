@@ -503,6 +503,23 @@ class JobTest extends SplunkTest
             //...
         }
     }
+
+    public function testWaitingForParsing()
+    {
+        $service = $this->loginToRealService();
+
+        //This query has only one job: to stay in the parsing state for several seconds
+        $job = $service->getJobs()->create('search index=_internal | join host [search index=_internal] | join host [search index=_internal]'
+                .'| join host [search index=_internal]| join host [search index=_internal]| join host [search index=_internal]');
+
+        //this should not raid an exeption
+        while(!$job->isDone())
+        {
+            $job->getProgress();
+            usleep(0.5 * 1000000);
+        }
+ 
+    }
     
     // === Utility ===
     
