@@ -28,6 +28,8 @@ class JobsTest extends SplunkTest
         $job = $service->getJobs()->create(JobsTest::SEARCH_QUERY, array(
             'exec_mode' => 'normal',
         ));
+        //wait for the search to become ready
+        $this->makeReady($job);
         $this->touch($job);
         
         return array($service, $job);

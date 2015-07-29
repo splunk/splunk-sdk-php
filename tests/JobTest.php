@@ -24,11 +24,11 @@ class JobTest extends SplunkTest
         list($service, $http) = $this->loginToMockService();
         
         // Get job
-        $httpResponse = (object) array(
+        $httpResponse = new Splunk_HttpResponse(array(
             'status' => 204,
             'reason' => 'No Content',
             'headers' => array(),
-            'body' => '');
+            'body' => ''));
         $http->expects($this->atLeastOnce())
              ->method('get')
              ->will($this->returnValue($httpResponse));
@@ -38,34 +38,35 @@ class JobTest extends SplunkTest
         try
         {
             $this->touch($job);
-            $this->assertTrue(FALSE, 'Expected Splunk_HttpException to be thrown.');
+            $this->assertTrue(FALSE, 'Expected RuntimeException to be thrown.');
         }
-        catch (Splunk_HttpException $e)
+        catch (Splunk_JobNotReadyException $e)
         {
-            $this->assertEquals(204, $e->getResponse()->status);
+            // Good
         }
     }
     
     public function testMakeReady()
     {
         $maxTries = 7;
+        $additionalGetCalls = 1; //the new isRead Method makes an http call now
         $this->assertTrue(
             $maxTries != Splunk_Job::DEFAULT_FETCH_MAX_TRIES,
             'This test is only valid for a non-default number of fetch attempts.');
         
         list($service, $http) = $this->loginToMockService();
         
-        $httpResponse = (object) array(
+        $httpResponse = new Splunk_HttpResponse(array(
             'status' => 204,
             'reason' => 'No Content',
             'headers' => array(),
-            'body' => '');
-        $http->expects($this->exactly($maxTries))
+            'body' => ''));
+        $http->expects($this->exactly($maxTries+$additionalGetCalls))
              ->method('get')
              ->will($this->returnValue($httpResponse));
         $job = $service->getJobs()->getReference('A_JOB');
         
-        $this->assertFalse($job->isReady());
+        $this->assertFalse($job->isReady()); //calls http->get() an additional time
         try
         {
             $job->makeReady(/*maxTries=*/$maxTries, /*delayPerRetry=*/0.1);
@@ -73,7 +74,7 @@ class JobTest extends SplunkTest
         }
         catch (Splunk_HttpException $e)
         {
-            $this->assertEquals(204, $e->getResponse()->status);
+            // Good
         }
     }
     
@@ -81,7 +82,7 @@ class JobTest extends SplunkTest
     {
         list($service, $http) = $this->loginToMockService();
         
-        $httpResponse = (object) array(
+        $httpResponse = new Splunk_HttpResponse(array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
@@ -90,8 +91,8 @@ class JobTest extends SplunkTest
   <content type="text/xml">
   </content>
 </entry>
-');
-        $http->expects($this->once())
+'));
+        $http->expects($this->exactly(2)) // make ready now needs two calls
              ->method('get')
              ->will($this->returnValue($httpResponse));
         $job = $service->getJobs()->getReference('A_JOB');
@@ -158,7 +159,11 @@ class JobTest extends SplunkTest
         try
         {
             $job->getResultsPage();
-            $this->fail('Expected Splunk_JobNotDoneException.');
+            $this->fail('Expected Splunk_JobNotReadyException or Splunk_JobNotDoneException.');
+        }
+        catch (Splunk_JobNotReadyException $e)
+        {
+            // Good
         }
         catch (Splunk_JobNotDoneException $e)
         {
@@ -226,6 +231,9 @@ class JobTest extends SplunkTest
             'latest_time' => 'rt',
         ));
         
+        //wait for the search to become ready
+        $this->makeReady($rtjob);
+        
         $this->assertTrue($rtjob['isRealTimeSearch'] === '1',
             'This should be a realtime job.');
         
@@ -290,6 +298,9 @@ class JobTest extends SplunkTest
             'latest_time' => 'rt',
         ));
         
+        //wait for the search to become ready
+        $this->makeReady($rtjob);
+        
         $this->assertTrue($rtjob['isRealTimeSearch'] === '1',
             'This should be a realtime job.');
         
@@ -336,6 +347,9 @@ class JobTest extends SplunkTest
         $ss = $service->getSavedSearches()->get('Top five sourcetypes');
         $job = $ss->dispatch();
         
+        //wait for the search to become ready
+        $this->makeReady($job);
+
         // Ensure that we have a fully loaded Job
         $this->touch($job);
         
@@ -352,14 +366,14 @@ class JobTest extends SplunkTest
     {
         $namespace = Splunk_Namespace::createUser('USER', 'APP');
         
-        $postResponse = (object) array(
+        $postResponse = new Splunk_HttpResponse(array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
             'body' => trim("
 <?xml version='1.0' encoding='UTF-8'?>
 <response><sid>1345584253.35</sid></response>
-"));
+")));
         $postArgs = array(
             // (The URL should correspond to the namespace)
             'https://localhost:8089/servicesNS/USER/APP/search/jobs/',
@@ -386,14 +400,14 @@ class JobTest extends SplunkTest
     {
         $namespace = Splunk_Namespace::createUser('USER', 'APP');
         
-        $postResponse = (object) array(
+        $postResponse = new Splunk_HttpResponse(array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
             'body' => trim("
 <?xml version='1.0' encoding='UTF-8'?>
 <response><sid>1345584253.35</sid></response>
-"));
+")));
         $postArgs = array(
             // (The URL should correspond to the namespace)
             'https://localhost:8089/servicesNS/USER/APP/search/jobs/',
@@ -509,16 +523,15 @@ class JobTest extends SplunkTest
         $service = $this->loginToRealService();
 
         //This query has only one job: to stay in the parsing state for several seconds
-        $job = $service->getJobs()->create('search index=_internal | join host [search index=_internal] | join host [search index=_internal]'
-                .'| join host [search index=_internal]| join host [search index=_internal]| join host [search index=_internal]');
+        $job = $service->getJobs()->create('search index=_internal | join host [search index=_internal] | join host [search index=_internal]');
 
-        //this should not raid an exeption
+        //this should not raise an exeption
         while(!$job->isDone())
         {
-            $job->getProgress();
             usleep(0.5 * 1000000);
+            $job->refresh();
         }
- 
+
     }
     
     // === Utility ===
@@ -531,7 +544,7 @@ class JobTest extends SplunkTest
         return $pageHasResults;
     }
     
-    private function makeDone($job)
+    private function makeDone(Splunk_Job $job)
     {
         while (!$job->isDone())
         {

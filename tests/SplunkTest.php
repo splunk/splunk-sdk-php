@@ -142,4 +142,17 @@ abstract class SplunkTest extends PHPUnit_Framework_TestCase
             mt_rand(0, 65535),
             mt_rand(0, 65535));
     }
+    
+    /**
+     * Waits for the $job to get scheduled on the server.
+     * 
+     * @param Splunk_Job $job
+     */
+    protected function makeReady(Splunk_Job $job)
+    {
+        while(!$job->isReady())
+        {
+             usleep(0.1 * 1000000);
+        }
+    }
 }
