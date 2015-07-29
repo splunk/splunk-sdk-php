@@ -22,36 +22,18 @@
  */
 class Splunk_Job extends Splunk_Entity
 {
+    /**
+     * Indicates if the Job is ready for querying
+     * @var boolean 
+     */
+    private $isReady;
+
     // NOTE: These constants are somewhat arbitrary and could use some tuning
     const DEFAULT_FETCH_MAX_TRIES = 10;
     const DEFAULT_FETCH_DELAY_PER_RETRY = 0.1;  // secs
     
     // === Load ===
-    
-    /*
-     * Job requests sometimes yield an HTTP 204 code when they are in the
-     * process of being created. To hide this from the caller, transparently
-     * retry requests when an HTTP 204 is received.
-     */
-    protected function fetch($fetchArgs)
-    {
-        $fetchArgs = array_merge(array(
-            'maxTries' => Splunk_Job::DEFAULT_FETCH_MAX_TRIES,
-            'delayPerRetry' => Splunk_Job::DEFAULT_FETCH_DELAY_PER_RETRY,
-        ), $fetchArgs);
-        
-        for ($numTries = 0; $numTries < $fetchArgs['maxTries']; $numTries++)
-        {
-            $response = parent::fetch($fetchArgs);
-            if ($this->isFullResponse($response))
-                return $response;
-            usleep($fetchArgs['delayPerRetry'] * 1000000);
-        }
-        
-        // Give up
-        throw new Splunk_HttpException($response);
-    }
-    
+ 
     protected function extractEntryFromRootXmlElement($xml)
     {
         // <entry> element is at the root of a job's Atom feed
@@ -61,15 +43,50 @@ class Splunk_Job extends Splunk_Entity
     // === Ready ===
     
     /** 
-     * Returns a value that indicates whether this job has been loaded.
+     * Indicates whether the job has been scheduled and is ready to
+     * return data.
      *
-     * @return bool                Whether this job has been loaded. 
+     * @return boolean
      */
     public function isReady()
     {
-        return $this->isLoaded();
+        if (!$this->isReady)
+        {
+            $reponse = $this->fetch();
+            $this->isReady = $this->isFullResponse($reponse);
+        }
+
+        return $this->isReady;
     }
     
+    /**
+     * Refreshes this entity's properties from the Splunk server
+     * if the search is scheduled.
+     * 
+     * @return Splunk_Job            This Job.
+     * @throws Splunk_IOException
+     */
+    public function refresh()
+    {
+        if ($this->isReady())
+        {
+            return parent::refresh();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Checks if the job is ready for quering
+     * 
+     * @throws Splunk_JobNotReadyException
+     */
+    private function checkReady()
+    {
+        if (!$this->isReady())
+            throw new Splunk_JobNotReadyException("Job is not yet scheduled by the server");
+    }
+
     /**
      * Loads this job, retrying the specified number of times as necessary.
      * 
@@ -81,24 +98,32 @@ class Splunk_Job extends Splunk_Entity
      * @throws Splunk_IOException
      */
     public function makeReady(
-        $maxTries=Splunk_Job::DEFAULT_FETCH_MAX_TRIES,
-        $delayPerRetry=Splunk_Job::DEFAULT_FETCH_DELAY_PER_RETRY)
+        $maxTries = Splunk_Job::DEFAULT_FETCH_MAX_TRIES,
+        $delayPerRetry = Splunk_Job::DEFAULT_FETCH_DELAY_PER_RETRY)
     {
-        return $this->validate(/*fetchArgs=*/array(
-            'maxTries' => $maxTries,
-            'delayPerRetry' => $delayPerRetry,
-        ));
+        for ($numTries = 0; $numTries < $maxTries; $numTries++)
+        {
+            $reponse = $this->fetch();
+            if ($this->isFullResponse($reponse))
+            {
+                return $this->validate();
+            }
+            usleep($delayPerRetry * 1000000);
+        }
+        throw new Splunk_HttpException($reponse);
     }
     
     // === Accessors ===
     
-    // Overrides superclass to return the correct ID of this job,
-    // which can be used to lookup this job from the Jobs collection.
     /**
+     * Overrides superclass to return the correct ID of this job,
+     * which can be used to lookup this job from the Jobs collection.
+     * 
      * @see Splunk_Entity::getName()
      */
     public function getName()
     {
+        $this->checkReady();
         return $this['sid'];
     }
     
@@ -109,6 +134,7 @@ class Splunk_Job extends Splunk_Entity
      */
     public function getSearch()
     {
+        $this->checkReady();
         return $this->getTitle();
     }
     
@@ -116,8 +142,8 @@ class Splunk_Job extends Splunk_Entity
     
     /**
      * Returns a value that indicates the percentage of this job's results 
-     *      that were computed at the time this job was last loaded or 
-     *      refreshed.
+     * that were computed at the time this job was last loaded or refreshed.
+     * If the job is not yet sheduled on the server it returns 0.
      *
      * @return float                Percentage of this job's results that were
      *                              computed (0.0-1.0) at the time this job was
@@ -126,12 +152,14 @@ class Splunk_Job extends Splunk_Entity
      */ 
     public function getProgress()
     {
+         if (!$this->isReady())
+            return 0;
         return floatval($this['doneProgress']);
     }
     
     /**
      * Returns a value that indicates whether this job's results were available 
-     *      at the time this job was last loaded or refreshed.
+     * at the time this job was last loaded or refreshed.
      *
      * @return boolean              Whether this job's results were available
      *                              at the time this job was last loaded or
@@ -140,6 +168,8 @@ class Splunk_Job extends Splunk_Entity
      */
     public function isDone()
     {
+        if (!$this->isReady())
+            return false;
         return ($this['isDone'] === '1');
     }
     
@@ -204,6 +234,7 @@ class Splunk_Job extends Splunk_Entity
      */
     public function getResults($args=array())
     {
+        $this->checkReady();
         return new Splunk_PaginatedResultsReader($this, $args);
     }
     
@@ -273,6 +304,7 @@ class Splunk_Job extends Splunk_Entity
      */
     public function getResultsPage($args=array())
     {
+        $this->checkReady();
         $response = $this->fetchPage('results', $args);
         if ($response->status == 204)
             throw new Splunk_JobNotDoneException($response);
@@ -325,7 +357,14 @@ class Splunk_Job extends Splunk_Entity
         return $response->bodyStream;
     }
     
-    /** Fetches a page of the specified type. */
+    /**
+     * Fetches a page of the specified type.
+     * 
+     * @param string $pageType
+     * @param array $args
+     * @return Splunk_HttpResponse
+     * @throws InvalidArgumentException
+     */
     private function fetchPage($pageType, $args)
     {
         $args = array_merge(array(
@@ -343,8 +382,12 @@ class Splunk_Job extends Splunk_Entity
         return $response;
     }
 
-    /** Determines whether a response contains full or partial results */
-    private function isFullResponse($response)
+    /**
+     * Determines whether a response contains full or partial results
+     * @param Splunk_HttpResponse $response
+     * @return boolean
+     */
+    private function isFullResponse(Splunk_HttpResponse $response)
     {
         if ($response->status == 204)
             $result = FALSE;
