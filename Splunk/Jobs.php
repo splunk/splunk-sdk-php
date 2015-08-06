@@ -38,6 +38,27 @@ class Splunk_Jobs extends Splunk_Collection
     }
     
     /**
+     * Returns an entity from the given entry element.
+     * This method uses the SID to identify the entity instead of the title property.
+     *
+     * @param SimpleXMLElement $entry       an <entry> element.
+     * @return Splunk_Entry
+     */
+    protected function loadEntityFromEntry($entry)
+    {
+        $content = Splunk_AtomFeed::parseValueInside($entry->content);
+
+        //A Job should always have a SID.
+        if (!isset($content['sid']))
+            throw new \RuntimeException("loadEntityFromEntry expected the entry to contain a SID. no SID found.");
+
+        return new $this->entitySubclass(
+            $this->service,
+            $this->getEntityPath($content['sid']),
+            $entry);
+    }
+    
+    /**
      * Creates a new search job.
      * 
      * @param string $search    The search query for the job to perform.
