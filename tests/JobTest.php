@@ -38,7 +38,7 @@ class JobTest extends SplunkTest
         try
         {
             $this->touch($job);
-            $this->assertTrue(FALSE, 'Expected RuntimeException to be thrown.');
+            $this->assertTrue(FALSE, 'Expected Splunk_JobNotReadyException to be thrown.');
         }
         catch (Splunk_JobNotReadyException $e)
         {
