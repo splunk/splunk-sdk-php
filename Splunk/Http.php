@@ -105,6 +105,11 @@ class Splunk_Http
                 'max_redirects' => 0,       // [PHP 5.2] don't follow HTTP 3xx automatically
                 'ignore_errors' => TRUE,    // don't throw exceptions on bad status codes
             ),
+            'ssl' => array(
+                // Allow self-signed certificates
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ),
         ));
         
         // NOTE: PHP does not perform certificate validation for HTTPS URLs.
