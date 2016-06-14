@@ -24,11 +24,11 @@ class JobTest extends SplunkTest
         list($service, $http) = $this->loginToMockService();
         
         // Get job
-        $httpResponse = (object) array(
+        $httpResponse = new Splunk_HttpResponse(array(
             'status' => 204,
             'reason' => 'No Content',
             'headers' => array(),
-            'body' => '');
+            'body' => ''));
         $http->expects($this->atLeastOnce())
              ->method('get')
              ->will($this->returnValue($httpResponse));
@@ -38,187 +38,35 @@ class JobTest extends SplunkTest
         try
         {
             $this->touch($job);
-            $this->assertTrue(FALSE, 'Expected Splunk_HttpException to be thrown.');
+            $this->assertTrue(FALSE, 'Expected Splunk_JobNotReadyException to be thrown.');
         }
-        catch (Splunk_HttpException $e)
+        catch (Splunk_JobNotReadyException $e)
         {
-            $this->assertEquals(204, $e->getResponse()->status);
+            // Good
         }
     }
-    
-    public function testGetTimeoutSimulated()
-    {
-        $bodyForJobInParsingState =
-'<?xml version="1.0" encoding="UTF-8"?>
-<!--This is to override browser formatting; see server.conf[httpServer] to disable. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .-->
-<?xml-stylesheet type="text/xml" href="/static/atom.xsl"?>
-<entry xmlns="http://www.w3.org/2005/Atom" xmlns:s="http://dev.splunk.com/ns/rest" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
-  <title>search index=_internal latest=-5m | stats count | appendcols [search index=_internal latest=-5m | stats count]</title>
-  <id>https://localhost:8089/services/search/jobs/1404154730.29</id>
-  <updated>2014-06-30T11:58:51.000-07:00</updated>
-  <link href="/services/search/jobs/1404154730.29" rel="alternate"/>
-  <published>2014-06-30T11:58:50.000-07:00</published>
-  <link href="/services/search/jobs/1404154730.29/search.log" rel="search.log"/>
-  <link href="/services/search/jobs/1404154730.29/events" rel="events"/>
-  <link href="/services/search/jobs/1404154730.29/results" rel="results"/>
-  <link href="/services/search/jobs/1404154730.29/results_preview" rel="results_preview"/>
-  <link href="/services/search/jobs/1404154730.29/timeline" rel="timeline"/>
-  <link href="/services/search/jobs/1404154730.29/summary" rel="summary"/>
-  <link href="/services/search/jobs/1404154730.29/control" rel="control"/>
-  <author>
-    <name>admin</name>
-  </author>
-  <content type="text/xml">
-    <s:dict>
-      <s:key name="bundleVersion">36800464769513394</s:key>
-      <s:key name="cursorTime">2038-01-18T19:14:07.000-08:00</s:key>
-      <s:key name="defaultSaveTTL">604800</s:key>
-      <s:key name="defaultTTL">600</s:key>
-      <s:key name="delegate"></s:key>
-      <s:key name="diskUsage">0</s:key>
-      <s:key name="dispatchState">PARSING</s:key>
-      <s:key name="doneProgress">0</s:key>
-      <s:key name="dropCount">0</s:key>
-      <s:key name="earliestTime">1969-12-31T16:00:00.000-08:00</s:key>
-      <s:key name="eventAvailableCount">0</s:key>
-      <s:key name="eventCount">0</s:key>
-      <s:key name="eventFieldCount">0</s:key>
-      <s:key name="eventIsStreaming">1</s:key>
-      <s:key name="eventIsTruncated">1</s:key>
-      <s:key name="eventSearch"></s:key>
-      <s:key name="eventSorting">desc</s:key>
-      <s:key name="isBatchModeSearch">0</s:key>
-      <s:key name="isDone">0</s:key>
-      <s:key name="isFailed">0</s:key>
-      <s:key name="isFinalized">0</s:key>
-      <s:key name="isPaused">0</s:key>
-      <s:key name="isPreviewEnabled">0</s:key>
-      <s:key name="isRealTimeSearch">0</s:key>
-      <s:key name="isRemoteTimeline">1</s:key>
-      <s:key name="isSaved">0</s:key>
-      <s:key name="isSavedSearch">0</s:key>
-      <s:key name="isZombie">0</s:key>
-      <s:key name="keywords"></s:key>
-      <s:key name="label"></s:key>
-      <s:key name="numPreviews">0</s:key>
-      <s:key name="pid">2359</s:key>
-      <s:key name="priority">5</s:key>
-      <s:key name="remoteSearch"></s:key>
-      <s:key name="reportSearch"></s:key>
-      <s:key name="resultCount">0</s:key>
-      <s:key name="resultIsStreaming">1</s:key>
-      <s:key name="resultPreviewCount">0</s:key>
-      <s:key name="runDuration">0.001000</s:key>
-      <s:key name="scanCount">0</s:key>
-      <s:key name="sid">1404154730.29</s:key>
-      <s:key name="statusBuckets">0</s:key>
-      <s:key name="ttl">600</s:key>
-      <s:key name="performance">
-        <s:dict>
-          <s:key name="dispatch.writeStatus">
-            <s:dict>
-              <s:key name="duration_secs">0.001000</s:key>
-              <s:key name="invocations">1</s:key>
-            </s:dict>
-          </s:key>
-          <s:key name="startup.handoff">
-            <s:dict>
-              <s:key name="duration_secs">0.045000</s:key>
-              <s:key name="invocations">1</s:key>
-            </s:dict>
-          </s:key>
-        </s:dict>
-      </s:key>
-      <s:key name="messages">
-        <s:dict/>
-      </s:key>
-      <s:key name="request">
-        <s:dict>
-          <s:key name="search">search index=_internal latest=-5m | stats count | appendcols [search index=_internal latest=-5m | stats count]</s:key>
-        </s:dict>
-      </s:key>
-      <s:key name="runtime">
-        <s:dict>
-          <s:key name="auto_cancel">0</s:key>
-          <s:key name="auto_pause">0</s:key>
-        </s:dict>
-      </s:key>
-      <s:key name="eai:acl">
-        <s:dict>
-          <s:key name="perms">
-            <s:dict>
-              <s:key name="read">
-                <s:list>
-                  <s:item>admin</s:item>
-                </s:list>
-              </s:key>
-              <s:key name="write">
-                <s:list>
-                  <s:item>admin</s:item>
-                </s:list>
-              </s:key>
-            </s:dict>
-          </s:key>
-          <s:key name="owner">admin</s:key>
-          <s:key name="modifiable">1</s:key>
-          <s:key name="sharing">global</s:key>
-          <s:key name="app">search</s:key>
-          <s:key name="can_write">1</s:key>
-          <s:key name="ttl">600</s:key>
-        </s:dict>
-      </s:key>
-      <s:key name="searchProviders">
-        <s:list/>
-      </s:key>
-    </s:dict>
-  </content>
-</entry>';
-        
-        list($service, $http) = $this->loginToMockService();
-        
-        // Get job
-        $httpResponse = (object) array(
-            'status' => 200,
-            'reason' => 'OK',
-            'headers' => array(),
-            'body' => $bodyForJobInParsingState);
-        $http->expects($this->atLeastOnce())
-             ->method('get')
-             ->will($this->returnValue($httpResponse));
-        $job = $service->getJobs()->getReference('A_JOB');
-        
-        // Try to touch job when server refuses to return it
-        try
-        {
-            $this->touch($job);
-            $this->assertTrue(FALSE, 'Expected Splunk_HttpException to be thrown.');
-        }
-        catch (Splunk_HttpException $e)
-        {
-            $this->assertEquals(204, $e->getResponse()->status);
-        }
-    }
-    
+
     public function testMakeReady()
     {
         $maxTries = 7;
+        $additionalGetCalls = 1; //the new isRead Method makes an http call now
         $this->assertTrue(
             $maxTries != Splunk_Job::DEFAULT_FETCH_MAX_TRIES,
             'This test is only valid for a non-default number of fetch attempts.');
         
         list($service, $http) = $this->loginToMockService();
         
-        $httpResponse = (object) array(
+        $httpResponse = new Splunk_HttpResponse(array(
             'status' => 204,
             'reason' => 'No Content',
             'headers' => array(),
-            'body' => '');
-        $http->expects($this->exactly($maxTries))
+            'body' => ''));
+        $http->expects($this->exactly($maxTries+$additionalGetCalls))
              ->method('get')
              ->will($this->returnValue($httpResponse));
         $job = $service->getJobs()->getReference('A_JOB');
         
-        $this->assertFalse($job->isReady());
+        $this->assertFalse($job->isReady()); //calls http->get() an additional time
         try
         {
             $job->makeReady(/*maxTries=*/$maxTries, /*delayPerRetry=*/0.1);
@@ -226,7 +74,7 @@ class JobTest extends SplunkTest
         }
         catch (Splunk_HttpException $e)
         {
-            $this->assertEquals(204, $e->getResponse()->status);
+            // Good
         }
     }
     
@@ -234,7 +82,7 @@ class JobTest extends SplunkTest
     {
         list($service, $http) = $this->loginToMockService();
         
-        $httpResponse = (object) array(
+        $httpResponse = new Splunk_HttpResponse(array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
@@ -243,8 +91,8 @@ class JobTest extends SplunkTest
   <content type="text/xml">
   </content>
 </entry>
-');
-        $http->expects($this->once())
+'));
+        $http->expects($this->exactly(2)) // make ready now needs two calls
              ->method('get')
              ->will($this->returnValue($httpResponse));
         $job = $service->getJobs()->getReference('A_JOB');
@@ -311,7 +159,11 @@ class JobTest extends SplunkTest
         try
         {
             $job->getResultsPage();
-            $this->fail('Expected Splunk_JobNotDoneException.');
+            $this->fail('Expected Splunk_JobNotReadyException or Splunk_JobNotDoneException.');
+        }
+        catch (Splunk_JobNotReadyException $e)
+        {
+            // Good
         }
         catch (Splunk_JobNotDoneException $e)
         {
@@ -379,6 +231,9 @@ class JobTest extends SplunkTest
             'latest_time' => 'rt',
         ));
         
+        //wait for the search to become ready
+        $this->makeReady($rtjob);
+        
         $this->assertTrue($rtjob['isRealTimeSearch'] === '1',
             'This should be a realtime job.');
         
@@ -443,6 +298,9 @@ class JobTest extends SplunkTest
             'latest_time' => 'rt',
         ));
         
+        //wait for the search to become ready
+        $this->makeReady($rtjob);
+        
         $this->assertTrue($rtjob['isRealTimeSearch'] === '1',
             'This should be a realtime job.');
         
@@ -489,6 +347,9 @@ class JobTest extends SplunkTest
         $ss = $service->getSavedSearches()->get('Top five sourcetypes');
         $job = $ss->dispatch();
         
+        //wait for the search to become ready
+        $this->makeReady($job);
+
         // Ensure that we have a fully loaded Job
         $this->touch($job);
         
@@ -505,14 +366,14 @@ class JobTest extends SplunkTest
     {
         $namespace = Splunk_Namespace::createUser('USER', 'APP');
         
-        $postResponse = (object) array(
+        $postResponse = new Splunk_HttpResponse(array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
             'body' => trim("
 <?xml version='1.0' encoding='UTF-8'?>
 <response><sid>1345584253.35</sid></response>
-"));
+")));
         $postArgs = array(
             // (The URL should correspond to the namespace)
             'https://localhost:8089/servicesNS/USER/APP/search/jobs/',
@@ -539,14 +400,14 @@ class JobTest extends SplunkTest
     {
         $namespace = Splunk_Namespace::createUser('USER', 'APP');
         
-        $postResponse = (object) array(
+        $postResponse = new Splunk_HttpResponse(array(
             'status' => 200,
             'reason' => 'OK',
             'headers' => array(),
             'body' => trim("
 <?xml version='1.0' encoding='UTF-8'?>
 <response><sid>1345584253.35</sid></response>
-"));
+")));
         $postArgs = array(
             // (The URL should correspond to the namespace)
             'https://localhost:8089/servicesNS/USER/APP/search/jobs/',
@@ -656,6 +517,22 @@ class JobTest extends SplunkTest
             //...
         }
     }
+
+    public function testWaitingForParsing()
+    {
+        $service = $this->loginToRealService();
+
+        //This query has only one job: to stay in the parsing state for several seconds
+        $job = $service->getJobs()->create('search index=_internal | join host [search index=_internal] | join host [search index=_internal]');
+
+        //this should not raise an exeption
+        while(!$job->isDone())
+        {
+            usleep(0.5 * 1000000);
+            $job->refresh();
+        }
+
+    }
     
     // === Utility ===
     
@@ -667,7 +544,7 @@ class JobTest extends SplunkTest
         return $pageHasResults;
     }
     
-    private function makeDone($job)
+    private function makeDone(Splunk_Job $job)
     {
         while (!$job->isDone())
         {

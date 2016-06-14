@@ -22,7 +22,7 @@
  */
 class Splunk_Collection extends Splunk_Endpoint
 {
-    private $entitySubclass;
+    protected $entitySubclass;
     
     /**
      * @internal
@@ -137,7 +137,7 @@ class Splunk_Collection extends Splunk_Endpoint
      * @param SimpleXMLElement $entry       an <entry> element.
      * @return Splunk_Entry
      */
-    private function loadEntityFromEntry($entry)
+    protected function loadEntityFromEntry($entry)
     {
         return new $this->entitySubclass(
             $this->service,
@@ -275,7 +275,7 @@ class Splunk_Collection extends Splunk_Endpoint
     /**
      * Returns the absolute path of the child entity with the specified name.
      */
-    private function getEntityPath($name)
+    protected function getEntityPath($name)
     {
         return $this->path . $this->getEntityRelativePath($name);
     }

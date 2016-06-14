@@ -22,9 +22,30 @@
  */
 class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
 {
+    /**
+     * Indicates whether the entity has been loaded
+     *
+     * @var boolean 
+     */
     private $loaded = FALSE;
+    
+    /**
+     *
+     * @var SimpleXMLElement 
+     */
     private $entry;
+    
+    /**
+     *
+     * @var string 
+     */
     private $namespace;
+    
+    /**
+     * Holds the available properties for this entity
+     *
+     * @var array 
+     */
     private $content;
     
     /**
@@ -88,9 +109,9 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
      * 
      * @throws Splunk_IOException
      */
-    private function load($fetchArgs)
+    private function load()
     {
-        $response = $this->fetch($fetchArgs);
+        $response = $this->fetch();
         $xml = new SimpleXMLElement($response->body);
         
         $this->entry = $this->extractEntryFromRootXmlElement($xml);
@@ -100,9 +121,10 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     /**
      * Fetches this entity's Atom feed from the Splunk server.
      * 
+     * @return Splunk_HttpResponse
      * @throws Splunk_IOException
      */
-    protected function fetch($fetchArgs)
+    protected function fetch()
     {
         return $this->sendGet('');
     }
@@ -123,14 +145,20 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return $xml->entry;
     }
     
-    /** Parses the entry's contents. */
+    /**
+     * Parses the entry's contents.
+     */
     private function parseContentsFromEntry()
     {
         $this->content = Splunk_AtomFeed::parseValueInside($this->entry->content);
         $this->loaded = TRUE;
     }
     
-    /** Returns a value that indicates whether the entity has been loaded. */
+    /**
+     * Returns a value that indicates whether the entity has been loaded.
+     * 
+     * @return boolean
+     */
     protected function isLoaded()
     {
         return $this->loaded;
@@ -189,7 +217,11 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
         return (string) $this->validate()->entry->title;
     }
     
-    /** Gets the namespace in which this entity resides. */
+    /**
+     * Gets the namespace in which this entity resides.
+     * 
+     * @return string
+     */
     protected function getSearchNamespace()
     {
         return $this->namespace;
@@ -222,7 +254,8 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     // === ArrayAccess Methods ===
     
     /**
-     * Gets the value of the specified entity property.
+     * ArrayAccess Interface Method to get the value of the
+     * specified entity property.
      *
      * @param string $key       The name of an entity property.
      * @return string           The value of the specified entity property.
@@ -231,21 +264,36 @@ class Splunk_Entity extends Splunk_Endpoint implements ArrayAccess
     {
         return $this->validate()->content[$key];
     }
-    
-    /** @internal */
+
+    /**
+     * unsupported ArrayAccess Interface Method to assign a value to an offset
+     * 
+     * @internal
+     * @param mixed $key
+     * @param mixed $value
+     * @throws Splunk_UnsupportedOperationException
+     */
     public function offsetSet($key, $value)
     {
         throw new Splunk_UnsupportedOperationException();
     }
     
-    /** @internal */
+    /**
+     * unsupported ArrayAccess Interface Method to unset an offset
+     * 
+     * @internal
+     * @param mixed $key
+     * @param mixed $value
+     * @throws Splunk_UnsupportedOperationException
+     */
     public function offsetUnset($key)
     {
         throw new Splunk_UnsupportedOperationException();
     }
     
     /**
-     * Gets a value that indicates whether the specified entity property exists.
+     * ArrayAccess Interface Method to gets a value that indicates whether
+     * the specified entity property exists.
      *
      * @param string $key       The name of an entity property.
      * @return string           Whether the specified entity property exists.

@@ -105,9 +105,13 @@ class Splunk_Http
                 'max_redirects' => 0,       // [PHP 5.2] don't follow HTTP 3xx automatically
                 'ignore_errors' => TRUE,    // don't throw exceptions on bad status codes
             ),
+            'ssl' => array(
+                'verify_peer' => false, // don't verify ssl peer. Since php 5.6 this defaults to true
+                'verify_peer_name' => false // allow certificate CN missmtach
+            )
         ));
-        
-        // NOTE: PHP does not perform certificate validation for HTTPS URLs.
+
+        // NOTE: PHP does not perform certificate validation for HTTPS URLs prior version 5.6.
         // NOTE: fopen() magically sets the $http_response_header local variable.
         $bodyStream = @fopen($url, 'rb', /*use_include_path=*/FALSE, $fopenContext);
         if ($bodyStream === FALSE)

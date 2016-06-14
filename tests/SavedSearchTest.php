@@ -34,6 +34,7 @@ class SavedSearchTest extends SplunkTest
     public function testDispatch($savedSearch)
     {
         $job = $savedSearch->dispatch();
+        $this->makeReady($job);
         $this->assertEquals('1', $job['isSavedSearch']);
     }
     
