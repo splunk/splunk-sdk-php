@@ -1,0 +1,17 @@
+{
+  "name": "splunk/splunk-sdk-php",
+  "description": "Splunk Software Development Kit for PHP",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Splunk, Inc.",
+      "email": "sales@splunk.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.2.11"
+  },
+  "autoload": {
+    "files": ["Splunk.php"]
+  }
+}
